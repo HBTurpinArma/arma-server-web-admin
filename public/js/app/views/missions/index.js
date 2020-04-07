@@ -1,48 +1,58 @@
-define(function (require) {
+var $ = require('jquery')
+var _ = require('underscore')
+var Marionette = require('marionette')
 
-  "use strict";
+var UploadView = require('app/views/missions/upload')
+var WorkshopView = require('app/views/missions/workshop')
+var ListView = require('app/views/missions/list')
+var tpl = require('tpl/missions/index.html')
 
-  var $                   = require('jquery'),
-      _                   = require('underscore'),
-      Backbone            = require('backbone'),
-      Marionette          = require('marionette'),
-      UploadView          = require('app/views/missions/upload'),
-      WorkshopView        = require('app/views/missions/workshop'),
-      ListView            = require('app/views/missions/list'),
-      tpl                 = require('text!tpl/missions/index.html');
+module.exports = Marionette.LayoutView.extend({
+  template: _.template(tpl),
+  templateHelpers: function () {
+    return {
+      filterValue: this.filterValue
+    }
+  },
 
-  return Marionette.LayoutView.extend({
-    template: _.template(tpl),
+  regions: {
+    uploadView: '#upload',
+    workshopView: '#workshop',
+    listView: '#list'
+  },
 
-    regions: {
-      uploadView: "#upload",
-      workshopView: "#workshop",
-      listView: "#list",
-    },
+  events: {
+    'click #refresh': 'refresh',
+    'keyup #filterMissions': 'updateFilter'
+  },
 
-    events: {
-      "click #refresh": "refresh",
-    },
+  initialize: function () {
+    this.filterValue = ''
+  },
 
-    onRender: function() {
-      this.uploadView.show(new UploadView());
-      this.workshopView.show(new WorkshopView());
-      this.listView.show(new ListView({collection: this.options.missions}));
-    },
+  updateFilter: function (event) {
+    this.filterValue = event.target.value
+    this.listView.currentView.filterValue = this.filterValue
+    this.listView.currentView.render()
+  },
 
-    refresh: function (event) {
-      event.preventDefault();
-      $.ajax({
-        url: "/api/missions/refresh",
-        type: 'POST',
-        success: function (resp) {
+  onRender: function () {
+    this.uploadView.show(new UploadView())
+    this.workshopView.show(new WorkshopView())
+    this.listView.show(new ListView({ collection: this.options.missions, filterValue: this.filterValue }))
+  },
 
-        },
-        error: function (resp) {
+  refresh: function (event) {
+    event.preventDefault()
+    $.ajax({
+      url: '/api/missions/refresh',
+      type: 'POST',
+      success: function (resp) {
 
-        },
-      });
-    },
-  });
+      },
+      error: function (resp) {
 
-});
+      }
+    })
+  }
+})
