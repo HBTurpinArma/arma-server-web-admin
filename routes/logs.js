@@ -1,10 +1,11 @@
 var express = require('express')
+const config = require('../config');
 
 module.exports = function (logsManager) {
   var router = express.Router()
 
   router.get('/', function (req, res) {
-    logsManager.logFiles(function (err, files) {
+    logsManager.logFiles(0, config.logCount, function (err, files) {
       if (err) {
         res.status(500).send(err)
       } else {
