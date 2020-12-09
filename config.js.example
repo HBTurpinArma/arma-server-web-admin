@@ -21,4 +21,5 @@ module.exports = {
   prefix: "", // Prefix to all server names
   suffix: "", // Suffix to all server names
   logFormat: "dev", // expressjs/morgan log format
+  logCount: 16, // Only show this amount of newest logs
 };
