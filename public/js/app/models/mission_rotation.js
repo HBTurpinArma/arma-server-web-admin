@@ -4,7 +4,7 @@ module.exports = Backbone.Model.extend({
   defaults: {
     name: '',
 
-    difficulty: 'custom'
+    difficulty: 'custom',
     params: []
 
   }
