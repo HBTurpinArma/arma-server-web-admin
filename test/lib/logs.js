@@ -1,3 +1,4 @@
+var path = require('path')
 require('should')
 var tk = require('timekeeper')
 const path = require('path');
