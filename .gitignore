@@ -48,6 +48,7 @@ archive
 
 # Project stuff
 config.js
+configs
 servers.json
 LICENSE
 package-lock.json
