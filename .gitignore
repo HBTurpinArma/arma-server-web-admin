@@ -45,3 +45,6 @@ jspm_packages
 # Project stuff
 config.js
 servers.json
+LICENSE
+package-lock.json
+.travis.yml
