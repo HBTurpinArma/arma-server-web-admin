@@ -11,7 +11,10 @@ module.exports = ModsListView.extend({
 
   events: {
     'click .check-all': 'checkAll',
-    'click .uncheck-all': 'uncheckAll'
+    'click .uncheck-all': 'uncheckAll',
+    'click .check-all_optional': 'checkAllOptional',
+    'click .uncheck-all_optional': 'uncheckAllOptional',
+    'click .check-clientside_optional': 'checkClientsideOptional'
   },
 
   buildChildView: function (item, ChildViewType, childViewOptions) {
@@ -20,20 +23,39 @@ module.exports = ModsListView.extend({
     return view
   },
 
-  changeAllCheckbox: function (checked) {
-    this.$('input[name="required"]:checkbox').map(function (idx, el) {
+  changeAllCheckbox: function (checked, name) {
+    this.$('input[name='+name+']:checkbox').map(function (idx, el) {
       return $(el).prop('checked', checked)
     })
   },
 
   checkAll: function (e) {
     e.preventDefault()
-    this.changeAllCheckbox(true)
+    this.changeAllCheckbox(true, "required")
   },
 
   uncheckAll: function (e) {
     e.preventDefault()
-    this.changeAllCheckbox(false)
+    this.changeAllCheckbox(false, "required")
+  },
+
+  checkAllOptional: function (e) {
+    e.preventDefault()
+    this.changeAllCheckbox(true, "optional")
+  },
+
+  uncheckAllOptional: function (e) {
+    e.preventDefault()
+    this.changeAllCheckbox(false, "optional")
+  },
+
+  checkClientsideOptional: function (e) {
+    e.preventDefault()
+    this.changeAllCheckbox(false, "optional")
+    this.$('input[name=optional]:checkbox').map(function (idx, el) {
+      return $(el).prop('checked', ($('input[name=optional]:checkbox').val().startsWith("clientside")))
+    })
+
   },
 
   serialize: function () {
