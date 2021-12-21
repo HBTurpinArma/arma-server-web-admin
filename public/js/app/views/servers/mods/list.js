@@ -38,7 +38,10 @@ module.exports = ModsListView.extend({
 
   serialize: function () {
     return {
-      mods: this.$('input:checkbox:checked').map(function (idx, el) {
+      mods: this.$('input[name="required"]:checkbox:checked').map(function (idx, el) {
+        return $(el).val()
+      }).get(),
+      mods_optional: this.$('input[name="optional"]:checkbox:checked').map(function (idx, el) {
         return $(el).val()
       }).get()
     }

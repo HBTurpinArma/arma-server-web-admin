@@ -11,7 +11,8 @@ module.exports = ModListItemView.extend({
 
   templateHelpers: function () {
     return {
-      enabled: this.options.server.get('mods').indexOf(this.model.get('name')) > -1
+      enabled: this.options.server.get('mods').indexOf(this.model.get('name')) > -1,
+      optional: this.options.server.get('mods_optional').indexOf(this.model.get('name')) > -1
     }
   }
 })

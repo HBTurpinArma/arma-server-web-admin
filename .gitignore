@@ -50,6 +50,5 @@ archive
 config.js
 configs
 servers.json
-LICENSE
 package-lock.json
 .travis.yml

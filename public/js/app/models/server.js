@@ -12,6 +12,7 @@ module.exports = Backbone.Model.extend({
     forcedDifficulty: '',
     max_players: null,
     mods: [],
+    mods_optional: [],
     motd: '',
     number_of_headless_clients: 0,
     parameters: [],
