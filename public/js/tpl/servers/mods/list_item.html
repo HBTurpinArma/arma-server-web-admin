@@ -2,9 +2,9 @@
   <div class="checkbox">
     <label>
       <span style="width:20px;display:inline-block;"></span>
-      <input name="required" type="checkbox" value="<%-name%>" <% if (enabled) { %>checked<% } %> >
+      <input name="required" id="required" type="checkbox" value="<%-name%>" <% if (required) { %>checked<% } %> >
       <span style="width:75px;display:inline-block;"></span>
-      <input name="optional" type="checkbox" value="<%-name%>" <% if (optional) { %>checked_opt<% } %> > 
+      <input name="optional" id="optional" type="checkbox" value="<%-name%>" <% if (optional) { %>checked<% } %> > 
       <span style="width:20px;display:inline-block;"></span>
       <%-name%>
     </label>

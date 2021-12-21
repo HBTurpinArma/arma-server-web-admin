@@ -15,13 +15,13 @@ module.exports = ModsListView.extend({
   },
 
   buildChildView: function (item, ChildViewType, childViewOptions) {
-    var options = _.extend({ model: item, server: this.options.server }, childViewOptions)
+    var options = _.extend({ model: item, server: this.options.server}, childViewOptions)
     var view = new ChildViewType(options)
     return view
   },
 
   changeAllCheckbox: function (checked) {
-    this.$('input:checkbox').map(function (idx, el) {
+    this.$('input[name="required"]:checkbox').map(function (idx, el) {
       return $(el).prop('checked', checked)
     })
   },

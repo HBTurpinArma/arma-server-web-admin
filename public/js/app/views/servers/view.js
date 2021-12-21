@@ -36,6 +36,7 @@ module.exports = Marionette.LayoutView.extend({
   initialize: function (options) {
     this.missions = options.missions
     this.mods = options.mods
+    this.mods_optional = options.mods_optional
   },
 
   onRender: function () {
