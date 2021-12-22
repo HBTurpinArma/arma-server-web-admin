@@ -10,11 +10,12 @@ module.exports = ModsListView.extend({
   template: _.template(tpl),
 
   events: {
-    'click .check-all': 'checkAll',
-    'click .uncheck-all': 'uncheckAll',
-    'click .check-all_optional': 'checkAllOptional',
-    'click .uncheck-all_optional': 'uncheckAllOptional',
-    'click .check-clientside_optional': 'checkClientsideOptional'
+    'click .toggle-required': 'toggleRequired',
+    'click .toggle-optional': 'toggleOptional',
+    'click .check-include-required': 'checkIncludeRequired',
+    'click .check-include-optional': 'checkIncludeOptional',
+    'keypress #include-required' : 'checkOnEnterRequired',
+    'keypress #include-optional' : 'checkOnEnterOptional'
   },
 
   buildChildView: function (item, ChildViewType, childViewOptions) {
@@ -29,34 +30,60 @@ module.exports = ModsListView.extend({
     })
   },
 
-  checkAll: function (e) {
+  toggleRequired: function (e) {
     e.preventDefault()
-    this.changeAllCheckbox(true, "required")
+    this.changeAllCheckbox(!this.$('input[name=required]:checkbox')[0].checked, "required")
   },
 
-  uncheckAll: function (e) {
+  toggleOptional: function (e) {
+    e.preventDefault()
+    this.changeAllCheckbox(!this.$('input[name=optional]:checkbox')[0].checked, "optional")
+  },
+
+  checkIncludeRequired: function (e) {
     e.preventDefault()
     this.changeAllCheckbox(false, "required")
-  },
-
-  checkAllOptional: function (e) {
-    e.preventDefault()
-    this.changeAllCheckbox(true, "optional")
-  },
-
-  uncheckAllOptional: function (e) {
-    e.preventDefault()
-    this.changeAllCheckbox(false, "optional")
-  },
-
-  checkClientsideOptional: function (e) {
-    e.preventDefault()
-    this.changeAllCheckbox(false, "optional")
-    this.$('input[name=optional]:checkbox').map(function (idx, el) {
-      return $(el).prop('checked', $(el).val().startsWith("clientside"))
+    //var filter = "clientside"
+    var filter = this.$('#include-required').val()
+    this.$('input[name=required]:checkbox').map(function (idx, el) {
+      return ($(el).prop('checked', $(el).val().includes(filter) && !($(el).val().includes("\\optionals\\"))))
     })
-
   },
+
+  checkIncludeOptional: function (e) {
+    e.preventDefault()
+    this.changeAllCheckbox(false, "optional")
+    //var filter = "clientside"
+    var filter = this.$('#include-optional').val()
+    this.$('input[name=optional]:checkbox').map(function (idx, el) {
+      return $(el).prop('checked', $(el).val().includes(filter))
+    })
+  },
+
+  checkOnEnterRequired: function(e){
+    if ( e.which === 13 ) { 
+      var keywords = $(e.target).val();
+      var filter = this.$('#include-required').val()
+      this.$('input[name=required]:checkbox').map(function (idx, el) {
+        return ($(el).prop('checked', $(el).val().includes(filter) && !($(el).val().includes("\\optionals\\"))))
+      })
+      e.preventDefault()
+      if(keywords === '') return;
+    }
+  },
+
+  checkOnEnterOptional: function(e){
+    if ( e.which === 13 ) { 
+      var keywords = $(e.target).val();
+      var filter = this.$('#include-optional').val()
+      this.$('input[name=optional]:checkbox').map(function (idx, el) {
+        return $(el).prop('checked', $(el).val().includes(filter))
+      })
+      e.preventDefault()
+      if(keywords === '') return;
+    }
+  },
+
 
   serialize: function () {
     return {
