@@ -53,7 +53,7 @@ module.exports = ModsListView.extend({
     e.preventDefault()
     this.changeAllCheckbox(false, "optional")
     this.$('input[name=optional]:checkbox').map(function (idx, el) {
-      return $(el).prop('checked', ($('input[name=optional]:checkbox').val().startsWith("clientside")))
+      return $(el).prop('checked', $(el).val().startsWith("clientside"))
     })
 
   },
