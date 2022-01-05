@@ -16,6 +16,7 @@ module.exports = Marionette.ItemView.extend({
   serialize: function () {
     return {
       additionalConfigurationOptions: this.$('form .additional-configuration-options').val(),
+      cbaConfigurationOptions: this.$('form .cba-configuration-options').val(),
       admin_password: this.$('form .admin-password').val(),
       allowed_file_patching: this.$('form .allowed-file-patching').prop('checked') ? 2 : 1,
       auto_start: this.$('form .auto-start').prop('checked'),

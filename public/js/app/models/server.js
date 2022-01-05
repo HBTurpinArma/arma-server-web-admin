@@ -4,6 +4,7 @@ var Backbone = require('backbone')
 module.exports = Backbone.Model.extend({
   defaults: {
     additionalConfigurationOptions: '',
+    cbaConfigurationOptions: '',
     admin_password: '',
     allowed_file_patching: 1,
     auto_start: false,

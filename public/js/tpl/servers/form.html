@@ -136,12 +136,22 @@
   </div>
 
   <div class="form-group">
-    <label for="additional-configuration-options" class="col-sm-2 control-label">Additional configuration options</label>
+    <label for="additional-configuration-options" class="col-sm-2 control-label">Additional Configuration Options</label>
     <div class="col-sm-10">
       <textarea rows="3"
                 class="form-control additional-configuration-options"
                 placeholder="No additional configuration options"><%- additionalConfigurationOptions %></textarea>
       <p class="help-block">Additional configuration options that will be appended to the generated server.cfg config file. Avoid (re)declaring any of the options above here.</p>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="cba-configuration-options" class="col-sm-2 control-label">CBA Configuration Override</label>
+    <div class="col-sm-10">
+      <textarea rows="3"
+                class="form-control cba-configuration-options"
+                placeholder="No overidden CBA configuration options"><%- cbaConfigurationOptions %></textarea>
+      <p class="help-block">Override specific CBA configuration options here.</p>
     </div>
   </div>
 </form>
