@@ -1,8 +1,16 @@
 <td>
   <div class="checkbox">
     <label>
-      <input type="checkbox" value="<%-name%>" <% if (enabled) { %>checked<% } %> >
+      <span style="width:20px;display:inline-block;"></span>
+      <input name="required" id="required" type="checkbox" value="<%-name%>" <% if (required) { %>checked<% } %> >
+      <span style="width:75px;display:inline-block;"></span>
+      <input name="optional" id="optional" type="checkbox" value="<%-name%>" <% if (optional) { %>checked<% } %> > 
+      <span style="width:20px;display:inline-block;"></span>
       <%-name%>
+      <td style="text-align: right; white-space: nowrap;">
+        <%-formattedSize%>
+      </td>
     </label>
   </div>
+
 </td>

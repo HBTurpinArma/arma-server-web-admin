@@ -42,6 +42,13 @@ jspm_packages
 # Output of 'npm pack'
 *.tgz
 
+#testing dirs
+archive
+
+
 # Project stuff
 config.js
+configs
 servers.json
+package-lock.json
+.travis.yml

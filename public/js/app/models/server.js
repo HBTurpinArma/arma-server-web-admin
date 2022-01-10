@@ -4,6 +4,7 @@ var Backbone = require('backbone')
 module.exports = Backbone.Model.extend({
   defaults: {
     additionalConfigurationOptions: '',
+    cbaConfigurationOptions: '',
     admin_password: '',
     allowed_file_patching: 1,
     auto_start: false,
@@ -12,6 +13,7 @@ module.exports = Backbone.Model.extend({
     forcedDifficulty: '',
     max_players: null,
     mods: [],
+    mods_optional: [],
     motd: '',
     number_of_headless_clients: 0,
     parameters: [],

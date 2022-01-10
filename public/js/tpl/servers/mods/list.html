@@ -1,10 +1,22 @@
 <form>
-  <button class="btn btn-xs btn-primary check-all">Check All</button>
-  <button class="btn btn-xs btn-primary uncheck-all">Uncheck All</button>
+  <div style="width: 100%; overflow: hidden;">
+    <div style="float:left; padding-right:30px;">
+      <button class="btn btn-xs btn-primary toggle-required">Toggle</button>
+      <input style="vertical-align: middle; margin:0px; margin-top:2px; line-height:1;" size=5 type="text" placeholder="battalion\" id="include-required">
+      <button style="vertical-align: middle; margin:0px; margin-top:2px; border-radius:0 .2rem .2rem 0; margin-left:-5px;" class="btn btn-primary btn-xs check-include-required"><span style="margin:0; padding:0%" class="glyphicon glyphicon-check"></span></button> 
+    </div>
+    <!-- <label style="-webkit-transform: rotate(-90deg); -moz-transform: rotate(-90deg); -ms-transform: rotate(-90deg); -o-transform: rotate(-90deg); transform: rotate(-90deg); font-size:10px; padding-right:20px;">Optional</label> -->
+    <div style="float:left;">
+      <button class="btn btn-xs btn-primary toggle-optional">Toggle</button>
+      <input style="vertical-align: middle; margin:0px; margin-top:2px; line-height:1;" size=5 type="text" placeholder="clientside\" id="include-optional">
+      <button style="vertical-align: middle; margin:0px; margin-top:2px; border-radius:0 .2rem .2rem 0; margin-left:-5px;" class="btn btn-primary btn-xs check-include-optional"><span style="margin:0; padding:0%" class="glyphicon glyphicon-check"></span></button> 
+    </div>
+  </div>
   <table class="table table-striped">
     <thead>
       <tr>
-        <th>Mod</th>
+        <th width="100%">Required<span style="width:20px;display:inline-block;"></span>Optional</th>
+        <th>Size</th>
       </tr>
     </thead>
 
