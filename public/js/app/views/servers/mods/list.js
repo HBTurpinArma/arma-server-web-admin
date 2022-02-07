@@ -15,7 +15,8 @@ module.exports = ModsListView.extend({
     'click .check-include-required': 'checkIncludeRequired',
     'click .check-include-optional': 'checkIncludeOptional',
     'keypress #include-required' : 'checkOnEnterRequired',
-    'keypress #include-optional' : 'checkOnEnterOptional'
+    'keypress #include-optional' : 'checkOnEnterOptional',
+    'click .preset-battalion': 'setPresetBattalion',
   },
 
   buildChildView: function (item, ChildViewType, childViewOptions) {
@@ -57,6 +58,22 @@ module.exports = ModsListView.extend({
     var filter = this.$('#include-optional').val()
     this.$('input[name=optional]:checkbox').map(function (idx, el) {
       return $(el).prop('checked', $(el).val().includes(filter))
+    })
+  },
+
+
+  setPresetBattalion: function (e) {
+    e.preventDefault()
+
+    this.changeAllCheckbox(false, "optional")
+    var filter = "clientside\\"
+    this.$('input[name=optional]:checkbox').map(function (idx, el) {
+      return $(el).prop('checked', $(el).val().includes(filter))
+    })
+
+    var filter = "battalion\\"
+    this.$('input[name=required]:checkbox').map(function (idx, el) {
+      return ($(el).prop('checked', $(el).val().includes(filter) && !($(el).val().includes("\\optionals\\"))))
     })
   },
 
