@@ -9,12 +9,22 @@
     <tbody>
     <% _.each(players(), function(player) { %>
       <tr>
-        <td><%= player.name %></td>
+        <td style="width: 100%;"><%= player.name %></td>
         <td><%= player.score %></td>
+        <td>
+          <button type="button" class="btn btn-danger btn-xs ban pull-right">
+            <span class="glyphicon glyphicon-ban-circle"></span> Ban
+          </button>
+        </td>
+        <td>
+          <button type="button" class="btn btn-primary btn-xs kick pull-right">
+            <span class="glyphicon glyphicon-user"></span> Kick
+          </button>
+        </td>
       </tr>
     <% }); %>
     </tbody>
-  </table>
+  </table> 
 <% } else { %>
   <tr>
     <td>Server Offline...</td>
