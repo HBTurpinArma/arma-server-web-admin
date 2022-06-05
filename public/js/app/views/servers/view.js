@@ -91,7 +91,7 @@ module.exports = Marionette.LayoutView.extend({
       error: function (model, response) {
         sweetAlert({
           title: 'Error',
-          text: 'An error occurred, please consult the logs',
+          text: response.responseText,
           type: 'error'
         })
       }

@@ -34,7 +34,6 @@ module.exports = Backbone.Model.extend({
       type: 'POST',
       success: function (resp) {
         self.set('pid', resp.pid)
-
         if (cb) {
           cb()
         }
@@ -54,7 +53,25 @@ module.exports = Backbone.Model.extend({
       type: 'POST',
       success: function (resp) {
         self.set('pid', resp.pid)
+        if (cb) {
+          cb()
+        }
+      },
+      error: function (err) {
+        if (cb) {
+          cb(err)
+        }
+      }
+    })
+  },
 
+  delete: function (cb) {
+    var self = this
+    $.ajax({
+      url: '/api/servers/' + self.get('id') + '/delete',
+      type: 'POST',
+      success: function (resp) { 
+        self.set('pid', resp.pid)
         if (cb) {
           cb()
         }

@@ -9,10 +9,18 @@ module.exports = function (missionsManager) {
   var router = express.Router()
 
   router.get('/', function (req, res) {
+    if (!modsManager.canUserView(req.auth.user)){
+      res.status(403).send('You do not have permission to view missions...')
+      return
+    }
     res.json(missionsManager.missions)
   })
 
   router.post('/', upload.array('missions', 64), function (req, res) {
+    if (!modsManager.canUserCreate(req.auth.user)){
+      res.status(403).send('You do not have permission to add missions...')
+      return
+    }
     var missions = req.files.filter(function (file) {
       return path.extname(file.originalname) === '.pbo'
     })
@@ -35,12 +43,20 @@ module.exports = function (missionsManager) {
   })
 
   router.get('/:mission', function (req, res) {
+    if (!modsManager.canUserView(req.auth.user)){
+      res.status(403).send('You do not have permission to view missions...')
+      return
+    }
     var filename = req.params.mission
 
     res.download(missionsManager.missionPath(filename), decodeURI(filename))
   })
 
   router.delete('/:mission', function (req, res) {
+    if (!modsManager.canUserDelete(req.auth.user)){
+      res.status(403).send('You do not have permission to delete missions...')
+      return
+    }
     var filename = req.params.mission
 
     missionsManager.delete(filename, function (err) {
@@ -53,11 +69,19 @@ module.exports = function (missionsManager) {
   })
 
   router.post('/refresh', function (req, res) {
+    if (!modsManager.canUserView(req.auth.user)){
+      res.status(403).send('You do not have permission to refresh missions...')
+      return
+    }
     missionsManager.updateMissions()
     res.status(204).send()
   })
 
   router.post('/workshop', function (req, res) {
+    if (!modsManager.canUserCreate(req.auth.user)){
+      res.status(403).send('You do not have permission to add missions...')
+      return
+    }
     var id = req.body.id
 
     missionsManager.downloadSteamWorkshop(id, function (err) {
