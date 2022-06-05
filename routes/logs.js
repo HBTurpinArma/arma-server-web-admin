@@ -1,11 +1,11 @@
 var express = require('express')
 const config = require('../config');
 
-module.exports = function (manager, logsManager) {
+module.exports = function (logsManager) {
   var router = express.Router()
 
   router.get('/', function (req, res) {
-    if (!manager.canUserView(req.auth.user)){
+    if (!logsManager.canUserView(req.auth.user)){
       res.status(403).send('You do not have permission to view logs...')
       return
     }
@@ -19,7 +19,7 @@ module.exports = function (manager, logsManager) {
   })
 
   router.delete('/:log', function (req, res) {
-    if (!manager.canUserDelete(req.auth.user)){
+    if (!logsManager.canUserDelete(req.auth.user)){
       res.status(403).send('You do not have permission to delete logs...')
       return
     }
@@ -34,7 +34,7 @@ module.exports = function (manager, logsManager) {
   })
 
   router.get('/:log/:mode', function (req, res) {
-    if (!manager.canUserView(req.auth.user)){
+    if (!logsManager.canUserView(req.auth.user)){
       res.status(403).send('You do not have permission to view logs...')
       res.send("No")
       return

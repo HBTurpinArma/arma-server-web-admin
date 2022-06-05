@@ -9,7 +9,7 @@ module.exports = function (missionsManager) {
   var router = express.Router()
 
   router.get('/', function (req, res) {
-    if (!modsManager.canUserView(req.auth.user)){
+    if (!missionsManager.canUserView(req.auth.user)){
       res.status(403).send('You do not have permission to view missions...')
       return
     }
@@ -17,7 +17,7 @@ module.exports = function (missionsManager) {
   })
 
   router.post('/', upload.array('missions', 64), function (req, res) {
-    if (!modsManager.canUserCreate(req.auth.user)){
+    if (!missionsManager.canUserCreate(req.auth.user)){
       res.status(403).send('You do not have permission to add missions...')
       return
     }
@@ -43,7 +43,7 @@ module.exports = function (missionsManager) {
   })
 
   router.get('/:mission', function (req, res) {
-    if (!modsManager.canUserView(req.auth.user)){
+    if (!missionsManager.canUserView(req.auth.user)){
       res.status(403).send('You do not have permission to view missions...')
       return
     }
@@ -53,7 +53,7 @@ module.exports = function (missionsManager) {
   })
 
   router.delete('/:mission', function (req, res) {
-    if (!modsManager.canUserDelete(req.auth.user)){
+    if (!missionsManager.canUserDelete(req.auth.user)){
       res.status(403).send('You do not have permission to delete missions...')
       return
     }
