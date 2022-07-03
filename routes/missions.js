@@ -69,7 +69,7 @@ module.exports = function (missionsManager) {
   })
 
   router.post('/refresh', function (req, res) {
-    if (!modsManager.canUserView(req.auth.user)){
+    if (!missionsManager.canUserView(req.auth.user)){
       res.status(403).send('You do not have permission to refresh missions...')
       return
     }
@@ -78,7 +78,7 @@ module.exports = function (missionsManager) {
   })
 
   router.post('/workshop', function (req, res) {
-    if (!modsManager.canUserCreate(req.auth.user)){
+    if (!missionsManager.canUserCreate(req.auth.user)){
       res.status(403).send('You do not have permission to add missions...')
       return
     }
