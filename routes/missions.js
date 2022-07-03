@@ -17,7 +17,7 @@ module.exports = function (missionsManager) {
   })
 
   router.post('/', upload.array('missions', 64), function (req, res) {
-    if (!missionsManager.canUserCreate(req.auth.user)){
+    if (!missionsManager.canUserUpload(req.auth.user)){
       res.status(403).send('You do not have permission to add missions...')
       return
     }
