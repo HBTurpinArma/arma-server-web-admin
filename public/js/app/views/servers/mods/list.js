@@ -17,6 +17,7 @@ module.exports = ModsListView.extend({
     'keypress #include-required' : 'checkOnEnterRequired',
     'keypress #include-optional' : 'checkOnEnterOptional',
     'click .preset-2nd': 'setPreset2nd',
+    'click .preset-4th': 'setPreset4th',
   },
 
   buildChildView: function (item, ChildViewType, childViewOptions) {
