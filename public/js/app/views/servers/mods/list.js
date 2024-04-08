@@ -62,7 +62,6 @@ module.exports = ModsListView.extend({
     })
   },
 
-
   setPresetBattlaion: function (e) {
     e.preventDefault()
 
@@ -124,6 +123,9 @@ module.exports = ModsListView.extend({
         return $(el).val()
       }).get(),
       mods_optional: this.$('input[name="optional"]:checkbox:checked').map(function (idx, el) {
+        return $(el).val()
+      }).get(),
+      mods_server_only: this.$('input[name="server_only"]:checkbox:checked').map(function (idx, el) {
         return $(el).val()
       }).get()
     }

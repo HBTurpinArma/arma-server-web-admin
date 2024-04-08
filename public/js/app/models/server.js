@@ -14,6 +14,7 @@ module.exports = Backbone.Model.extend({
     max_players: null,
     mods: [],
     mods_optional: [],
+    mods_server_only: [],
     motd: '',
     number_of_headless_clients: 0,
     parameters: [],
