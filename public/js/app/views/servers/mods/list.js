@@ -16,8 +16,8 @@ module.exports = ModsListView.extend({
     'click .check-include-optional': 'checkIncludeOptional',
     'keypress #include-required' : 'checkOnEnterRequired',
     'keypress #include-optional' : 'checkOnEnterOptional',
-    'click .preset-2nd': 'setPreset2nd',
-    'click .preset-4th': 'setPreset4th',
+    'click .preset-battalion': 'setPresetBattlaion',
+    'click .preset-ww2': 'setPresetWW2',
   },
 
   buildChildView: function (item, ChildViewType, childViewOptions) {
@@ -63,31 +63,31 @@ module.exports = ModsListView.extend({
   },
 
 
-  setPreset2nd: function (e) {
+  setPresetBattlaion: function (e) {
     e.preventDefault()
 
     this.changeAllCheckbox(false, "optional")
-    var filter = "2nd_clientside/"
+    var filter = "clientside/"
     this.$('input[name=optional]:checkbox').map(function (idx, el) {
       return $(el).prop('checked', $(el).val().includes(filter))
     })
 
-    var filter = "2nd_battalion/"
+    var filter = "battalion/"
     this.$('input[name=required]:checkbox').map(function (idx, el) {
       return ($(el).prop('checked', $(el).val().includes(filter) && !($(el).val().includes("\\optionals\\"))))
     })
   },
 
-  setPreset4th: function (e) {
+  setPresetWW2: function (e) {
     e.preventDefault()
 
     this.changeAllCheckbox(false, "optional")
-    var filter = "4th_clientside/"
+    var filter = "clientside_ww2/"
     this.$('input[name=optional]:checkbox').map(function (idx, el) {
       return $(el).prop('checked', $(el).val().includes(filter))
     })
 
-    var filter = "4th_legion/"
+    var filter = "battalion_ww2/"
     this.$('input[name=required]:checkbox').map(function (idx, el) {
       return ($(el).prop('checked', $(el).val().includes(filter) && !($(el).val().includes("\\optionals\\"))))
     })
