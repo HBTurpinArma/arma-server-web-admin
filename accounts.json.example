@@ -1,0 +1,1 @@
+[{"username":"user","password":"password123","permissions":{"servers":{"view":true,"stop":true,"start":true,"delete":false,"create":false,"edit":true},"missions":{"view":true,"delete":false,"create":true},"mods":{"view":false,"delete":false},"logs":{"view":false,"delete":false}}}]

@@ -1,33 +1,38 @@
+var auth = require('./accounts.json');
+
 module.exports = {
-  game: 'arma3', // arma3, arma2oa, arma2, arma1, cwa, ofpresistance, ofp
-  path: 'path-to-arma3-directory',
-  port: 3000,
-  host: '0.0.0.0', // Can be either an IP or a Hostname
-  type: 'linux', // Can be either linux, windows or wine
-  additionalConfigurationOptions: '', // Additional configuration options appended to server.cfg file
-  parameters: [ // Additional startup parameters used by all servers
-    '-noSound',
-    '-world=empty'
-  ],
-  serverMods: [ // Mods used exclusively by server and not shared with clients
-    '@mod1',
-    '@mod2',
-  ],
-  virtualServer: {
-    enabled: false, // If virtual servers should be used
+	game: 'arma3_x64', // arma3_x64, arma3, arma2oa, arma2, arma1, cwa, ofpresistance, ofp
+	path: 'C:/Program Files (x86)/Steam/steamapps/common/Arma 3',
+	port: 3000,
+	host: '0.0.0.0', // Can be either an IP or a Hostname
+	type: 'windows', // Can be either linux, windows or wine
+	additionalConfigurationOptions: "steamProtocolMaxDataSize = 2048; \
+	kickTimeout[] = { {0, 10},{1, 10},{2, 10},{3, 10} };", // Additional configuration options appended to server.cfg file
+	parameters: [ // Additional startup parameters used by all servers
+		'-noSound',
+		'-world=empty',
+		//'-cfg=config/networkparams.cfg',
+		'-profiles=Profiles'
+	],
+	modPath: "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma 3",
+	serverMods: [ // Mods used exclusively by server and not shared with clients
+		//'@extDB3'
+	], 
+	admins: [ // add steam IDs here to enable #login without password
+	], 
+	virtualServer: {
+    enabled: true, // If virtual servers should be used
     fileExtensions: [ // Extra files in root of server folder that should be copied to virtual servers
       '.json'
     ],
     folders: [ // Extra folders in root of server folder that should be linked to virtual servers
+		"profiles",
+		"config"
     ]
   },
-  admins: [], // add steam IDs here to enable #login without password
-  auth: { // If both username and password is set, HTTP Basic Auth will be used. You may use an array to specify more than one user.
-    username: '', // Username for HTTP Basic Auth
-    password: '', // Password for HTTP Basic Auth
-  },
+  // If both username and password is set, HTTP Basic Auth will be used. You may use an array to specify more than one user.
+  auth: auth,
   prefix: "", // Prefix to all server names
   suffix: "", // Suffix to all server names
   logFormat: "dev", // expressjs/morgan log format
-  logCount: 16, // Only show this amount of newest logs
 };
