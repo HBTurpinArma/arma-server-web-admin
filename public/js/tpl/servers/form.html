@@ -25,6 +25,28 @@
   </div>
 
   <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" class="auto-start" <% if (auto_start) { %>checked="checked"<% } %>> Auto Start
+          <p class="help-block">Should the server start when the panel service starts.</p>
+        </label>
+      </div>
+
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" class="virtual_server" <% if (virtual_server) { %>checked="checked"<% } %>> Virtual Server
+          <p class="help-block">Should a temporary copy of the server be used?</p>
+        </label>
+      </div>
+
+    </div>
+  </div>
+
+
+
+  <div class="form-group">
     <label for="max-players" class="col-sm-2 control-label">Max Players</label>
     <div class="col-sm-10">
       <input type="number" class="form-control max-players" placeholder="Max Players" value="<%- max_players %>">
@@ -92,26 +114,6 @@
     <div class="col-sm-10">
       <input type="number" class="form-control headless-clients" placeholder="Headless Clients" value="<%- number_of_headless_clients %>">
       <p class="help-block">Number of headless clients that will be launched</p>
-    </div>
-  </div>
-
-  <div class="form-group">
-    <div class="col-sm-offset-2 col-sm-10">
-      <div class="checkbox">
-        <label>
-          <input type="checkbox" class="auto-start" <% if (auto_start) { %>checked="checked"<% } %>> Auto Start
-        </label>
-      </div>
-    </div>
-  </div>
-
-  <div class="form-group">
-    <div class="col-sm-offset-2 col-sm-10">
-      <div class="checkbox">
-        <label>
-          <input type="checkbox" class="virtual_server" <% if (virtual_server) { %>checked="checked"<% } %>> Virtual Server
-        </label>
-      </div>
     </div>
   </div>
 
