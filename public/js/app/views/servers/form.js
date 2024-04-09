@@ -45,6 +45,11 @@ module.exports = Marionette.ItemView.extend({
     //Select saved option from the model on render.
     var selectedValue = this.model.get('game_selected');
     this.$('form .game_selected').val(selectedValue);
+
+
+    var selectedValue = this.$('form .game_selected').val();
+    this.$('.cc').hide();
+    this.$('.cc-' + selectedValue).show();
   },
 
   onSelectionChange: function() {
