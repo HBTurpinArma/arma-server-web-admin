@@ -1,19 +1,6 @@
-<td>
-  <div class="checkbox">
-    <label>
-      
-      <span style="width:35px;display:inline-block;"></span>      
-      <input name="server_only" id="server_only" type="checkbox" value="<%-name%>" <% if (server_only) { %>checked<% } %> >
-      <span style="width:80px;display:inline-block;"></span>
-      <input name="required" id="required" type="checkbox" value="<%-name%>" <% if (required) { %>checked<% } %> >
-      <span style="width:80px;display:inline-block;"></span>
-      <input name="optional" id="optional" type="checkbox" value="<%-name%>" <% if (optional) { %>checked<% } %> > 
-      <span style="width:35px;display:inline-block;"></span>
-      <%-name%>
-      <td style="text-align: right; white-space: nowrap;">
-        <%-formattedSize%>
-      </td>
-    </label>
-  </div>
 
-</td>
+<td style="text-align: center; width: 100px;"><input name="server_only" id="server_only" type="checkbox" value="<%-name%>" <% if (server_only) { %>checked<% } %> ></td>
+<td style="text-align: center; width: 100px;"><input name="required" id="required" type="checkbox" value="<%-name%>" <% if (required) { %>checked<% } %> ></td>
+<td style="text-align: center; width: 100px;"><input name="optional" id="optional" type="checkbox" value="<%-name%>" <% if (optional) { %>checked<% } %> ></td>
+<td><%-name%></td>
+<td style="text-align: right; width: 15%;"><%-formattedSize%></td>
