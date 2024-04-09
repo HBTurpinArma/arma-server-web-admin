@@ -3,11 +3,14 @@ var Backbone = require('backbone')
 
 module.exports = Backbone.Model.extend({
   defaults: {
-    additionalConfigurationOptions: '',
-    cbaConfigurationOptions: '',
+    game_selected: "",
+    title: '',
+    port: 2302,
+    password: '',
     admin_password: '',
     allowed_file_patching: 1,
     auto_start: false,
+    virtual_server: true,
     battle_eye: false,
     file_patching: false,
     forcedDifficulty: '',
@@ -18,14 +21,13 @@ module.exports = Backbone.Model.extend({
     motd: '',
     number_of_headless_clients: 0,
     parameters: [],
-    password: '',
     persistent: false,
-    port: 2302,
     processes: null,
     state: null,
-    title: '',
     von: false,
-    verify_signatures: false
+    verify_signatures: false,
+    additionalConfigurationOptions: '',
+    cbaConfigurationOptions: ''
   },
   urlRoot: '/api/servers/',
   start: function (cb) {

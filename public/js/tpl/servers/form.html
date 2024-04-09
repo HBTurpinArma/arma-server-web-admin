@@ -1,5 +1,15 @@
 <form class="form-horizontal" role="form">
   <div class="form-group">
+    <label for="game_selected" class="col-sm-2 control-label">Game</label>
+    <div class="col-sm-10">
+      <select class="form-control game_selected" id="game_selected" value="<%- (game_selected || '') %>">
+        <option value="arma3">Arma 3</option>
+        <option value="armareforger">Arma Reforger</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group">
     <label for="title" class="col-sm-2 control-label">Title</label>
     <div class="col-sm-10">
       <input type="text" class="form-control title" placeholder="Title" value="<%- title %>">
@@ -77,7 +87,7 @@
     </div>
   </div>
 
-  <div class="form-group">
+  <div class="form-group cc cc-arma3">
     <label for="headless-clients" class="col-sm-2 control-label">Headless Clients</label>
     <div class="col-sm-10">
       <input type="number" class="form-control headless-clients" placeholder="Headless Clients" value="<%- number_of_headless_clients %>">
@@ -89,7 +99,17 @@
     <div class="col-sm-offset-2 col-sm-10">
       <div class="checkbox">
         <label>
-          <input type="checkbox" class="auto-start" <% if (auto_start) { %>checked="checked"<% } %>> Auto Start when manager launches
+          <input type="checkbox" class="auto-start" <% if (auto_start) { %>checked="checked"<% } %>> Auto Start
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" class="virtual_server" <% if (virtual_server) { %>checked="checked"<% } %>> Virtual Server
         </label>
       </div>
     </div>
@@ -105,7 +125,7 @@
     </div>
   </div>
 
-  <div class="form-group">
+  <div class="form-group cc cc-arma3">
     <div class="col-sm-offset-2 col-sm-10">
       <div class="checkbox">
         <label>
@@ -115,7 +135,7 @@
     </div>
   </div>
 
-  <div class="form-group">
+  <div class="form-group cc cc-arma3">
     <div class="col-sm-offset-2 col-sm-10">
       <div class="checkbox">
         <label>
@@ -125,7 +145,7 @@
     </div>
   </div>
 
-  <div class="form-group">
+  <div class="form-group cc cc-arma3">
     <div class="col-sm-offset-2 col-sm-10">
       <div class="checkbox">
         <label>
@@ -145,7 +165,7 @@
     </div>
   </div>
 
-  <div class="form-group">
+  <div class="form-group cc cc-arma3">
     <label for="cba-configuration-options" class="col-sm-2 control-label">CBA Configuration Override</label>
     <div class="col-sm-10">
       <textarea rows="3"
