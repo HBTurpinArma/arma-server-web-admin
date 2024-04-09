@@ -20,6 +20,11 @@ module.exports = ModsListView.extend({
     'click .preset-ww2': 'setPresetWW2',
   },
 
+  onRender: function() {
+
+  },
+
+
   buildChildView: function (item, ChildViewType, childViewOptions) {
     var options = _.extend({ model: item, server: this.options.server}, childViewOptions)
     var view = new ChildViewType(options)

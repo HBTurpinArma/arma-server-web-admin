@@ -4,6 +4,7 @@ var sweetAlert = require('sweet-alert')
 
 var tpl = require('tpl/mods/list_item.html')
 
+
 var template = _.template(tpl)
 
 module.exports = Marionette.ItemView.extend({
@@ -17,7 +18,8 @@ module.exports = Marionette.ItemView.extend({
   templateHelpers: function () {
     var modFile = this.model.get('modFile')
     var steamMeta = this.model.get('steamMeta')
-
+    var game = this.model.get('game')
+    
     var link = null
     var title = null
 
@@ -36,6 +38,7 @@ module.exports = Marionette.ItemView.extend({
     }
 
     return {
+      game: game,
       link: link,
       title: title
     }

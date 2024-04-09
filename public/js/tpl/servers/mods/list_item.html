@@ -1,6 +1,7 @@
-
-<td style="text-align: center; width: 100px;"><input name="server_only" id="server_only" type="checkbox" value="<%-name%>" <% if (server_only) { %>checked<% } %> ></td>
-<td style="text-align: center; width: 100px;"><input name="required" id="required" type="checkbox" value="<%-name%>" <% if (required) { %>checked<% } %> ></td>
-<td style="text-align: center; width: 100px;"><input name="optional" id="optional" type="checkbox" value="<%-name%>" <% if (optional) { %>checked<% } %> ></td>
-<td><%-name%></td>
-<td style="text-align: right; width: 15%;"><%-formattedSize%></td>
+<%  if (game == game_selected) { %>
+  <td style="text-align: center; width: 100px;"><input name="server_only" id="server_only" type="checkbox" value="<%-name%>" <% if (server_only) { %>checked<% } %> ></td>
+  <td style="text-align: center; width: 100px;"><input name="required" id="required" type="checkbox" value="<%-name%>" <% if (required) { %>checked<% } %> ></td>
+  <td style="text-align: center; width: 100px;"><input name="optional" id="optional" type="checkbox" value="<%-name%>" <% if (optional) { %>checked<% } %> ></td>
+  <td><%-name%></td>
+  <td style="text-align: right; width: 15%;"><%-formattedSize%></td>
+<% } %>
