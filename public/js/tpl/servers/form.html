@@ -3,8 +3,12 @@
     <label for="game_selected" class="col-sm-2 control-label">Game</label>
     <div class="col-sm-10">
       <select class="form-control game_selected" id="game_selected" value="<%- (game_selected || '') %>">
+        <% games.forEach(function(game) { %>
+          <option value="<%- game %>"><%- game.displayName %></option>
+        <% }); %>
         <option value="arma3">Arma 3</option>
         <option value="armareforger">Arma Reforger</option>
+
       </select>
     </div>
   </div>
@@ -67,7 +71,7 @@
     </div>
   </div>
 
-  <div class="form-group cc cc-arma3">
+  <div class="form-group cc cc-arma3 cc-arma3_x64">
     <label for="motd" class="col-sm-2 control-label">MOTD</label>
     <div class="col-sm-10">
       <textarea rows="3"
@@ -77,7 +81,7 @@
     </div>
   </div>
 
-  <div class="form-group cc cc-arma3">
+  <div class="form-group cc cc-arma3 cc-arma3_x64">
     <label for="forcedDifficulty" class="col-sm-2 control-label">Difficulty</label>
     <div class="col-sm-10">
       <select class="form-control forcedDifficulty" value="<%- (forcedDifficulty || '') %>">
@@ -90,7 +94,7 @@
     </div>
   </div>
 
-  <div class="form-group cc cc-arma3">
+  <div class="form-group cc cc-arma3 cc-arma3_x64">
     <label class="col-sm-2 control-label">File Patching</label>
     <div class="col-sm-10">
       <div class="checkbox">
@@ -109,7 +113,7 @@
     </div>
   </div>
 
-  <div class="form-group cc cc-arma3">
+  <div class="form-group cc cc-arma3 cc-arma3_x64">
     <label for="headless-clients" class="col-sm-2 control-label">Headless Clients</label>
     <div class="col-sm-10">
       <input type="number" class="form-control headless-clients" placeholder="Headless Clients" value="<%- number_of_headless_clients %>">
@@ -127,7 +131,7 @@
     </div>
   </div>
 
-  <div class="form-group cc cc-arma3">
+  <div class="form-group cc cc-arma3 cc-arma3_x64">
     <div class="col-sm-offset-2 col-sm-10">
       <div class="checkbox">
         <label>
@@ -137,7 +141,7 @@
     </div>
   </div>
 
-  <div class="form-group cc cc-arma3">
+  <div class="form-group cc cc-arma3 cc-arma3_x64">
     <div class="col-sm-offset-2 col-sm-10">
       <div class="checkbox">
         <label>
@@ -147,7 +151,7 @@
     </div>
   </div>
 
-  <div class="form-group cc cc-arma3">
+  <div class="form-group cc cc-arma3 cc-arma3_x64">
     <div class="col-sm-offset-2 col-sm-10">
       <div class="checkbox">
         <label>
@@ -157,7 +161,7 @@
     </div>
   </div>
 
-  <div class="form-group cc cc-arma3">
+  <div class="form-group cc cc-arma3 cc-arma3_x64">
     <label for="additional-configuration-options" class="col-sm-2 control-label">Additional Configuration Options</label>
     <div class="col-sm-10">
       <textarea rows="3"
@@ -167,7 +171,7 @@
     </div>
   </div>
 
-  <div class="form-group cc cc-arma3">
+  <div class="form-group cc cc-arma3 cc-arma3_x64">
     <label for="cba-configuration-options" class="col-sm-2 control-label">CBA Configuration Override</label>
     <div class="col-sm-10">
       <textarea rows="3"
