@@ -9,6 +9,7 @@ module.exports = ModsListView.extend({
   childView: ListItemView,
   template: _.template(tpl),
 
+
   events: {
     'click .toggle-required': 'toggleRequired',
     'click .toggle-optional': 'toggleOptional',
@@ -18,6 +19,13 @@ module.exports = ModsListView.extend({
     'keypress #include-optional' : 'checkOnEnterOptional',
     'click .preset-battalion': 'setPresetBattlaion',
     'click .preset-ww2': 'setPresetWW2',
+  },
+
+  onRender: function() {
+    //Select saved option from the model on render.
+    var game_selected = this.options.server.get('game_selected')
+    this.$('.cc').hide();
+    this.$('.cc-' + game_selected).show();
   },
 
 
@@ -129,6 +137,12 @@ module.exports = ModsListView.extend({
       mods_server_only: this.$('input[name="server_only"]:checkbox:checked').map(function (idx, el) {
         return $(el).val()
       }).get()
+    }
+  },
+
+  templateHelpers: function () {
+    return {
+      game_selected: this.options.server.get('game_selected')
     }
   }
 })
