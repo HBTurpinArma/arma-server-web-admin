@@ -1,4 +1,4 @@
-<td><%-game_selected%></td>
+
 <td>    
 
     <% if (virtual_server) { %>
@@ -41,10 +41,14 @@
 </td> -->
 
 
-<td><%-port%></td>
+
+
 <td style="width: 100%;">
   <a href='#servers/<%-id%>'><%-title%></a>
 </td>
+<td><%-port%></td>
+
+<td><%-game_selected%></td>
 <td class="text-nowrap">
   <% if (processes && processes[0]) { %>
     <%= processes[0].cpuFormatted %>
