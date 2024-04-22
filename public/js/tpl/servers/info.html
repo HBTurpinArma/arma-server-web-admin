@@ -53,27 +53,28 @@
     </div>
   </div>
 <% if (processes) { %>
+  <hr/>
   <div class="form-group">
-    <label class="col-sm-2 control-label">Processes</label>
-    <div class="col-sm-21">
+    <label class="col-sm-1 control-label">Processes</label>
+    <div class="col-sm-11">
       <% processes.map(function (process) { %>
         <div class="form-group">
-          <label class="col-sm-2 control-label">Name</label>
+          <label class="col-sm-1 control-label">Name</label>
           <div class="col-sm-21">
             <p class="form-control-static"><%= process.name %></p>
           </div>
         </div>
 
         <div class="form-group">
-          <label class="col-sm-2 control-label">CPU</label>
-          <div class="col-sm-21">
+          <label class="col-sm-1 control-label">CPU</label>
+          <div class="col-sm-11">
             <p class="form-control-static"><%= process.cpuFormatted %></p>
           </div>
         </div>
 
         <div class="form-group">
-          <label class="col-sm-2 control-label">RAM</label>
-          <div class="col-sm-21">
+          <label class="col-sm-1 control-label">RAM</label>
+          <div class="col-sm-11">
             <p class="form-control-static"><%= process.memoryFormatted %></p>
           </div>
         </div>
@@ -83,43 +84,50 @@
 <% } %>
 
 <% if (state) { %>
-  <div class="form-group">
-    <label class="col-sm-2 control-label">Name</label>
-    <div class="col-sm-21">
-      <p class="form-control-static"><%= state.name %></p>
+  <hr/>
+  <label class="col-sm-1 control-label">GameQuery</label>
+  <div class="col-sm-11">
+    <div class="form-group">
+      <label class="col-sm-1 control-label">Name</label>
+      <div class="col-sm-11">
+        <p class="form-control-static"><%= state.name %></p>
+      </div>
+    </div>
+  
+    <div class="form-group">
+      <label class="col-sm-1 control-label">Game</label>
+      <div class="col-sm-11">
+        <p class="form-control-static"><%= state.raw.game %></p>
+      </div>
+    </div>
+  
+    <div class="form-group">
+      <label class="col-sm-1 control-label">Map</label>
+      <div class="col-sm-11">
+        <p class="form-control-static"><%= state.map %></p>
+      </div>
+    </div>
+  
+    <div class="form-group">
+      <label class="col-sm-1 control-label">Mission</label>
+      <div class="col-sm-11">
+        <% if (missions[0]) { %>
+          <p class="form-control-static"><%= missions[0].name  %></p>
+        <% } else { %>
+          <p class="form-control-static">NO MISSION SELECTED</p>
+        <% } %>
+      </div>
+    </div>
+   
+    <div class="form-group">
+      <label class="col-sm-1 control-label">Players</label>
+      <div class="col-sm-11">
+        <p class="form-control-static">
+          <%= state.players.length %> / <%= state.maxplayers %>
+        </p>
+      </div>
     </div>
   </div>
-
-  <div class="form-group">
-    <label class="col-sm-2 control-label">Game</label>
-    <div class="col-sm-21">
-      <p class="form-control-static"><%= state.raw.game %></p>
-    </div>
-  </div>
-
-  <div class="form-group">
-    <label class="col-sm-2 control-label">Map</label>
-    <div class="col-sm-21">
-      <p class="form-control-static"><%= state.map %></p>
-    </div>
-  </div>
-
-  <div class="form-group">
-    <label class="col-sm-1 control-label">Mission</label>
-    <div class="col-sm-11">
-      <p class="form-control-static"><%= missions[0].name  %></p>
-    </div>
-  </div>
-
-  <div class="form-group">
-    <label class="col-sm-1 control-label">Players</label>
-    <div class="col-sm-11">
-      <p class="form-control-static">
-        <%= state.players.length %> / <%= state.maxplayers %>
-      </p>
-    </div>
-  </div>
-
 <% } %>
 
 </form>
