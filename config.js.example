@@ -27,7 +27,7 @@ module.exports = {
   parameters: [
     '-noSound',
     '-world=empty',
-    '-profiles=Profiles'
+    '-profiles=profiles'
   ],
   virtualServer: {
     fileExtensions: [ // Extra files in root of server folder that should be copied to virtual servers
