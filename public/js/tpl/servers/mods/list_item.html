@@ -3,5 +3,14 @@
   <td style="text-align: center; width: 100px;"><input name="required" id="required" type="checkbox" value="<%-name%>" <% if (required) { %>checked<% } %> ></td>
   <td style="text-align: center; width: 100px;"><input name="optional" id="optional" type="checkbox" value="<%-name%>" <% if (optional) { %>checked<% } %> ></td>
   <td><%-name%></td>
+  <td>
+    <% if (link) { %>
+      <a href='<%-link%>' target=_blank rel='noopener noreferrer'>
+        <%-title%>
+      </a>
+    <% } else if (title) { %>
+      <%-title%>
+    <% } %>
+  </td>
   <td style="text-align: right; width: 15%;"><%-formattedSize%></td>
 <% } %>
