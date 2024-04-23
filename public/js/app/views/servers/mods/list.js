@@ -75,14 +75,19 @@ module.exports = ModsListView.extend({
     e.preventDefault()
 
     this.changeAllCheckbox(false, "optional")
-    var filter = "clientside/"
+    var filter = "clientside\\"
     this.$('input[name=optional]:checkbox').map(function (idx, el) {
       return $(el).prop('checked', $(el).val().includes(filter))
     })
 
-    var filter = "battalion/"
+    var filter = "battalion\\"
     this.$('input[name=required]:checkbox').map(function (idx, el) {
       return ($(el).prop('checked', $(el).val().includes(filter) && !($(el).val().includes("\\optionals\\"))))
+    })
+
+    var filter = "serverside\\"
+    this.$('input[name=server_only]:checkbox').map(function (idx, el) {
+      return $(el).prop('checked', $(el).val().includes(filter))
     })
   },
 
