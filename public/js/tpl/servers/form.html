@@ -3,9 +3,7 @@
     <label for="game_selected" class="col-sm-2 control-label">Game</label>
     <div class="col-sm-10">
       <select class="form-control game_selected" id="game_selected" value="<%- (game_selected || '') %>">
-        <!-- Can we pass through this from the config.js somehow -->
-        <option value="arma3">Arma 3</option>
-        <option value="armareforger">Arma Reforger</option>
+        <!-- Auto load this on render from api/games/ -->
       </select>
     </div>
   </div>

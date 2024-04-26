@@ -42,14 +42,33 @@ module.exports = Marionette.ItemView.extend({
   },
 
   onRender: function() {
-    //Select saved option from the model on render.
-    var selectedValue = this.model.get('game_selected');
-    this.$('form .game_selected').val(selectedValue);
+    var self = this
 
+    $.get('/api/games').done(function(data) {
+      self.games = data
 
-    var selectedValue = this.$('form .game_selected').val();
-    this.$('.cc').hide();
-    this.$('.cc-' + selectedValue).show();
+      var gameSelectElement = self.$('#game_selected');
+      var gameSelected = this.model.get('game_selected');
+
+      //Empty the options so that we can refresh them and setup the default selected on render.
+      gameSelectElement.empty()
+
+      //Loop through the games and add them to the dropdown selector
+      Object.entries(data).forEach(([key, value]) => {
+        console.log(key,value.displayName)
+        gameSelectElement.append($('<option>', {
+          value: key,
+          text: value.displayName
+        }))
+      })
+
+      //Auto select the selected game saved to the model settings.
+      gameSelectElement.val(gameSelected);
+      var gameSelected = this.$('form .game_selected').val();
+      this.$('.cc').hide();
+      this.$('.cc-' + gameSelected).show();
+
+    }.bind(this))
   },
 
   onSelectionChange: function() {
