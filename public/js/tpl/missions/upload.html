@@ -1,6 +1,6 @@
 <form class="form" role="form" enctype="multipart/form-data">
   <div class="form-group">
-    <label for="missions" class="control-label">Mission Files</label>
+    <label for="missions" class="control-label">Mission Files (.pbo)</label>
     <input multiple="multiple"
            accept=".pbo"
            type="file"
@@ -8,8 +8,12 @@
            name="missions"
            id="missions"
     >
-    <span class="help-block">Only supports missions packed as a PBO</span>
+    <label for="game" class="control-label">Game</label>
+    <select class="form-control " id="game_selected">
+
+    </select>
   </div>
+
   <button type="submit" class="btn btn-primary ladda-button" data-style="expand-left">
     <span class="glyphicon glyphicon-cloud-upload"></span>
     Upload
