@@ -43,6 +43,7 @@ app.use('/api/logs', require('./routes/logs')(logs))
 app.use('/api/missions', require('./routes/missions')(missions))
 app.use('/api/mods', require('./routes/mods')(mods))
 app.use('/api/servers', require('./routes/servers')(manager, mods))
+app.use('/api/games', require('./routes/games')(config.games))
 
 
 io.on('connection', function (socket) {
