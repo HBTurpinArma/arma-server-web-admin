@@ -17,7 +17,7 @@ module.exports = Marionette.LayoutView.extend({
 
   regions: {
     uploadView: '#upload',
-    workshopView: '#workshop',
+    // workshopView: '#workshop',
     listView: '#list'
   },
 
@@ -38,7 +38,7 @@ module.exports = Marionette.LayoutView.extend({
 
   onRender: function () {
     this.uploadView.show(new UploadView())
-    this.workshopView.show(new WorkshopView())
+    // this.workshopView.show(new WorkshopView())
     this.listView.show(new ListView({ collection: this.options.missions, filterValue: this.filterValue }))
   },
 

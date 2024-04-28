@@ -1,30 +1,69 @@
-<form>
-  <div style="width: 100%; overflow: hidden;">
-    <div style="float:left; padding-right:15px;">
-      <button class="btn btn-xs btn-primary toggle-required">Toggle</button>
-      <input style="vertical-align: middle; margin:0px; margin-top:1px; line-height:1;" size=5 type="text" placeholder="battalion\" id="include-required">
-      <button style="vertical-align: middle; margin:0px; margin-top:1px; border-radius:0 .2rem .2rem 0; margin-left:-5px;" class="btn btn-primary btn-xs check-include-required"><span style="margin:0; padding:0%" class="glyphicon glyphicon-check"></span></button> 
-    </div>
-    <!-- <label style="-webkit-transform: rotate(-90deg); -moz-transform: rotate(-90deg); -ms-transform: rotate(-90deg); -o-transform: rotate(-90deg); transform: rotate(-90deg); font-size:10px; padding-right:20px;">Optional</label> -->
-    <div style="float:left; padding-right:15px;">
-      <button class="btn btn-xs btn-primary toggle-optional">Toggle</button>
-      <input style="vertical-align: middle; margin:0px; margin-top:1px; line-height:1;" size=5 type="text" placeholder="clientside\" id="include-optional">
-      <button style="vertical-align: middle; margin:0px; margin-top:1px; border-radius:0 .2rem .2rem 0; margin-left:-5px;" class="btn btn-primary btn-xs check-include-optional"><span style="margin:0; padding:0%" class="glyphicon glyphicon-check"></span></button> 
-    </div>
-    <div style="float:ltef;">
-      <button class="btn btn-xs btn-info preset-battalion">Battalion Preset</button>
-      <!-- <button class="btn btn-xs btn-info preset-ww2">WW2 Preset</button> -->
-    </div>
-  </div>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th width="100%">Required<span style="width:20px;display:inline-block;"></span>Optional</th>
-        <th>Size</th>
-      </tr>
-    </thead>
 
-    <!-- want to insert collection items, here -->
-    <tbody></tbody>
-  </table>
-</form>
+
+  <form>
+    <div class="cc cc-arma3 cc-arma3_x64" style="width: 100%; overflow: hidden;">
+      <div style="float:left; padding-right:15px;">
+        <button class="btn btn-xs btn-primary toggle-required">Toggle</button>
+        <input style="vertical-align: middle; margin:0px; margin-top:1px; line-height:1;" size=5 type="text" placeholder="battalion\" id="include-required">
+        <button style="vertical-align: middle; margin:0px; margin-top:1px; border-radius:0 .2rem .2rem 0; margin-left:-5px;" class="btn btn-primary btn-xs check-include-required"><span style="margin:0; padding:0%" class="glyphicon glyphicon-check"></span></button> 
+      </div>
+      <!-- <label style="-webkit-transform: rotate(-90deg); -moz-transform: rotate(-90deg); -ms-transform: rotate(-90deg); -o-transform: rotate(-90deg); transform: rotate(-90deg); font-size:10px; padding-right:20px;">Optional</label> -->
+      <div style="float:left; padding-right:15px;">
+        <button class="btn btn-xs btn-primary toggle-optional">Toggle</button>
+        <input style="vertical-align: middle; margin:0px; margin-top:1px; line-height:1;" size=5 type="text" placeholder="clientside\" id="include-optional">
+        <button style="vertical-align: middle; margin:0px; margin-top:1px; border-radius:0 .2rem .2rem 0; margin-left:-5px;" class="btn btn-primary btn-xs check-include-optional"><span style="margin:0; padding:0%" class="glyphicon glyphicon-check"></span></button> 
+      </div>
+      <div style="float:ltef;">
+        <button class="btn btn-xs btn-info preset-battalion">Battalion Preset</button>
+        <button class="btn btn-xs btn-info preset-ww2">WW2 Preset</button>
+      </div>
+    </div>
+    <!-- This is probably the worst shit I've done but it works I guess... -->
+    <table class="table table-striped">
+      <thead class="cc cc-arma3 cc-arma3_x64">
+        <tr>
+          <th style="width: 100px; text-align: center;">Server Only</th>
+          <th style="width: 100px; text-align: center;">Required</th>
+          <th style="width: 100px; text-align: center;">Optional</th>
+          <th width="45%">Path</th>
+          <th width="45%">Mod</th>
+          <th style="text-align: right; width: 10%;">Size</th>
+        </tr>
+      </thead>
+      <!-- want to insert collection items, here -->
+      <tbody></tbody>
+    </table>
+
+    
+    <div class="cc cc-armareforger" style="width: 100%; overflow: hidden;">
+      <div class="form-group">
+        <label for="mods" class="col-sm-2 control-label">Reforger Mod Config</label>
+        <div class="col-sm-10">
+          <textarea rows="3" class="form-control additional-configuration-options" placeholder="[]"></textarea>
+          <br>
+        </div>
+      </div>
+
+      <div class="col-sm-12">
+        <pre class="alert alert-warning" style="white-space: pre-wrap; word-wrap: break-word;"><p>To set up mods for reforger, check out the <a href="https://community.bistudio.com/wiki/Arma_Reforger:Server_Config">server config</a> setup for reforger and how this mods config should look. Ensure that you have it enclosed in [] like the example below:</p>
+      [
+        {
+          "modId":"59673B6FBB95459F",
+          "name":"BetterTracers",
+          "version":"1.0.5"
+        },
+        {
+          "modId": 82343B695462433S",
+          "name": "BiggestModEver",
+          "version": "0.6.9"
+        }
+      ]
+        </pre>
+      </div>
+    </div>
+
+
+  </form>
+
+
+

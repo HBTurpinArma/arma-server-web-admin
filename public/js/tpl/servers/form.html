@@ -1,5 +1,14 @@
 <form class="form-horizontal" role="form">
   <div class="form-group">
+    <label for="game_selected" class="col-sm-2 control-label">Game</label>
+    <div class="col-sm-10">
+      <select class="form-control game_selected" id="game_selected" value="<%- (game_selected || '') %>">
+        <!-- Auto load this on render from api/games/ -->
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group">
     <label for="title" class="col-sm-2 control-label">Title</label>
     <div class="col-sm-10">
       <input type="text" class="form-control title" placeholder="Title" value="<%- title %>">
@@ -13,6 +22,28 @@
       <p class="help-block">Server will use the designated port and the three following ports</p>
     </div>
   </div>
+
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" class="auto-start" <% if (auto_start) { %>checked="checked"<% } %>> Auto Start
+          <p class="help-block">Should the server start when the panel service starts.</p>
+        </label>
+      </div>
+
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" class="virtual_server" <% if (virtual_server) { %>checked="checked"<% } %>> Virtual Server
+          <p class="help-block">Should a temporary copy of the server be used?</p>
+        </label>
+      </div>
+
+    </div>
+  </div>
+
+
 
   <div class="form-group">
     <label for="max-players" class="col-sm-2 control-label">Max Players</label>
@@ -35,7 +66,7 @@
     </div>
   </div>
 
-  <div class="form-group">
+  <div class="form-group cc cc-arma3 cc-arma3_x64">
     <label for="motd" class="col-sm-2 control-label">MOTD</label>
     <div class="col-sm-10">
       <textarea rows="3"
@@ -45,7 +76,7 @@
     </div>
   </div>
 
-  <div class="form-group">
+  <div class="form-group cc cc-arma3 cc-arma3_x64">
     <label for="forcedDifficulty" class="col-sm-2 control-label">Difficulty</label>
     <div class="col-sm-10">
       <select class="form-control forcedDifficulty" value="<%- (forcedDifficulty || '') %>">
@@ -58,7 +89,7 @@
     </div>
   </div>
 
-  <div class="form-group">
+  <div class="form-group cc cc-arma3 cc-arma3_x64">
     <label class="col-sm-2 control-label">File Patching</label>
     <div class="col-sm-10">
       <div class="checkbox">
@@ -77,21 +108,11 @@
     </div>
   </div>
 
-  <div class="form-group">
+  <div class="form-group cc cc-arma3 cc-arma3_x64">
     <label for="headless-clients" class="col-sm-2 control-label">Headless Clients</label>
     <div class="col-sm-10">
       <input type="number" class="form-control headless-clients" placeholder="Headless Clients" value="<%- number_of_headless_clients %>">
       <p class="help-block">Number of headless clients that will be launched</p>
-    </div>
-  </div>
-
-  <div class="form-group">
-    <div class="col-sm-offset-2 col-sm-10">
-      <div class="checkbox">
-        <label>
-          <input type="checkbox" class="auto-start" <% if (auto_start) { %>checked="checked"<% } %>> Auto Start when manager launches
-        </label>
-      </div>
     </div>
   </div>
 
@@ -105,7 +126,7 @@
     </div>
   </div>
 
-  <div class="form-group">
+  <div class="form-group cc cc-arma3 cc-arma3_x64">
     <div class="col-sm-offset-2 col-sm-10">
       <div class="checkbox">
         <label>
@@ -115,7 +136,7 @@
     </div>
   </div>
 
-  <div class="form-group">
+  <div class="form-group cc cc-arma3 cc-arma3_x64">
     <div class="col-sm-offset-2 col-sm-10">
       <div class="checkbox">
         <label>
@@ -125,7 +146,7 @@
     </div>
   </div>
 
-  <div class="form-group">
+  <div class="form-group cc cc-arma3 cc-arma3_x64">
     <div class="col-sm-offset-2 col-sm-10">
       <div class="checkbox">
         <label>
@@ -135,7 +156,7 @@
     </div>
   </div>
 
-  <div class="form-group">
+  <div class="form-group cc cc-arma3 cc-arma3_x64">
     <label for="additional-configuration-options" class="col-sm-2 control-label">Additional Configuration Options</label>
     <div class="col-sm-10">
       <textarea rows="3"
@@ -145,7 +166,7 @@
     </div>
   </div>
 
-  <div class="form-group">
+  <div class="form-group cc cc-arma3 cc-arma3_x64">
     <label for="cba-configuration-options" class="col-sm-2 control-label">CBA Configuration Override</label>
     <div class="col-sm-10">
       <textarea rows="3"

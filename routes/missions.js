@@ -9,18 +9,27 @@ module.exports = function (missionsManager) {
   var router = express.Router()
 
   router.get('/', function (req, res) {
+    if (!missionsManager.canUserView(req.auth.user)){
+      res.status(403).send('You do not have permission to view missions...')
+      return
+    }
     res.json(missionsManager.missions)
   })
 
   router.post('/', upload.array('missions', 64), function (req, res) {
+    if (!missionsManager.canUserCreate(req.auth.user)){
+      res.status(403).send('You do not have permission to add missions...')
+      return
+    }
     var missions = req.files.filter(function (file) {
       return path.extname(file.originalname) === '.pbo'
     })
-
+    var gameKey = req.body.game
+    console.log(req.body)
     async.parallelLimit(
       missions.map(function (missionFile) {
         return function (next) {
-          missionsManager.handleUpload(missionFile, next)
+          missionsManager.handleUpload(gameKey, missionFile, next)
         }
       }),
       8,
@@ -35,15 +44,23 @@ module.exports = function (missionsManager) {
   })
 
   router.get('/:mission', function (req, res) {
+    if (!missionsManager.canUserView(req.auth.user)){
+      res.status(403).send('You do not have permission to view missions...')
+      return
+    }
     var filename = req.params.mission
 
     res.download(missionsManager.missionPath(filename), decodeURI(filename))
   })
 
   router.delete('/:mission', function (req, res) {
+    if (!missionsManager.canUserDelete(req.auth.user)){
+      res.status(403).send('You do not have permission to delete missions...')
+      return
+    }
     var filename = req.params.mission
-
-    missionsManager.delete(filename, function (err) {
+    //TODO: hard coded stinky gamekey, need to maybe build the game into the mission model properly so it can be called and referenced in the listitem view.
+    missionsManager.delete("arma3", filename, function (err) {
       if (err) {
         res.status(500).send(err)
       } else {
@@ -53,11 +70,19 @@ module.exports = function (missionsManager) {
   })
 
   router.post('/refresh', function (req, res) {
+    if (!missionsManager.canUserView(req.auth.user)){
+      res.status(403).send('You do not have permission to refresh missions...')
+      return
+    }
     missionsManager.updateMissions()
     res.status(204).send()
   })
 
   router.post('/workshop', function (req, res) {
+    if (!missionsManager.canUserCreate(req.auth.user)){
+      res.status(403).send('You do not have permission to add missions...')
+      return
+    }
     var id = req.body.id
 
     missionsManager.downloadSteamWorkshop(id, function (err) {

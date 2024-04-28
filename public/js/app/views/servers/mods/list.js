@@ -9,6 +9,7 @@ module.exports = ModsListView.extend({
   childView: ListItemView,
   template: _.template(tpl),
 
+
   events: {
     'click .toggle-required': 'toggleRequired',
     'click .toggle-optional': 'toggleOptional',
@@ -16,8 +17,17 @@ module.exports = ModsListView.extend({
     'click .check-include-optional': 'checkIncludeOptional',
     'keypress #include-required' : 'checkOnEnterRequired',
     'keypress #include-optional' : 'checkOnEnterOptional',
-    'click .preset-battalion': 'setPresetBattalion',
+    'click .preset-battalion': 'setPresetBattlaion',
+    'click .preset-ww2': 'setPresetWW2',
   },
+
+  onRender: function() {
+    //Select saved option from the model on render.
+    var game_selected = this.options.server.get('game_selected')
+    this.$('.cc').hide();
+    this.$('.cc-' + game_selected).show();
+  },
+
 
   buildChildView: function (item, ChildViewType, childViewOptions) {
     var options = _.extend({ model: item, server: this.options.server}, childViewOptions)
@@ -61,8 +71,7 @@ module.exports = ModsListView.extend({
     })
   },
 
-
-  setPresetBattalion: function (e) {
+  setPresetBattlaion: function (e) {
     e.preventDefault()
 
     this.changeAllCheckbox(false, "optional")
@@ -72,6 +81,26 @@ module.exports = ModsListView.extend({
     })
 
     var filter = "battalion\\"
+    this.$('input[name=required]:checkbox').map(function (idx, el) {
+      return ($(el).prop('checked', $(el).val().includes(filter) && !($(el).val().includes("\\optionals\\"))))
+    })
+
+    var filter = "serverside\\"
+    this.$('input[name=server_only]:checkbox').map(function (idx, el) {
+      return $(el).prop('checked', $(el).val().includes(filter))
+    })
+  },
+
+  setPresetWW2: function (e) {
+    e.preventDefault()
+
+    this.changeAllCheckbox(false, "optional")
+    var filter = "clientside_ww2/"
+    this.$('input[name=optional]:checkbox').map(function (idx, el) {
+      return $(el).prop('checked', $(el).val().includes(filter))
+    })
+
+    var filter = "battalion_ww2/"
     this.$('input[name=required]:checkbox').map(function (idx, el) {
       return ($(el).prop('checked', $(el).val().includes(filter) && !($(el).val().includes("\\optionals\\"))))
     })
@@ -109,7 +138,16 @@ module.exports = ModsListView.extend({
       }).get(),
       mods_optional: this.$('input[name="optional"]:checkbox:checked').map(function (idx, el) {
         return $(el).val()
+      }).get(),
+      mods_server_only: this.$('input[name="server_only"]:checkbox:checked').map(function (idx, el) {
+        return $(el).val()
       }).get()
+    }
+  },
+
+  templateHelpers: function () {
+    return {
+      game_selected: this.options.server.get('game_selected')
     }
   }
 })

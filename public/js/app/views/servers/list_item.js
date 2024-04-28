@@ -25,7 +25,17 @@ module.exports = Marionette.ItemView.extend({
     var title = this.model.get('title') + ' Clone'
     var clone = this.model.clone()
     clone.set({ id: null, title: title, auto_start: false })
-    clone.save()
+    clone.save({}, {
+      success: function () {},
+      error: function (model, response) {
+        sweetAlert({
+          title: 'Error',
+          text: response.responseText,
+          type: 'error'
+        })
+      }
+    })
+    
   },
 
   delete: function (event) {
@@ -39,7 +49,19 @@ module.exports = Marionette.ItemView.extend({
       confirmButtonText: 'Yes, delete it!'
     },
     function () {
-      self.model.destroy()
+      self.model.delete(function (err) {
+        if (err) {
+          setTimeout(function(){ //Sweet alert is on an old version, might be worth upgrading so we can use promises.
+            sweetAlert({
+              title: 'Error',
+              text: err.responseText,
+              type: 'error'
+            })
+          }, 200);
+          return
+        }
+        self.render()
+      })
     })
   },
 
@@ -55,7 +77,6 @@ module.exports = Marionette.ItemView.extend({
         })
         return
       }
-
       self.render()
     })
   },
@@ -74,11 +95,13 @@ module.exports = Marionette.ItemView.extend({
     function () {
       self.model.stop(function (err) {
         if (err) {
-          sweetAlert({
-            title: 'Error',
-            text: err.responseText,
-            type: 'error'
-          })
+          setTimeout(function(){ //Sweet alert is on an old version, might be worth upgrading so we can use promises.
+            sweetAlert({
+              title: 'Error',
+              text: err.responseText,
+              type: 'error'
+            })
+          }, 200);
           return
         }
 

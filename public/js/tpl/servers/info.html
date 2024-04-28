@@ -1,7 +1,7 @@
 <form class="form-horizontal" role="form">
   <div class="form-group">
-    <label class="col-sm-1 control-label">Status</label>
-    <div class="col-sm-11">
+    <label class="col-sm-2 control-label">Status</label>
+    <div class="col-sm-10">
       <p class="form-control-static">
         <% if (typeof(pid) != "undefined" && pid) { %>
           <% if (state) { %>
@@ -26,48 +26,55 @@
   </div>
 
   <div class="form-group">
-    <label class="col-sm-1 control-label">Port</label>
-    <div class="col-sm-11">
+    <label class="col-sm-2 control-label">Port</label>
+    <div class="col-sm-10">
       <p class="form-control-static"><%- port %></p>
     </div>
   </div>
 
   <div class="form-group">
-    <label class="col-sm-1 control-label">Mods</label>
-    <div class="col-sm-11">
+    <label class="col-sm-2 control-label">Server Only</label>
+    <div class="col-sm-10">
+      <p class="form-control-static"><%- mods_server_only.join(', ') %></p>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="col-sm-2 control-label">Required Mods</label>
+    <div class="col-sm-10">
       <p class="form-control-static"><%- mods.join(', ') %></p>
     </div>
   </div>
 
   <div class="form-group">
-    <label class="col-sm-1 control-label">Optional</label>
-    <div class="col-sm-11">
+    <label class="col-sm-2 control-label">Optional Mods</label>
+    <div class="col-sm-10">
       <p class="form-control-static"><%- mods_optional.join(', ') %></p>
     </div>
   </div>
-
 <% if (processes) { %>
+  <hr/>
   <div class="form-group">
     <label class="col-sm-1 control-label">Processes</label>
-    <div class="col-sm-11">
+    <div class="col-sm-3">
       <% processes.map(function (process) { %>
         <div class="form-group">
-          <label class="col-sm-1 control-label">Name</label>
-          <div class="col-sm-11">
+          <label class="col-sm-2 control-label">Name</label>
+          <div class="col-sm-10">
             <p class="form-control-static"><%= process.name %></p>
           </div>
         </div>
 
         <div class="form-group">
-          <label class="col-sm-1 control-label">CPU</label>
-          <div class="col-sm-11">
+          <label class="col-sm-2 control-label">CPU</label>
+          <div class="col-sm-10">
             <p class="form-control-static"><%= process.cpuFormatted %></p>
           </div>
         </div>
 
         <div class="form-group">
-          <label class="col-sm-1 control-label">RAM</label>
-          <div class="col-sm-11">
+          <label class="col-sm-2 control-label">RAM</label>
+          <div class="col-sm-10">
             <p class="form-control-static"><%= process.memoryFormatted %></p>
           </div>
         </div>
@@ -77,37 +84,42 @@
 <% } %>
 
 <% if (state) { %>
+  <hr/>
   <div class="form-group">
-    <label class="col-sm-1 control-label">Name</label>
-    <div class="col-sm-11">
+    <label class="col-sm-2 control-label">Name</label>
+    <div class="col-sm-10">
       <p class="form-control-static"><%= state.name %></p>
     </div>
   </div>
 
   <div class="form-group">
-    <label class="col-sm-1 control-label">Game</label>
-    <div class="col-sm-11">
+    <label class="col-sm-2 control-label">Game</label>
+    <div class="col-sm-10">
       <p class="form-control-static"><%= state.raw.game %></p>
     </div>
   </div>
 
   <div class="form-group">
-    <label class="col-sm-1 control-label">Map</label>
-    <div class="col-sm-11">
+    <label class="col-sm-2 control-label">Map</label>
+    <div class="col-sm-10">
       <p class="form-control-static"><%= state.map %></p>
     </div>
   </div>
 
   <div class="form-group">
-    <label class="col-sm-1 control-label">Mission</label>
-    <div class="col-sm-11">
-      <p class="form-control-static"><%= missions[0].name  %></p>
+    <label class="col-sm-2 control-label">Mission</label>
+    <div class="col-sm-10">
+      <% if (missions[0]) { %>
+        <p class="form-control-static"><%= missions[0].name  %></p>
+      <% } else { %>
+        <p class="form-control-static">NO MISSION SELECTED</p>
+      <% } %>
     </div>
   </div>
 
   <div class="form-group">
-    <label class="col-sm-1 control-label">Players</label>
-    <div class="col-sm-11">
+    <label class="col-sm-2 control-label">Players</label>
+    <div class="col-sm-10">
       <p class="form-control-static">
         <%= state.players.length %> / <%= state.maxplayers %>
       </p>

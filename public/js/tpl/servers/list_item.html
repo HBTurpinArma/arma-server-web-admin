@@ -1,3 +1,12 @@
+
+<td>    
+
+    <% if (virtual_server) { %>
+      <span class="label label-info">VIRTUAL</span>
+    <% } else { %>
+      <span class="label"></span>
+    <% } %>
+</td>
 <td>
   <% if (typeof(pid) != "undefined" && pid) { %>
     <% if (state) { %>
@@ -23,19 +32,23 @@
   <% } %>
 </td>
 
-<td>  
+<!-- <td>  
   <% if (state) { %>
   <a class="btn btn-secondary btn-xs" href='#servers/<%-id%>' id="rcon">
     <span class="glyphicon glyphicon-unchecked"></span> RCON
   </a>
   <% } %>
-</td>
+</td> -->
 
 
-<td><%-port%></td>
+
+
 <td style="width: 100%;">
   <a href='#servers/<%-id%>'><%-title%></a>
 </td>
+<td><%-port%></td>
+
+<td><%-game_selected%></td>
 <td class="text-nowrap">
   <% if (processes && processes[0]) { %>
     <%= processes[0].cpuFormatted %>
