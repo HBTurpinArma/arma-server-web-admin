@@ -31,34 +31,27 @@
       <p class="form-control-static"><%- port %></p>
     </div>
   </div>
-    
+
   <div class="form-group">
     <label class="col-sm-2 control-label">Server Only</label>
     <div class="col-sm-10">
-      <% if (Array.isArray(mods_server_only)) { %>
-        <p class="form-control-static"><%- mods_server_only.join(', ') %></p>
-      <% } %>
+      <p class="form-control-static"><%- mods_server_only.join(', ') %></p>
     </div>
   </div>
 
   <div class="form-group">
     <label class="col-sm-2 control-label">Required Mods</label>
     <div class="col-sm-10">
-      <% if (Array.isArray(mods)) { %>
-        <p class="form-control-static"><%- mods.join(', ') %></p>
-      <% } %>
+      <p class="form-control-static"><%- mods.join(', ') %></p>
     </div>
   </div>
 
   <div class="form-group">
     <label class="col-sm-2 control-label">Optional Mods</label>
     <div class="col-sm-10">
-      <% if (Array.isArray(mods_optional)) { %>
-        <p class="form-control-static"><%- mods_optional.join(', ') %></p>
-      <% } %>
+      <p class="form-control-static"><%- mods_optional.join(', ') %></p>
     </div>
   </div>
-
 <% if (processes) { %>
   <hr/>
   <div class="form-group">
