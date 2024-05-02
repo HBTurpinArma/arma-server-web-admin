@@ -45,6 +45,10 @@ app.use('/api/mods', require('./routes/mods')(mods))
 app.use('/api/servers', require('./routes/servers')(manager, mods))
 app.use('/api/games', require('./routes/games')(config.games))
 
+app.get('/logout', function (req, res) {
+  res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
+  res.status(401).send('<a href="/">Return</a>');
+});
 
 io.on('connection', function (socket) {
   socket.emit('missions', missions.missions)

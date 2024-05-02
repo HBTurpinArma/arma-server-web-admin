@@ -26,6 +26,10 @@ module.exports = ModsListView.extend({
     var game_selected = this.options.server.get('game_selected')
     this.$('.cc').hide();
     this.$('.cc-' + game_selected).show();
+    //Setup reforger mods
+    var reforgerMods = this.$('form .reforger-mods');
+    var stringedMods = JSON.stringify(this.options.server.get('mods'));
+    reforgerMods.val(stringedMods);
   },
 
 
@@ -132,17 +136,23 @@ module.exports = ModsListView.extend({
 
 
   serialize: function () {
-    return {
-      mods: this.$('input[name="required"]:checkbox:checked').map(function (idx, el) {
-        return $(el).val()
-      }).get(),
-      mods_optional: this.$('input[name="optional"]:checkbox:checked').map(function (idx, el) {
-        return $(el).val()
-      }).get(),
-      mods_server_only: this.$('input[name="server_only"]:checkbox:checked').map(function (idx, el) {
-        return $(el).val()
-      }).get()
-    }
+    if (this.options.server.get('game_selected') == "arma3") {
+      return {
+        mods: this.$('input[name="required"]:checkbox:checked').map(function (idx, el) {
+          return $(el).val()
+        }).get(),
+        mods_optional: this.$('input[name="optional"]:checkbox:checked').map(function (idx, el) {
+          return $(el).val()
+        }).get(),
+        mods_server_only: this.$('input[name="server_only"]:checkbox:checked').map(function (idx, el) {
+          return $(el).val()
+        }).get()
+      }
+    } else if (this.options.server.get('game_selected') == "reforger") {
+      return {
+        mods: JSON.parse(this.$('form .reforger-mods').val())
+      }
+    } 
   },
 
   templateHelpers: function () {

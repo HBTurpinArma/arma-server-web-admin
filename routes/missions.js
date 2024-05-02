@@ -25,7 +25,7 @@ module.exports = function (missionsManager) {
       return path.extname(file.originalname) === '.pbo'
     })
     var gameKey = req.body.game
-    console.log(req.body)
+
     async.parallelLimit(
       missions.map(function (missionFile) {
         return function (next) {
@@ -49,8 +49,9 @@ module.exports = function (missionsManager) {
       return
     }
     var filename = req.params.mission
+    var gameKey = "arma3"
 
-    res.download(missionsManager.missionPath(filename), decodeURI(filename))
+    res.download(missionsManager.missionPath(gameKey. filename), decodeURI(filename))
   })
 
   router.delete('/:mission', function (req, res) {
@@ -59,8 +60,10 @@ module.exports = function (missionsManager) {
       return
     }
     var filename = req.params.mission
+    var gameKey = "arma3"
+    
     //TODO: hard coded stinky gamekey, need to maybe build the game into the mission model properly so it can be called and referenced in the listitem view.
-    missionsManager.delete("arma3", filename, function (err) {
+    missionsManager.delete(gameKey, filename, function (err) {
       if (err) {
         res.status(500).send(err)
       } else {
