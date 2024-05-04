@@ -1,6 +1,6 @@
 <td><%-game%></td>
 <td style="width: 100%; word-break: break-all;">
-  <a href='/api/missions/<%-encodeURI(name)%>'><%-missionName%></a>
+  <a href='/api/missions/<%-encodeURI(name)%>/<%-encodeURI(game)%>'><%-missionName%></a>
   <span class="visible-xs visible-sm"><%-worldName%></span>
 </td>
 <td class="hidden-xs hidden-sm"><%-worldName%></td>

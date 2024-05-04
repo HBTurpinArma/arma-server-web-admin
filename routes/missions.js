@@ -43,15 +43,16 @@ module.exports = function (missionsManager) {
     )
   })
 
-  router.get('/:mission', function (req, res) {
+  router.get('/:mission/:game', function (req, res) {
     if (!missionsManager.canUserView(req.auth.user)){
       res.status(403).send('You do not have permission to view missions...')
       return
     }
     var filename = req.params.mission
-    var gameKey = "arma3"
+    var gameKey = req.params.game
+    console.log(req)
 
-    res.download(missionsManager.missionPath(gameKey. filename), decodeURI(filename))
+    res.download(missionsManager.missionPath(gameKey, filename), decodeURI(filename))
   })
 
   router.delete('/:mission', function (req, res) {
