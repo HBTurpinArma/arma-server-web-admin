@@ -55,7 +55,7 @@ module.exports = Marionette.ItemView.extend({
 
       //Loop through the games and add them to the dropdown selector
       Object.entries(data).forEach(([key, value]) => {
-        console.log(key,value.displayName)
+        //console.log(key,value.displayName)
         gameSelectElement.append($('<option>', {
           value: key,
           text: value.displayName
