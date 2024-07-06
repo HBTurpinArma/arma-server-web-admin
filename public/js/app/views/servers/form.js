@@ -21,6 +21,7 @@ module.exports = Marionette.ItemView.extend({
     return {
       game_selected: this.$('form .game_selected').val(),
       title: this.$('form .title').val(),
+      uid: this.$('form .uid').val(),
       port: this.$('form .port').val(),
       password: this.$('form .password').val(),
       admin_password: this.$('form .admin-password').val(),

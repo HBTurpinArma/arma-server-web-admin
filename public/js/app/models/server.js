@@ -5,6 +5,7 @@ module.exports = Backbone.Model.extend({
   defaults: {
     game_selected: "",
     title: '',
+    uid: '',
     port: 2302,
     password: '',
     admin_password: '',
