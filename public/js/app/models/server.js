@@ -50,6 +50,25 @@ module.exports = Backbone.Model.extend({
     })
   },
 
+  headlessrefresh: function (cb) {
+    var self = this
+    $.ajax({
+      url: '/api/servers/' + self.get('id') + '/headlessrefresh',
+      type: 'POST',
+      success: function (resp) {
+        self.set('pid', resp.pid)
+        if (cb) {
+          cb()
+        }
+      },
+      error: function (err) {
+        if (cb) {
+          cb(err)
+        }
+      }
+    })
+  },
+
   stop: function (cb) {
     var self = this
     $.ajax({

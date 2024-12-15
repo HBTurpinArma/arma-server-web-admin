@@ -78,6 +78,18 @@ module.exports = function (manager, mods) {
     res.json({ status: 'ok', pid: server.pid })
   })
 
+  router.post('/:server/headlessrefresh', function (req, res) {
+    if (!manager.canUserStart(req.auth.user)){
+      res.status(403).send('You do not have permission to start servers...')
+      return
+    }
+    var server = manager.getServer(req.params.server)
+    server.restartHeadlessClients()
+    res.json({ status: 'ok', pid: server.pid })
+  })
+
+
+
   router.post('/:server/stop', function (req, res) {
     if (!manager.canUserStop(req.auth.user)){
       res.status(403).send('You do not have permission to stop servers...')
