@@ -63,28 +63,44 @@
   <hr/>
   <div class="form-group">
     <label class="col-sm-1 control-label">Processes</label>
-    <div class="col-sm-3">
+    <div class="col-sm-4">
       <% processes.map(function (process) { %>
-        <div class="form-group">
-          <label class="col-sm-2 control-label">Name</label>
-          <div class="col-sm-10">
-            <p class="form-control-static"><%= process.name %></p>
+
+        <div class="panel <%= process.offline ? 'panel-danger' : 'panel-default' %>">
+          <div class="panel-heading" style="display: flex; justify-content: space-between; align-items: center;">
+            <h3 class="panel-title" style="flex-grow: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+              <%= process.name %>
+            </h3>
+            <% if (process.offline) { %> 
+              <a class="btn btn-primary btn-xs" href="#" id="headlessrefresh">
+                <span class="glyphicon glyphicon-repeat"></span>
+                Restart
+              </a>
+            <% } else { %> 
+              <!-- <a class="btn btn-danger btn-xs" href="#" id="headlessstop">
+                <span class="glyphicon glyphicon-stop"></span>
+                Stop
+              </a> -->
+            <% } %>
+          </div>
+        
+          <div class="panel-body">
+            <label class="col-sm-2 control-label">CPU</label>
+            <div class="col-sm-10">
+              <p class="form-control-static"><%= process.cpuFormatted %></p>
+            </div>
+        
+            <label class="col-sm-2 control-label">RAM</label>
+            <div class="col-sm-10">
+              <p class="form-control-static"><%= process.memoryFormatted %></p>
+            </div>
           </div>
         </div>
 
-        <div class="form-group">
-          <label class="col-sm-2 control-label">CPU</label>
-          <div class="col-sm-10">
-            <p class="form-control-static"><%= process.cpuFormatted %></p>
-          </div>
-        </div>
+   
+ 
 
-        <div class="form-group">
-          <label class="col-sm-2 control-label">RAM</label>
-          <div class="col-sm-10">
-            <p class="form-control-static"><%= process.memoryFormatted %></p>
-          </div>
-        </div>
+
       <% }) %>
     </div>
   </div>

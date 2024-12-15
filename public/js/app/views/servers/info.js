@@ -9,7 +9,8 @@ module.exports = Marionette.LayoutView.extend({
 
   events: {
     'click #start': 'start',
-    'click #stop': 'stop'
+    'click #stop': 'stop',
+    'click #headlessrefresh': 'headlessrefresh'
   },
 
   start: function (event) {
@@ -17,6 +18,24 @@ module.exports = Marionette.LayoutView.extend({
     event.preventDefault()
 
     this.model.start(function (err) {
+      if (err) {
+        sweetAlert({
+          title: 'Error',
+          text: err.responseText,
+          type: 'error'
+        })
+        return
+      }
+
+      self.render()
+    })
+  },
+  
+  headlessrefresh: function (event) {
+    var self = this
+    event.preventDefault()
+
+    this.model.headlessrefresh(function (err) {
       if (err) {
         sweetAlert({
           title: 'Error',
