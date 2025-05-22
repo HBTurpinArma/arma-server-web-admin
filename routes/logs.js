@@ -9,7 +9,7 @@ module.exports = function (logsManager) {
       res.status(403).send('You do not have permission to view logs...')
       return
     }
-    logsManager.logFiles(0, config.logCount, function (err, files) {
+    logsManager.logFiles(function (err, files) {
       if (err) {
         res.status(500).send(err)
       } else {

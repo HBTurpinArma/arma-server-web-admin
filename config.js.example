@@ -21,7 +21,7 @@ module.exports = {
       gamedigQuery: "arma3"
     }
   },
-  logsPath: "S:\\Logs",
+  logsPath: "S:\\Servers\\Arma3\\profiles", // Unfortunately, this isn't game dependent yet, just point to profiles folder for now.
   additionalConfigurationOptions: "steamProtocolMaxDataSize = 2048; \
     kickTimeout[] = { {0, 10},{1, 10},{2, 10},{3, 10} };", // Additional configuration options appended to server.cfg file
   parameters: [
