@@ -10,7 +10,6 @@ var MissionsView = require('app/views/servers/missions/index')
 var ModsListView = require('app/views/servers/mods/list')
 var ParametersListView = require('app/views/servers/parameters/list')
 var PlayersView = require('app/views/servers/players')
-var RCONView = require('app/views/servers/rcon')
 var tpl = require('tpl/servers/view.html')
 
 module.exports = Marionette.LayoutView.extend({
@@ -22,8 +21,7 @@ module.exports = Marionette.LayoutView.extend({
     modsView: '#tab-mods',
     parametersView: '#parameters',
     playersView: '#tab-players',
-    settingsView: '#settings',
-    rconView: '#tab-rcon'
+    settingsView: '#settings'
   },
 
   events: {
@@ -49,7 +47,6 @@ module.exports = Marionette.LayoutView.extend({
     this.parametersView.show(new ParametersListView({ model: this.model }))
     this.playersView.show(new PlayersView({ model: this.model }))
     this.settingsView.show(new FormView({ model: this.model }))
-    this.rconView.show(new RCONView({ model: this.model }))
   },
 
   serverUpdated: function () {
