@@ -1,16 +1,18 @@
-var async = require('async')
 var express = require('express')
-var multer = require('multer')
-var path = require('path')
-const { config } = require('process')
 
-var upload = multer({ storage: multer.diskStorage({}) })
-
-module.exports = function (games) {
+module.exports = function (gamesConfig) {
   var router = express.Router()
+  let cachedGamesData = null
 
   router.get('/', function (req, res) {
-    res.json(games)
+    if (cachedGamesData) {
+      // Serve cached data
+      return res.json(cachedGamesData)
+    }
+
+    // Cache the gamesConfig data
+    cachedGamesData = gamesConfig
+    res.json(cachedGamesData)
   })
 
   return router

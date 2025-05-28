@@ -43,33 +43,42 @@ module.exports = Marionette.ItemView.extend({
   },
 
   onRender: function() {
-    var self = this
+    var self = this;
+  
+    // Check if cached games data exists
+    if (window.cachedGamesData) {
+      self.populateGameSelect(window.cachedGamesData);
+    } else {
+      // Fetch games data from the API and cache it
+      $.get('/api/games').done(function(data) {
+        window.cachedGamesData = data; // Cache the data globally
+        self.populateGameSelect(data);
+      }).fail(function() {
+        console.error('Failed to fetch games data');
+      });
+    }
+  },
 
-    $.get('/api/games').done(function(data) {
-      self.games = data
-
-      var gameSelectElement = self.$('#game_selected');
-      var gameSelected = this.model.get('game_selected');
-
-      //Empty the options so that we can refresh them and setup the default selected on render.
-      gameSelectElement.empty()
-
-      //Loop through the games and add them to the dropdown selector
-      Object.entries(data).forEach(([key, value]) => {
-        //console.log(key,value.displayName)
-        gameSelectElement.append($('<option>', {
-          value: key,
-          text: value.displayName
-        }))
-      })
-
-      //Auto select the selected game saved to the model settings.
-      gameSelectElement.val(gameSelected);
-      var gameSelected = this.$('form .game_selected').val();
-      this.$('.cc').hide();
-      this.$('.cc-' + gameSelected).show();
-
-    }.bind(this))
+  populateGameSelect: function(data) {
+    var gameSelectElement = this.$('#game_selected');
+    var gameSelected = this.model.get('game_selected');
+  
+    // Empty the options so that we can refresh them and set up the default selected on render
+    gameSelectElement.empty();
+  
+    // Loop through the games and add them to the dropdown selector
+    Object.entries(data).forEach(([key, value]) => {
+      gameSelectElement.append($('<option>', {
+        value: key,
+        text: value.displayName
+      }));
+    });
+  
+    // Auto-select the selected game saved to the model settings
+    gameSelectElement.val(gameSelected);
+    var gameSelected = this.$('form .game_selected').val();
+    this.$('.cc').hide();
+    this.$('.cc-' + gameSelected).show();
   },
 
   onSelectionChange: function() {
