@@ -1,0 +1,33 @@
+<section class="panel panel-default" aria-labelledby="audit-heading">
+  <div class="panel-heading mods-section-heading">
+    <h2 class="panel-title" id="audit-heading">Audit Log</h2>
+    <button type="button" class="btn btn-default btn-xs audit-refresh">Refresh</button>
+  </div>
+  <div class="panel-body">
+    <p class="help-block">Panel changes and their response status are recorded. Accepted background operations may finish later.</p>
+    <form class="audit-filter">
+      <div class="row">
+        <div class="col-sm-5 form-group">
+          <label for="audit-user">User</label>
+          <input id="audit-user" class="form-control" type="search" maxlength="200" placeholder="Search users">
+        </div>
+        <div class="col-sm-5 form-group">
+          <label for="audit-action">Action</label>
+          <input id="audit-action" class="form-control" type="search" maxlength="200" placeholder="Search method or path">
+        </div>
+        <div class="col-sm-2 form-group">
+          <label>&nbsp;</label>
+          <button type="submit" class="btn btn-primary form-control audit-apply">Search</button>
+        </div>
+      </div>
+    </form>
+    <p class="audit-status" role="status"></p>
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead><tr><th>Time</th><th>User</th><th>Action</th><th>Details</th><th>Status</th></tr></thead>
+        <tbody class="audit-rows"></tbody>
+      </table>
+    </div>
+    <button type="button" class="btn btn-default audit-more" style="display: none">Load older events</button>
+  </div>
+</section>

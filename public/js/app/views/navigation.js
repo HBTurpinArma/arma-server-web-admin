@@ -4,6 +4,7 @@ var Backbone = require('backbone')
 var Marionette = require('marionette')
 
 var ServersListView = require('app/views/navigation/servers/list')
+var permissions = require('app/permissions')
 var tpl = require('tpl/navigation.html')
 
 module.exports = Marionette.ItemView.extend({
@@ -19,6 +20,7 @@ module.exports = Marionette.ItemView.extend({
         return route === 'missions' || route === 'mods' || route === 'logs' || route.indexOf('servers/') === 0 ? 'active' : ''
       },
       canManageAccounts: !!this.canManageAccounts,
+      canViewAuditLog: !!this.canViewAuditLog,
       username: this.username,
       darkMode: window.armaTheme.get() === 'dark'
     }
@@ -33,13 +35,16 @@ module.exports = Marionette.ItemView.extend({
       self.$('.theme-toggle-input').prop('checked', window.armaTheme.get() === 'dark')
     }
     window.addEventListener('arma-theme-change', this.themeChanged)
-    $.getJSON('/api/accounts/me').done(function (result) {
-      self.canManageAccounts = result.canManage
-      self.username = result.username
-      self.render()
-    }).fail(function () {
-      console.error('Unable to check account-management permissions')
-    })
+    this.listenTo(permissions, 'change:permissionsStatus', this.updateAccount)
+    this.updateAccount()
+  },
+
+  updateAccount: function () {
+    var ready = permissions.get('permissionsStatus') === 'ready'
+    this.canManageAccounts = ready && permissions.get('canManage')
+    this.canViewAuditLog = ready && permissions.get('canViewAuditLog')
+    this.username = ready ? permissions.get('username') : null
+    if (this.isRendered) this.render()
   },
 
   events: {

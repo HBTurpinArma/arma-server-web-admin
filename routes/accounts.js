@@ -5,6 +5,7 @@ var crypto = require('crypto')
 var hasPresetPermission = require('../lib/preset-permissions')
 var canUpdateGame = require('../lib/game-update-permission')
 var canView = require('../lib/view-permissions')
+var canViewAuditLog = require('../lib/audit-permission')
 
 var permissions = {
   servers: ['view', 'start', 'stop', 'create', 'edit', 'delete', 'updateGame'],
@@ -12,7 +13,7 @@ var permissions = {
   mods: ['view', 'delete', 'update'],
   logs: ['view', 'delete'],
   presets: ['edit', 'delete'],
-  accounts: ['manage']
+  accounts: ['manage', 'auditLog']
 }
 
 function isAdmin (user) {
@@ -22,6 +23,7 @@ function isAdmin (user) {
 
 function publicAccount (user) {
   var permissions = Object.assign({}, user.permissions)
+  permissions.accounts = Object.assign({}, permissions.accounts, { auditLog: canViewAuditLog(user) })
   permissions.servers = Object.assign({}, permissions.servers, { updateGame: canUpdateGame(user) })
   if (permissions.mods) {
     permissions.mods = Object.assign({}, permissions.mods)
@@ -47,6 +49,7 @@ module.exports = function (config, defaultPath, onChange) {
     res.json({
       username: user ? user.username : null,
       canManage: isAdmin(user),
+      canViewAuditLog: canViewAuditLog(user),
       canEditPresets: hasPresetPermission(config, req, 'edit'),
       canDeletePresets: hasPresetPermission(config, req, 'delete'),
       canUpdateMods: !!(user && user.permissions && user.permissions.mods && user.permissions.mods.update === true),
@@ -119,7 +122,10 @@ module.exports = function (config, defaultPath, onChange) {
     if (!body.permissions || typeof body.permissions !== 'object' || Array.isArray(body.permissions)) return 'Invalid permissions'
     var valid = Object.keys(permissions).every(function (group) {
       return body.permissions[group] && typeof body.permissions[group] === 'object' &&
-        permissions[group].every(function (action) { return typeof body.permissions[group][action] === 'boolean' })
+        permissions[group].every(function (action) {
+          if (group === 'accounts' && action === 'auditLog' && body.permissions[group][action] === undefined) return true
+          return typeof body.permissions[group][action] === 'boolean'
+        })
     })
     return valid ? null : 'Invalid permissions'
   }
@@ -129,7 +135,13 @@ module.exports = function (config, defaultPath, onChange) {
     var merged = Object.assign({}, result.permissions || {})
     Object.keys(permissions).forEach(function (group) {
       merged[group] = Object.assign({}, merged[group] || {})
-      permissions[group].forEach(function (action) { merged[group][action] = body.permissions[group][action] })
+      permissions[group].forEach(function (action) {
+        if (group === 'accounts' && action === 'auditLog' && body.permissions[group][action] === undefined) {
+          merged[group][action] = canViewAuditLog(existing)
+        } else {
+          merged[group][action] = body.permissions[group][action]
+        }
+      })
     })
     delete merged.mods.updateGame
     result.username = body.username

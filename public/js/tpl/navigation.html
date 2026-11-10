@@ -23,16 +23,21 @@
             <li class="server-list-container"><ul id="servers-list"></ul></li>
           </ul>
         </li>
-        <li class="dropdown <%= isActiveRoute('accounts') %>">
+        <li class="dropdown <%= isActiveRoute('accounts') || isActiveRoute('audit-log') %>">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Settings <b class="caret"></b></a>
           <ul class="dropdown-menu settings-menu">
             <% if (username) { %>
             <li class="dropdown-header account-signed-in">Signed in as <strong><%- username %></strong></li>
             <% } %>
             <li><label class="theme-toggle"><span class="theme-switch"><input type="checkbox" class="theme-toggle-input" <%= darkMode ? 'checked' : '' %>><span class="theme-switch-track" aria-hidden="true"></span></span> Dark Mode</label></li>
-            <% if (canManageAccounts) { %>
+            <% if (canManageAccounts || canViewAuditLog) { %>
             <li role="separator" class="divider"></li>
+            <% } %>
+            <% if (canManageAccounts) { %>
             <li class="<%= isActiveRoute('accounts') %>"><a href="#accounts">Account Management</a></li>
+            <% } %>
+            <% if (canViewAuditLog) { %>
+            <li class="<%= isActiveRoute('audit-log') %>"><a href="#audit-log">Audit Log</a></li>
             <% } %>
             <% if (username) { %>
             <li role="separator" class="divider"></li>

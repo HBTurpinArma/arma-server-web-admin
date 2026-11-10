@@ -51,6 +51,7 @@ serverMods | Mods that always and only will be used by the game servers
 auth | Array of accounts used to sign in
 sessionSecureCookies | Set to `true` when using HTTPS through a trusted reverse proxy; trusts one proxy hop
 accountsPath | Optional path to the accounts JSON file; defaults to `accounts.json` in the application directory
+auditLogPath | Optional path for the persistent panel audit log; defaults to `panel-audit.log` in the application directory
 presetsPath | Optional folder containing public Arma Launcher `.html` presets; the Mods page lists these files
 modUpdater | Optional updater configuration: `python`, absolute mod `script` and optional `gameScript`, `cwd` and `gameCwd` paths
 prefix | Text prepended to all game servers name
@@ -97,6 +98,24 @@ An existing single-account `auth` object continues to work for sign-in and,
 without explicit permissions, retains access to server, mission, mod and log
 operations. Account management requires the accounts array to be loaded from
 `accounts.json`.
+
+## Panel audit log
+
+Users with **Accounts > Audit Log** permission can open **Settings > Audit Log** to
+review and search panel changes by user and action (HTTP method or request path),
+including the user, time, request, response status and selected target names. Failed
+requests that reach the authenticated API and interrupted connections are included; a successful response to a
+background operation records that it was accepted, not its eventual result.
+View requests and sign-in/sign-out are excluded. When authentication is disabled,
+changes are recorded as unauthenticated and the audit page is inaccessible until
+an authorized user signs in. Existing account managers retain audit access until
+their explicit Audit Log permission is changed; new accounts do not receive it by
+default. Account managers can grant or revoke it independently of account management.
+Request bodies, passwords and query strings are not
+stored. The JSON Lines file is retained indefinitely: ensure the service user can
+write to `auditLogPath`, protect it with filesystem permissions, and monitor disk
+space. Write failures are reported in the server console and, where possible, an
+`X-Audit-Log-Error` response header; the underlying change may already have occurred.
 
 ## Account management
 

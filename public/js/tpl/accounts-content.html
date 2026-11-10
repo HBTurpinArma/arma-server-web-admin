@@ -28,11 +28,13 @@
       delete: 'Delete launcher preset files from the Mods page. This does not control preset sets.'
     },
     accounts: {
-      manage: 'Create, edit, and delete accounts, including assigning account-management and other permissions.'
+      manage: 'Create, edit, and delete accounts, including assigning account-management and other permissions.',
+      auditLog: 'View and search the panel audit log.'
     }
   }
   function displayName (name) {
     if (name === 'updateGame') return 'Update'
+    if (name === 'auditLog') return 'Audit Log'
     return name.charAt(0).toUpperCase() + name.slice(1)
   }
 %>

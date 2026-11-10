@@ -1,0 +1,9 @@
+<% entries.forEach(function (entry) { %>
+<tr>
+  <td><%- new Date(entry.time).toLocaleString() %></td>
+  <td><%- entry.user || 'Unauthenticated' %></td>
+  <td><%- entry.method %> <%- entry.path %></td>
+  <td><%- entry.details ? JSON.stringify(entry.details) : '' %></td>
+  <td><%- entry.aborted ? 'Connection closed' : entry.status %></td>
+</tr>
+<% }) %>

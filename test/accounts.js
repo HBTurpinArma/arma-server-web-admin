@@ -122,6 +122,34 @@ describe('account management', function () {
     assert.strictEqual(me.body.canUpdateGame, false)
   })
 
+  it('exposes and saves the independent audit permission, preserving legacy manager access', async function () {
+    var listing = await admin('get', '/api/accounts').expect(200)
+    assert(listing.body.permissions.accounts.includes('auditLog'))
+    assert.strictEqual(listing.body.accounts[0].permissions.accounts.auditLog, true)
+    assert.strictEqual(listing.body.accounts[1].permissions.accounts.auditLog, false)
+    var me = await request(app).get('/api/accounts/me').set('Cookie', adminCookie).expect(200)
+    assert.strictEqual(me.body.canViewAuditLog, true)
+    var user = listing.body.accounts[1]
+    user.password = ''
+    user.permissions.accounts.auditLog = true
+    await admin('put', '/api/accounts/user').set('X-Requested-With', 'XMLHttpRequest').send(user).expect(200)
+    assert.strictEqual(JSON.parse(fs.readFileSync(file))[1].permissions.accounts.auditLog, true)
+    me = await request(app).get('/api/accounts/me').set('Cookie', userCookie).expect(200)
+    assert.strictEqual(me.body.canManage, false)
+    assert.strictEqual(me.body.canViewAuditLog, true)
+    user.permissions.accounts.auditLog = false
+    await admin('put', '/api/accounts/user').set('X-Requested-With', 'XMLHttpRequest').send(user).expect(200)
+    me = await request(app).get('/api/accounts/me').set('Cookie', userCookie).expect(200)
+    assert.strictEqual(me.body.canViewAuditLog, false)
+    var manager = listing.body.accounts[0]
+    manager.password = ''
+    manager.permissions.accounts.auditLog = false
+    await admin('put', '/api/accounts/admin').set('X-Requested-With', 'XMLHttpRequest').send(manager).expect(200)
+    me = await request(app).get('/api/accounts/me').set('Cookie', adminCookie).expect(200)
+    assert.strictEqual(me.body.canManage, true)
+    assert.strictEqual(me.body.canViewAuditLog, false)
+  })
+
   it('creates, edits, and deletes accounts with immediately updated authentication', async function () {
     var data = { username: 'new', password: 'new-secret', permissions: permissions(false) }
     await admin('post', '/api/accounts').set('X-Requested-With', 'XMLHttpRequest').send(data).expect(200)
@@ -211,7 +239,8 @@ describe('account management', function () {
     assert(html.includes('Permissions do not restrict every data channel'))
     Object.keys(response.body.permissions).forEach(function (group) {
       response.body.permissions[group].forEach(function (action) {
-        var title = group.charAt(0).toUpperCase() + group.slice(1) + ' ' + (action === 'updateGame' ? 'Update' : action.charAt(0).toUpperCase() + action.slice(1))
+        var actionTitle = action === 'updateGame' ? 'Update' : (action === 'auditLog' ? 'Audit Log' : action.charAt(0).toUpperCase() + action.slice(1))
+        var title = group.charAt(0).toUpperCase() + group.slice(1) + ' ' + actionTitle
         assert(html.includes('aria-label="' + title + ' permission information"'), title)
         assert(html.includes('role="tooltip" id="account-info-' + group + '-' + action + '"'), title)
       })

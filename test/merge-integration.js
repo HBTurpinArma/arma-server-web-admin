@@ -10,9 +10,12 @@ var underscore = require('underscore')
 describe('merged application routes', function () {
   var app
   var config
+  var auditDirectory
 
   before(function () {
+    auditDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'panel-audit-integration-'))
     config = {
+      auditLogPath: path.join(auditDirectory, 'audit.log'),
       auth: [{
         username: 'operator',
         password: 'secret',
@@ -51,6 +54,11 @@ describe('merged application routes', function () {
     } finally {
       Module._load = original
     }
+  })
+
+  after(function () {
+    if (fs.existsSync(config.auditLogPath)) fs.unlinkSync(config.auditLogPath)
+    fs.rmdirSync(auditDirectory)
   })
 
   it('starts with the retained settings endpoint and enforces account permissions', async function () {
@@ -170,6 +178,40 @@ describe('merged application routes', function () {
       fs.unlinkSync(nonMission)
       fs.rmdirSync(directory)
       fs.rmdirSync(otherDirectory)
+    }
+  })
+
+  it('records panel mutations and enforces independent audit permission', async function () {
+    var login = await request(app).post('/api/session').set('X-Requested-With', 'XMLHttpRequest')
+      .send({ username: 'operator', password: 'secret' }).expect(200)
+    var cookie = login.headers['set-cookie'][0]
+    await request(app).get('/api/audit-log').expect(401)
+    await request(app).get('/api/audit-log').set('Cookie', cookie).expect(403)
+    await request(app).post('/api/missions/refresh?password=hidden').set('Cookie', cookie).expect(204)
+    config.auth[0].permissions.accounts = { manage: true }
+    try {
+      var result = await request(app).get('/api/audit-log').set('Cookie', cookie).expect(200)
+      var entry = result.body.entries.find(function (item) {
+        return item.user === 'operator' && item.path === '/api/missions/refresh' && item.status === 204
+      })
+      assert(entry)
+      assert(!JSON.stringify(result.body).includes('password=hidden'))
+      assert(!JSON.stringify(result.body).includes('secret'))
+      result = await request(app).get('/api/audit-log?user=OPER&action=post%20%2Fapi%2Fmissions').set('Cookie', cookie).expect(200)
+      assert(result.body.entries.length > 0)
+      assert(result.body.entries.every(function (item) { return item.user === 'operator' && item.method === 'POST' && item.path.indexOf('/api/missions') === 0 }))
+      result = await request(app).get('/api/audit-log?user=missing').set('Cookie', cookie).expect(200)
+      assert.strictEqual(result.body.entries.length, 0)
+      await request(app).get('/api/audit-log?cursor=abc').set('Cookie', cookie).expect(400)
+      await request(app).get('/api/audit-log?user[]=x').set('Cookie', cookie).expect(400)
+      config.auth[0].permissions.accounts.auditLog = false
+      await request(app).get('/api/audit-log').set('Cookie', cookie).expect(403)
+      config.auth[0].permissions.accounts.manage = false
+      config.auth[0].permissions.accounts.auditLog = true
+      await request(app).get('/api/accounts').set('Cookie', cookie).expect(403)
+      await request(app).get('/api/audit-log').set('Cookie', cookie).expect(200)
+    } finally {
+      delete config.auth[0].permissions.accounts
     }
   })
 })

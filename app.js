@@ -17,6 +17,7 @@ var Logs = require('./lib/logs')
 var Settings = require('./lib/settings')
 var createModUpdater = require('./lib/mod-updater')
 var createLiveViewData = require('./lib/live-view-data')
+var createAuditLog = require('./lib/audit-log')
 
 
 var app = express()
@@ -48,6 +49,10 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
 var auth = setupSessionAuth(config, app, io)
+
+var auditLog = createAuditLog(config.auditLogPath || path.join(__dirname, 'panel-audit.log'))
+app.use('/api', auditLog.middleware)
+app.use('/api/audit-log', require('./routes/audit-log')(config, auditLog))
 
 morgan.token('user', function (req) { return req.auth ? req.auth.user : 'anon' })
 app.use(morgan(config.logFormat || 'dev'))

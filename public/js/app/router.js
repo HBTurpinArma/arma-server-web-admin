@@ -11,6 +11,7 @@ var MissionsView = require('app/views/missions/index')
 var ModsListView = require('app/views/mods/list')
 var ServerView = require('app/views/servers/view')
 var AccountsView = require('app/views/accounts')
+var AuditLogView = require('app/views/audit-log')
 var Logs = require('app/collections/logs')
 var Missions = require('app/collections/missions')
 var Mods = require('app/collections/mods')
@@ -33,6 +34,7 @@ module.exports = Backbone.Router.extend({
     missions: 'missions',
     mods: 'mods',
     accounts: 'accounts',
+    'audit-log': 'auditLog',
     'servers/:id': 'server',
     '': 'home'
   },
@@ -107,6 +109,10 @@ module.exports = Backbone.Router.extend({
 
   accounts: function () {
     layoutView.content.show(new AccountsView())
+  },
+
+  auditLog: function () {
+    layoutView.content.show(new AuditLogView())
   },
 
   server: function (id) {

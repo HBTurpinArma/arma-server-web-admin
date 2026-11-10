@@ -6,12 +6,14 @@ var vm = require('vm')
 
 describe('account navigation', function () {
   it('shows an escaped account name and logout control for signed-in users', function () {
-    var html = template({ username: '<admin>', canManageAccounts: true, darkMode: true, isActiveRoute: function () { return '' }, isServersActive: function () { return '' } })
+    var html = template({ username: '<admin>', canManageAccounts: true, canViewAuditLog: true, darkMode: true, isActiveRoute: function () { return '' }, isServersActive: function () { return '' } })
     assert(html.includes('Signed in as'))
     assert(html.includes('&lt;admin&gt;'))
     assert(!html.includes('<admin>'))
     assert(html.includes('account-logout'))
     assert(html.includes('href="#accounts"'))
+    assert(html.includes('href="#audit-log"'))
+    assert(html.includes('>Audit Log</a>'))
     assert(html.includes('Account Management'))
     assert(html.indexOf('href="#missions"') < html.indexOf('class="divider"'))
     assert(html.indexOf('href="#mods"') < html.indexOf('class="divider"'))
@@ -27,13 +29,24 @@ describe('account navigation', function () {
   })
 
   it('hides account controls when authentication is disabled', function () {
-    var html = template({ username: null, canManageAccounts: false, darkMode: false, isActiveRoute: function () { return '' }, isServersActive: function () { return '' } })
+    var html = template({ username: null, canManageAccounts: false, canViewAuditLog: false, darkMode: false, isActiveRoute: function () { return '' }, isServersActive: function () { return '' } })
     assert(!html.includes('Signed in as'))
     assert(!html.includes('account-logout'))
     assert(!html.includes('href="#accounts"'))
+    assert(!html.includes('href="#audit-log"'))
     assert(html.includes('class="theme-toggle-input"'))
     assert(!html.includes('class="theme-toggle-input" checked'))
     assert(!html.slice(html.indexOf('class="dropdown-menu settings-menu"')).includes('class="divider"'))
+  })
+
+  it('shows audit and account management links independently', function () {
+    function render (manage, audit) {
+      return template({ username: 'operator', canManageAccounts: manage, canViewAuditLog: audit, darkMode: false, isActiveRoute: function () { return '' }, isServersActive: function () { return '' } })
+    }
+    assert(render(false, true).includes('href="#audit-log"'))
+    assert(!render(false, true).includes('href="#accounts"'))
+    assert(render(true, false).includes('href="#accounts"'))
+    assert(!render(true, false).includes('href="#audit-log"'))
   })
 
   it('handles the route before history starts and highlights server sections', function () {
