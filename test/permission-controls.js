@@ -34,13 +34,14 @@ describe('permission-aware controls', function () {
     var render = template('logs/list.html')
     var denied = render({ canView: false, permissionsStatus: 'ready' })
     assert(denied.includes('You do not have permission to view logs.'))
-    assert(/<table[^>]*hidden/.test(denied))
-    assert(denied.includes('<tbody></tbody>'))
+    assert(!denied.includes('id="rpt-list"'))
+    assert(!denied.includes('id="log-list"'))
     assert(render({ canView: false, permissionsStatus: 'loading' }).includes('Checking log view permission'))
     assert(render({ canView: false, permissionsStatus: 'error' }).includes('Unable to check log view permission'))
     var allowed = render({ canView: true, permissionsStatus: 'ready' })
     assert(!allowed.includes('You do not have permission'))
-    assert(!/<table[^>]*hidden/.test(allowed))
+    assert(allowed.includes('id="rpt-list"'))
+    assert(allowed.includes('id="log-list"'))
   })
 
   it('renders appropriate access messages for each protected page', function () {

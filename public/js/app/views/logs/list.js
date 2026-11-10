@@ -2,18 +2,21 @@ var _ = require('underscore')
 var Marionette = require('marionette')
 var permissions = require('app/permissions')
 
-var ListItemView = require('app/views/logs/list_item')
+var FileListView = require('app/views/logs/file_list')
 var tpl = require('tpl/logs/list.html')
 
 var template = _.template(tpl)
 
-module.exports = Marionette.CompositeView.extend({
-  childView: ListItemView,
-  childViewContainer: 'tbody',
+module.exports = Marionette.LayoutView.extend({
   template: template,
 
+  regions: {
+    rptList: '#rpt-list',
+    logList: '#log-list'
+  },
+
   initialize: function () {
-    this.listenTo(permissions, 'change', this.render)
+    this.listenTo(permissions, 'change:permissionsStatus', this.render)
   },
 
   templateHelpers: function () {
@@ -21,5 +24,11 @@ module.exports = Marionette.CompositeView.extend({
       canView: permissions.can('logs', 'view'),
       permissionsStatus: permissions.get('permissionsStatus')
     }
+  },
+
+  onRender: function () {
+    if (!permissions.can('logs', 'view')) return
+    this.rptList.show(new FileListView({ collection: this.collection, extension: '.rpt' }))
+    this.logList.show(new FileListView({ collection: this.collection, extension: '.log' }))
   }
 })

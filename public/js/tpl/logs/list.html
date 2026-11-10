@@ -11,19 +11,17 @@
     <% } %>
   </div>
 </section>
+<% } else { %>
+<section class="panel panel-default" aria-labelledby="rpt-logs-heading">
+  <div class="panel-heading"><h2 class="panel-title" id="rpt-logs-heading">RPT Files (.rpt)</h2></div>
+  <div class="panel-body">
+    <div class="table-responsive"><div id="rpt-list"></div></div>
+  </div>
+</section>
+<section class="panel panel-default" aria-labelledby="log-files-heading">
+  <div class="panel-heading"><h2 class="panel-title" id="log-files-heading">Log Files (.log)</h2></div>
+  <div class="panel-body">
+    <div class="table-responsive"><div id="log-list"></div></div>
+  </div>
+</section>
 <% } %>
-<table class="table table-striped" <%= canView ? '' : 'hidden' %>>
-  <thead>
-    <tr>
-      <th width="100%">Filename</th>
-      <th class="hidden-xs hidden-sm">Created</th>
-      <th class="hidden-xs hidden-sm">Modified</th>
-      <th>Size</th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-
-  <!-- want to insert collection items, here -->
-  <tbody></tbody>
-</table>
