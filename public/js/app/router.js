@@ -1,5 +1,7 @@
 var $ = require('jquery')
+var _ = require('underscore')
 var Backbone = require('backbone')
+var Marionette = require('marionette')
 
 var LayoutView = require('app/views/layout')
 var NavigationView = require('app/views/navigation')
@@ -15,6 +17,7 @@ var Mods = require('app/collections/mods')
 var Settings = require('app/models/settings')
 var Servers = require('app/collections/servers')
 var permissions = require('app/permissions')
+var PermissionPage = require('app/views/permission-page')
 
 var $body = $('body')
 var missions = new Missions()
@@ -36,13 +39,17 @@ module.exports = Backbone.Router.extend({
 
   initialize: function () {
     permissions.refresh()
-    this.on('route', function () { permissions.refresh() })
     layoutView.navigation.show(new NavigationView({ settings: settings, servers: servers }))
 
     var initialized = false
+    var connected = false
 
     /* global io */
     var socket = io.connect()
+    socket.on('connect', function () {
+      if (connected) permissions.refresh()
+      connected = true
+    })
     socket.on('disconnect', function () {
       $.get('/api/accounts/me')
     })
@@ -57,19 +64,23 @@ module.exports = Backbone.Router.extend({
     })
     socket.on('servers', function (_servers) {
       servers.set(_servers)
-
+    })
+    socket.on('settings', function (_settings) {
+      settings.set(_settings)
       if (!initialized) {
         initialized = true
         Backbone.history.start()
       }
     })
-    socket.on('settings', function (_settings) {
-      settings.set(_settings)
-    })
+    socket.on('permissions-changed', function () { permissions.refresh() })
   },
 
   home: function () {
-    layoutView.content.show(new ServersView({ collection: servers }))
+    layoutView.content.show(new PermissionPage({
+      group: 'servers',
+      title: 'Servers',
+      createView: function () { return new ServersView({ collection: servers }) }
+    }))
   },
 
   logs: function () {
@@ -79,11 +90,19 @@ module.exports = Backbone.Router.extend({
   },
 
   missions: function () {
-    layoutView.content.show(new MissionsView({ missions: missions }))
+    layoutView.content.show(new PermissionPage({
+      group: 'missions',
+      title: 'Missions',
+      createView: function () { return new MissionsView({ missions: missions }) }
+    }))
   },
 
   mods: function () {
-    layoutView.content.show(new ModsListView({ collection: mods }))
+    layoutView.content.show(new PermissionPage({
+      group: 'mods',
+      title: 'Mods',
+      createView: function () { return new ModsListView({ collection: mods }) }
+    }))
   },
 
   accounts: function () {
@@ -91,16 +110,19 @@ module.exports = Backbone.Router.extend({
   },
 
   server: function (id) {
-    var server = servers.get(id)
-    if (server) {
-      layoutView.content.show(new ServerView({
-        model: server,
-        missions: missions,
-        mods: mods
-      }))
-    } else {
-      this.navigate('#', true)
-    }
+    layoutView.content.show(new PermissionPage({
+      group: 'servers',
+      title: 'Servers',
+      createView: function () {
+        var server = servers.get(id)
+        if (!server) {
+          return new Marionette.ItemView({
+            template: _.template('<section class="panel panel-default"><div class="panel-heading"><h2 class="panel-title">Servers</h2></div><div class="panel-body">Server not found.</div></section>')
+          })
+        }
+        return new ServerView({ model: server, missions: missions, mods: mods })
+      }
+    }))
   }
 
 })

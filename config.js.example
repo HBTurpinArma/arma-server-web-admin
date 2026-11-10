@@ -22,6 +22,13 @@ module.exports = {
     }
   },
   presetsPath: "S:\\Servers\\Arma3\\presets", // Public (no auth) Arma 3 Launcher preset .html files; omit to disable
+  // modUpdater: {
+  //   python: "C:\\Python315\\python.exe",
+  //   script: "D:\\Arma3\\arma-server-updater\\update_mods.py",
+  //   gameScript: "D:\\Arma3\\arma-server-updater\\update_game.py",
+  //   cwd: "D:\\Arma3\\arma-server-updater", // Optional; defaults to the mod script directory
+  //   gameCwd: "D:\\Arma3\\arma-server-updater" // Optional; defaults to the game script directory
+  // },
   logsPath: "S:\\Servers\\Arma3\\profiles", // Unfortunately, this isn't game dependent yet, just point to profiles folder for now.
   additionalConfigurationOptions: "steamProtocolMaxDataSize = 2048; \
     kickTimeout[] = { {0, 10},{1, 10},{2, 10},{3, 10} };", // Additional configuration options appended to server.cfg file
@@ -50,8 +57,6 @@ module.exports = {
   suffix: "", // Suffix to all server names
   logFormat: "dev", // expressjs/morgan log format
 };
-
-
 
 
 

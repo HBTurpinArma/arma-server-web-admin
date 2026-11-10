@@ -52,6 +52,7 @@ auth | Array of accounts used to sign in
 sessionSecureCookies | Set to `true` when using HTTPS through a trusted reverse proxy; trusts one proxy hop
 accountsPath | Optional path to the accounts JSON file; defaults to `accounts.json` in the application directory
 presetsPath | Optional folder containing public Arma Launcher `.html` presets; the Mods page lists these files
+modUpdater | Optional updater configuration: `python`, absolute mod `script` and optional `gameScript`, `cwd` and `gameCwd` paths
 prefix | Text prepended to all game servers name
 suffix | Text appended to all game servers name
 
@@ -68,6 +69,23 @@ suffix | Text appended to all game servers name
 Dark mode is enabled by default. Use **Settings > Dark Mode** to switch themes;
 the choice is saved in browser storage and shared by the sign-in page and Preset
 Builder on the same origin.
+
+To enable **Update Mods** and **Update Game**, configure `modUpdater` as shown in
+`config.js.example`, restart the app, and grant **Mods Update** and/or **Servers
+Update** in Account Management. Accounts previously granted **Mods Update Game**
+retain that permission; editing and saving an account moves it to the Servers group.
+Each script runs as the application service user, without a shell or
+arguments, with its working directory defaulting to the script's directory.
+The configured Python executable must be accessible to that user. The updater
+requires authentication even if the rest of the app runs without it. Only one
+mod or game update runs at a time; it continues when you leave the page. The shared
+output is visible only to users with permission for the active or most recent
+update. Output is retained
+in memory (up to the last 256K characters) until another update or app restart.
+Python output is unbuffered, though subprocesses started by the script may still
+buffer their own output. Successful updates trigger an installed-mods refresh.
+Only grant this permission to users trusted to run the configured script and view
+its output; avoid printing credentials or secrets.
 
 An existing single-account `auth` object continues to work for sign-in and,
 without explicit permissions, retains access to server, mission, mod and log
@@ -94,8 +112,12 @@ scripts in your browser.
 **Presets Delete** separately permits deleting launcher preset files from the Mods
 page; existing accounts do not have this permission until an account manager grants
 it. Deleting curated preset sets remains controlled by **Presets Edit**.
-The server Save and server, mission, log, and preset Delete buttons remain visible
-but are disabled when the signed-in account lacks the corresponding permission.
+The mission and preset Upload buttons, server Save, and server, mission, log, and
+preset Delete buttons remain visible but are disabled when the signed-in account
+lacks the corresponding permission. The server, mission, mod and log pages require
+their respective **View** permissions. Mission and mod tabs in the server editor
+also require those permissions; saving other settings preserves inaccessible
+mission and mod selections.
 Permission checks on the server remain authoritative.
 
 The page can generate a 16-character random password containing uppercase,
@@ -117,9 +139,10 @@ hours, and are lost when the application restarts. Logging out invalidates the
 current session; other signed-in devices remain signed in. Existing integrations
 using HTTP Basic authentication must switch to the session login endpoint.
 
-**Permission limitation:** Existing application permissions do not enforce complete
-data isolation: socket broadcasts are not scoped to each account. Do not use these
-permissions as a security boundary for untrusted users.
+**Permission limitation:** View permissions restrict the corresponding pages, APIs,
+and live lists, but do not enforce complete data isolation. For example, server
+configuration can include selected missions and mods. Do not use these permissions
+as a security boundary for untrusted users.
 The existing `servers.rcon` field is not currently enforced by a route and is not
 offered as an account-management option.
 

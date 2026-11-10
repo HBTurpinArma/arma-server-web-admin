@@ -1,17 +1,17 @@
-<div class="row">
-  <div class="col-sm-4 col-sm-push-8">
+<div class="row mods-overview">
+  <div class="col-sm-4 mods-overview-actions">
     <section class="panel panel-default" aria-labelledby="upload-preset-heading">
       <div class="panel-heading"><h2 class="panel-title" id="upload-preset-heading">Upload Preset</h2></div>
       <div class="panel-body">
         <p class="presets-upload-availability" role="status">Checking preset upload availability...</p>
-        <div class="presets-upload-panel" hidden>
+        <div class="presets-upload-panel">
           <form class="preset-upload-form" enctype="multipart/form-data">
             <div class="form-group">
               <label for="preset-file">Launcher Preset (.html)</label>
               <input type="file" id="preset-file" name="preset" accept=".html,text/html" class="form-control" required>
               <p class="help-block">Maximum file size: 5 MiB. Existing files with the same name will be replaced.</p>
             </div>
-            <button type="submit" class="btn btn-primary">
+            <button type="submit" class="btn btn-primary" disabled>
               <span class="glyphicon glyphicon-cloud-upload"></span> Upload
             </button>
             <p class="preset-upload-status" role="status"></p>
@@ -19,12 +19,28 @@
         </div>
       </div>
     </section>
+    <section class="panel panel-default" aria-labelledby="update-mods-heading">
+      <div class="panel-heading"><h2 class="panel-title" id="update-mods-heading">Update Mods and Game</h2></div>
+      <div class="panel-body">
+        <p class="help-block">Updates continue if you leave this page. Only one update can run at a time.</p>
+        <div class="mod-update-controls">
+          <button type="button" class="btn btn-primary update-mods" disabled>
+            <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> Update Mods
+          </button>
+          <button type="button" class="btn btn-primary update-game" disabled>
+            <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> Update Game
+          </button>
+          <p class="mod-update-status" role="status">Checking updater availability...</p>
+        </div>
+        <pre class="mod-update-output" aria-label="Update output" tabindex="0"></pre>
+      </div>
+    </section>
   </div>
-  <div class="col-sm-8 col-sm-pull-4">
+  <div class="col-sm-8 mods-overview-presets">
     <section class="panel panel-default mods-presets" aria-labelledby="launcher-presets-heading">
       <div class="panel-heading mods-section-heading">
-        <h2 class="panel-title" id="launcher-presets-heading">Launcher Presets</h2>
-        <button type="button" class="btn btn-default btn-xs refresh-presets" aria-label="Refresh launcher presets">
+        <h2 class="panel-title" id="launcher-presets-heading">Loaded Presets</h2>
+        <button type="button" class="btn btn-default btn-xs refresh-presets" aria-label="Refresh loaded presets">
           <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> Refresh
         </button>
       </div>
@@ -36,7 +52,6 @@
             <tbody class="presets-list"></tbody>
           </table>
         </div>
-        <p class="presets-builder" hidden><a href="/presets" target="_blank" rel="noopener noreferrer">Open Preset Builder</a></p>
       </div>
     </section>
   </div>

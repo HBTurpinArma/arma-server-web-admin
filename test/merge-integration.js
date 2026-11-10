@@ -73,12 +73,34 @@ describe('merged application routes', function () {
     try {
       var response = await request(app).get('/api/accounts/me').expect(200)
       assert.strictEqual(response.body.permissions.servers.edit, true)
+      assert.strictEqual(response.body.permissions.servers.view, true)
+      assert.strictEqual(response.body.permissions.missions.view, true)
+      assert.strictEqual(response.body.permissions.mods.view, true)
+      assert.strictEqual(response.body.permissions.missions.create, true)
+      assert.strictEqual(response.body.permissions.logs.view, true)
       assert.strictEqual(response.body.permissions.logs.delete, true)
       await request(app).get('/api/servers').expect(200)
       await request(app).get('/api/missions').expect(200)
       await request(app).get('/api/mods').expect(200)
     } finally {
       config.auth = original
+    }
+  })
+
+  it('denies list and refresh routes without the corresponding view permission', async function () {
+    var login = await request(app).post('/api/session').set('X-Requested-With', 'XMLHttpRequest')
+      .send({ username: 'operator', password: 'secret' }).expect(200)
+    var cookie = login.headers['set-cookie'][0]
+    var groups = ['servers', 'missions', 'mods']
+    try {
+      groups.forEach(function (group) { config.auth[0].permissions[group].view = false })
+      for (var i = 0; i < groups.length; i++) {
+        await request(app).get('/api/' + groups[i]).set('Cookie', cookie).expect(403)
+      }
+      await request(app).post('/api/missions/refresh').set('Cookie', cookie).expect(403)
+      await request(app).post('/api/mods/refresh').set('Cookie', cookie).expect(403)
+    } finally {
+      groups.forEach(function (group) { config.auth[0].permissions[group].view = true })
     }
   })
 })

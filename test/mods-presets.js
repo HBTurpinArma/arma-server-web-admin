@@ -10,10 +10,10 @@ var vm = require('vm')
 describe('launcher presets on the Mods page', function () {
   it('renders two matching sections with separate refresh controls', function () {
     var html = fs.readFileSync(path.join(__dirname, '..', 'public', 'js', 'tpl', 'mods', 'list.html'), 'utf8')
-    assert(/<h2 class="panel-title" id="launcher-presets-heading">Launcher Presets<\/h2>/.test(html))
+    assert(/<h2 class="panel-title" id="launcher-presets-heading">Loaded Presets<\/h2>/.test(html))
     assert(/<h2 class="panel-title">Installed Mods<\/h2>/.test(html))
-    assert(html.includes('col-sm-4 col-sm-push-8'))
-    assert(html.includes('col-sm-8 col-sm-pull-4'))
+    assert(html.includes('col-sm-4 mods-overview-actions'))
+    assert(html.includes('col-sm-8 mods-overview-presets'))
     assert(html.includes('aria-labelledby="upload-preset-heading"'))
     assert(html.includes('aria-labelledby="launcher-presets-heading"'))
     assert(html.includes('class="btn btn-default btn-xs refresh-presets"'))
@@ -132,7 +132,7 @@ describe('launcher presets on the Mods page', function () {
     var source = fs.readFileSync(path.join(__dirname, '..', 'public', 'js', 'app', 'views', 'mods', 'list.js'), 'utf8')
     var module = { exports: {} }
     var callbacks = {}
-    var state = { items: [], links: [], status: '', builderHidden: true, uploadHidden: true, availability: '', deleteDisabled: null }
+    var state = { items: [], links: [], status: '', uploadDisabled: true, availability: '', deleteDisabled: null }
     var jquery = function (tag, attributes) {
       var item = {}
       if (tag === '<a>') state.links.push(attributes)
@@ -163,6 +163,7 @@ describe('launcher presets on the Mods page', function () {
     }
     vm.runInNewContext(source, {
       module: module,
+      clearTimeout: clearTimeout,
       document: { createTextNode: function (text) { return text } },
       require: function (name) { return dependencies[name] }
     })
@@ -170,9 +171,14 @@ describe('launcher presets on the Mods page', function () {
     view.$ = function (selector) {
       if (selector === '.presets-list') return { empty: function () { state.items = []; return this } }
       if (selector === '.presets-status') return { text: function (value) { state.status = value } }
-      if (selector === '.presets-builder') return { prop: function (name, value) { state.builderHidden = value } }
-      if (selector === '.presets-upload-panel') return { prop: function (name, value) { state.uploadHidden = value } }
+      if (selector === '.preset-upload-form button[type=submit]') {
+        return {
+          prop: function (name, value) { state.uploadDisabled = value; return this },
+          attr: function () { return this }
+        }
+      }
       if (selector === '.presets-upload-availability') return { text: function (value) { state.availability = value } }
+      if (selector === '.mod-update-status') return { text: function () {} }
     }
     view.onRender()
     var presets = callbacks['/api/presets']
@@ -181,15 +187,16 @@ describe('launcher presets on the Mods page', function () {
     assert(state.availability.includes('Restart the server'))
     me.success({ canEditPresets: false })
     assert(state.availability.includes('Presets Edit permission'))
+    assert.strictEqual(state.uploadDisabled, true)
     me.success({ canEditPresets: true, canDeletePresets: true })
     assert(state.availability.includes('until the presets list loads'))
+    assert.strictEqual(state.uploadDisabled, true)
     presets.success(['<script>.html', 'Preset B.HTML'])
     assert.deepStrictEqual(state.items, ['<script>.html', 'Preset B.HTML'])
     assert.strictEqual(state.links[0].href, '/api/presets/%3Cscript%3E.html')
     assert.strictEqual(state.links[0].download, '<script>.html')
     assert.strictEqual(state.status, '')
-    assert.strictEqual(state.builderHidden, false)
-    assert.strictEqual(state.uploadHidden, false)
+    assert.strictEqual(state.uploadDisabled, false)
     assert.strictEqual(state.availability, '')
     assert.strictEqual(state.deleteDisabled, false)
     me.success({ canEditPresets: true, canDeletePresets: false })
@@ -220,7 +227,7 @@ describe('launcher presets on the Mods page', function () {
     var refreshed = false
     var status
     var input = { files: [{ name: 'EXISTING.html', size: 12 }], value: 'selected' }
-    var button = { prop: function () {} }
+    var button = { prop: function () { return this }, attr: function () { return this } }
     var jquery = {
       ajax: function (options) {
         submitted = options
@@ -250,12 +257,17 @@ describe('launcher presets on the Mods page', function () {
     })
     var view = module.exports
     view.presets = ['existing.html']
+    view.presetsLoaded = true
     view.$ = function (selector) {
       if (selector === '#preset-file') return { get: function () { return input } }
       if (selector === '.preset-upload-status') return { text: function (value) { status = value } }
       return button
     }
     view.loadPresets = function () { refreshed = true }
+    view.canEditPresets = false
+    view.uploadPreset({ preventDefault: function () {} })
+    assert.strictEqual(submitted, undefined)
+    view.canEditPresets = true
     view.uploadPreset({ preventDefault: function () {} })
     assert.strictEqual(submitted, undefined)
     confirmed = true

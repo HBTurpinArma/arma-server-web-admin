@@ -2,6 +2,7 @@ var assert = require('assert')
 var fs = require('fs')
 var path = require('path')
 var underscore = require('underscore')
+var vm = require('vm')
 
 describe('server editor layout', function () {
   function read (file) {
@@ -35,5 +36,44 @@ describe('server editor layout', function () {
     assert(missions.includes('id="available"'))
     assert(missions.includes('id="rotation"'))
     assert(missions.includes('id="filterMissions"'))
+  })
+
+  it('does not replace inaccessible mission and mod selections when saving', function () {
+    var module = { exports: {} }
+    var canView = false
+    var saved
+    var dependencies = {
+      jquery: {},
+      underscore: underscore,
+      backbone: {},
+      marionette: { LayoutView: { extend: function (view) { return view } } },
+      'sweet-alert': function () {},
+      'app/permissions': {
+        can: function (group, action) { return action === 'edit' || canView }
+      },
+      'tpl/servers/view.html': ''
+    }
+    vm.runInNewContext(read('public/js/app/views/servers/view.js'), {
+      module: module,
+      require: function (name) {
+        return Object.prototype.hasOwnProperty.call(dependencies, name) ? dependencies[name] : {}
+      }
+    })
+    var view = module.exports
+    view.model = {
+      get: function () { return 'id' },
+      save: function (data) { saved = data }
+    }
+    view.settingsView = { currentView: { serialize: function () { return { title: 'server' } } } }
+    view.parametersView = { currentView: { serialize: function () { return {} } } }
+    view.missionsView = { currentView: { content: { currentView: { serialize: function () { return { missions: ['changed'] } } } } } }
+    view.modsView = { currentView: { content: { currentView: { serialize: function () { return { mods: ['changed'] } } } } } }
+    view.save()
+    assert.strictEqual(saved.missions, undefined)
+    assert.strictEqual(saved.mods, undefined)
+    canView = true
+    view.save()
+    assert.deepStrictEqual(saved.missions, ['changed'])
+    assert.deepStrictEqual(saved.mods, ['changed'])
   })
 })

@@ -1,0 +1,12 @@
+<section class="panel panel-default" aria-labelledby="access-heading">
+  <div class="panel-heading"><h2 class="panel-title" id="access-heading"><%- title %></h2></div>
+  <div class="panel-body" role="status">
+    <% if (status === 'error') { %>
+    Unable to check <%- group %> view permission.
+    <% } else if (status !== 'ready') { %>
+    Checking <%- group %> view permission...
+    <% } else { %>
+    You do not have permission to view <%- group %>.
+    <% } %>
+  </div>
+</section>

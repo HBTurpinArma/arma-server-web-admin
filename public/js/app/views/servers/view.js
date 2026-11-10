@@ -11,6 +11,7 @@ var MissionsView = require('app/views/servers/missions/index')
 var ModsListView = require('app/views/servers/mods/list')
 var ParametersListView = require('app/views/servers/parameters/list')
 var PlayersView = require('app/views/servers/players')
+var PermissionPage = require('app/views/permission-page')
 var tpl = require('tpl/servers/view.html')
 
 module.exports = Marionette.LayoutView.extend({
@@ -47,9 +48,18 @@ module.exports = Marionette.LayoutView.extend({
   },
 
   onRender: function () {
+    var self = this
     this.infoView.show(new InfoView({ model: this.model }))
-    this.missionsView.show(new MissionsView({ missions: this.missions, model: this.model }))
-    this.modsView.show(new ModsListView({ collection: this.mods, server: this.model }))
+    this.missionsView.show(new PermissionPage({
+      group: 'missions',
+      title: 'Missions',
+      createView: function () { return new MissionsView({ missions: self.missions, model: self.model }) }
+    }))
+    this.modsView.show(new PermissionPage({
+      group: 'mods',
+      title: 'Mods',
+      createView: function () { return new ModsListView({ collection: self.mods, server: self.model }) }
+    }))
     this.parametersView.show(new ParametersListView({ model: this.model }))
     this.playersView.show(new PlayersView({ model: this.model }))
     this.settingsView.show(new FormView({ model: this.model }))
@@ -91,8 +101,12 @@ module.exports = Marionette.LayoutView.extend({
       return
     }
 
-    _.extend(data, this.missionsView.currentView.serialize())
-    _.extend(data, this.modsView.currentView.serialize())
+    if (permissions.can('missions', 'view')) {
+      _.extend(data, this.missionsView.currentView.content.currentView.serialize())
+    }
+    if (permissions.can('mods', 'view')) {
+      _.extend(data, this.modsView.currentView.content.currentView.serialize())
+    }
     _.extend(data, this.parametersView.currentView.serialize())
 
     this.model.save(data, {

@@ -173,9 +173,51 @@ html .mods-section-heading {
   gap: 12px;
 }
 
+@media (min-width: 768px) {
+  html .mods-overview {
+    display: flex;
+    flex-direction: row-reverse;
+  }
+
+  html .mods-overview-presets {
+    display: flex;
+    min-width: 0;
+  }
+
+  html .mods-overview-presets .mods-presets {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
 html .mods-refresh-status:empty,
 html .missions-refresh-status:empty {
   display: none;
+}
+
+html .mod-update-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin-bottom: 12px;
+}
+
+html .mod-update-status {
+  margin: 0;
+  color: var(--app-muted);
+}
+
+html .mod-update-output,
+html[data-theme="dark"] .mod-update-output {
+  background: var(--app-bg);
+  border: 1px solid var(--app-border);
+  color: var(--app-text);
+  max-height: 300px;
+  min-height: 100px;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 html .table {

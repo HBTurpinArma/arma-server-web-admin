@@ -17,9 +17,9 @@ describe('account management', function () {
 
   function permissions (manage) {
     return {
-      servers: { view: true, start: false, stop: false, create: false, edit: false, delete: false, rcon: false },
+      servers: { view: true, start: false, stop: false, create: false, edit: false, delete: false, rcon: false, updateGame: false },
       missions: { view: false, create: false, delete: false },
-      mods: { view: false, delete: false },
+      mods: { view: false, delete: false, update: false },
       logs: { view: false, delete: false },
       presets: { edit: false, delete: false },
       accounts: { manage: manage }
@@ -72,21 +72,54 @@ describe('account management', function () {
   it('reports only relevant effective control permissions without exposing credentials', async function () {
     var response = await request(app).get('/api/accounts/me').set('Cookie', userCookie).expect(200)
     assert.deepStrictEqual(response.body.permissions, {
-      servers: { edit: false, delete: false },
-      missions: { delete: false },
-      logs: { delete: false }
+      servers: { view: true, edit: false, delete: false },
+      missions: { view: false, create: false, delete: false },
+      logs: { view: false, delete: false },
+      mods: { view: false }
     })
     assert.strictEqual(response.body.canDeletePresets, false)
+    assert.strictEqual(response.body.canUpdateMods, false)
+    assert.strictEqual(response.body.canUpdateGame, false)
     assert.strictEqual(response.body.password, undefined)
     config.auth[1].permissions.servers.edit = true
     config.auth[1].permissions.missions.delete = true
+    config.auth[1].permissions.missions.create = true
     config.auth[1].permissions.logs.delete = true
+    config.auth[1].permissions.logs.view = true
     config.auth[1].permissions.presets.delete = true
+    config.auth[1].permissions.mods.update = true
+    config.auth[1].permissions.servers.updateGame = true
     response = await request(app).get('/api/accounts/me').set('Cookie', userCookie).expect(200)
     assert.strictEqual(response.body.permissions.servers.edit, true)
     assert.strictEqual(response.body.permissions.missions.delete, true)
+    assert.strictEqual(response.body.permissions.missions.create, true)
     assert.strictEqual(response.body.permissions.logs.delete, true)
+    assert.strictEqual(response.body.permissions.logs.view, true)
     assert.strictEqual(response.body.canDeletePresets, true)
+    assert.strictEqual(response.body.canUpdateMods, true)
+    assert.strictEqual(response.body.canUpdateGame, true)
+  })
+
+  it('displays and migrates legacy game updater permission when an account is saved', async function () {
+    delete config.auth[1].permissions.servers.updateGame
+    config.auth[1].permissions.mods.updateGame = true
+    fs.writeFileSync(file, JSON.stringify(config.auth))
+    var me = await request(app).get('/api/accounts/me').set('Cookie', userCookie).expect(200)
+    assert.strictEqual(me.body.canUpdateGame, true)
+    var listing = await admin('get', '/api/accounts').expect(200)
+    assert(listing.body.permissions.servers.includes('updateGame'))
+    assert(!listing.body.permissions.mods.includes('updateGame'))
+    var user = listing.body.accounts[1]
+    assert.strictEqual(user.permissions.servers.updateGame, true)
+    assert.strictEqual(user.permissions.mods.updateGame, undefined)
+    user.password = ''
+    user.permissions.servers.updateGame = false
+    await admin('put', '/api/accounts/user').set('X-Requested-With', 'XMLHttpRequest').send(user).expect(200)
+    var saved = JSON.parse(fs.readFileSync(file))[1]
+    assert.strictEqual(saved.permissions.servers.updateGame, false)
+    assert.strictEqual(saved.permissions.mods.updateGame, undefined)
+    me = await request(app).get('/api/accounts/me').set('Cookie', userCookie).expect(200)
+    assert.strictEqual(me.body.canUpdateGame, false)
   })
 
   it('creates, edits, and deletes accounts with immediately updated authentication', async function () {
@@ -178,7 +211,7 @@ describe('account management', function () {
     assert(html.includes('Permissions do not restrict every data channel'))
     Object.keys(response.body.permissions).forEach(function (group) {
       response.body.permissions[group].forEach(function (action) {
-        var title = group.charAt(0).toUpperCase() + group.slice(1) + ' ' + action.charAt(0).toUpperCase() + action.slice(1)
+        var title = group.charAt(0).toUpperCase() + group.slice(1) + ' ' + (action === 'updateGame' ? 'Update' : action.charAt(0).toUpperCase() + action.slice(1))
         assert(html.includes('aria-label="' + title + ' permission information"'), title)
         assert(html.includes('role="tooltip" id="account-info-' + group + '-' + action + '"'), title)
       })

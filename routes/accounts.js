@@ -3,11 +3,13 @@ var fs = require('fs')
 var path = require('path')
 var crypto = require('crypto')
 var hasPresetPermission = require('../lib/preset-permissions')
+var canUpdateGame = require('../lib/game-update-permission')
+var canView = require('../lib/view-permissions')
 
 var permissions = {
-  servers: ['view', 'start', 'stop', 'create', 'edit', 'delete'],
+  servers: ['view', 'start', 'stop', 'create', 'edit', 'delete', 'updateGame'],
   missions: ['view', 'create', 'delete'],
-  mods: ['view', 'delete'],
+  mods: ['view', 'delete', 'update'],
   logs: ['view', 'delete'],
   presets: ['edit', 'delete'],
   accounts: ['manage']
@@ -19,7 +21,13 @@ function isAdmin (user) {
 }
 
 function publicAccount (user) {
-  return { username: user.username, permissions: user.permissions }
+  var permissions = Object.assign({}, user.permissions)
+  permissions.servers = Object.assign({}, permissions.servers, { updateGame: canUpdateGame(user) })
+  if (permissions.mods) {
+    permissions.mods = Object.assign({}, permissions.mods)
+    delete permissions.mods.updateGame
+  }
+  return { username: user.username, permissions: permissions }
 }
 
 module.exports = function (config, defaultPath, onChange) {
@@ -41,13 +49,24 @@ module.exports = function (config, defaultPath, onChange) {
       canManage: isAdmin(user),
       canEditPresets: hasPresetPermission(config, req, 'edit'),
       canDeletePresets: hasPresetPermission(config, req, 'delete'),
+      canUpdateMods: !!(user && user.permissions && user.permissions.mods && user.permissions.mods.update === true),
+      canUpdateGame: canUpdateGame(user),
       permissions: {
         servers: {
+          view: canView(config, req.auth && req.auth.user, 'servers'),
           edit: unrestricted || !!(user && user.permissions && user.permissions.servers && user.permissions.servers.edit === true),
           delete: unrestricted || !!(user && user.permissions && user.permissions.servers && user.permissions.servers.delete === true)
         },
-        missions: { delete: unrestricted || !!(user && user.permissions && user.permissions.missions && user.permissions.missions.delete === true) },
-        logs: { delete: unrestricted || !!(user && user.permissions && user.permissions.logs && user.permissions.logs.delete === true) }
+        missions: {
+          view: canView(config, req.auth && req.auth.user, 'missions'),
+          create: unrestricted || !!(user && user.permissions && user.permissions.missions && user.permissions.missions.create === true),
+          delete: unrestricted || !!(user && user.permissions && user.permissions.missions && user.permissions.missions.delete === true)
+        },
+        logs: {
+          view: unrestricted || !!(user && user.permissions && user.permissions.logs && user.permissions.logs.view === true),
+          delete: unrestricted || !!(user && user.permissions && user.permissions.logs && user.permissions.logs.delete === true)
+        },
+        mods: { view: canView(config, req.auth && req.auth.user, 'mods') }
       }
     })
   })
@@ -112,6 +131,7 @@ module.exports = function (config, defaultPath, onChange) {
       merged[group] = Object.assign({}, merged[group] || {})
       permissions[group].forEach(function (action) { merged[group][action] = body.permissions[group][action] })
     })
+    delete merged.mods.updateGame
     result.username = body.username
     result.password = body.password || existing.password
     result.permissions = merged

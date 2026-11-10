@@ -15,6 +15,8 @@ var Missions = require('./lib/missions')
 var Mods = require('./lib/mods')
 var Logs = require('./lib/logs')
 var Settings = require('./lib/settings')
+var createModUpdater = require('./lib/mod-updater')
+var createLiveViewData = require('./lib/live-view-data')
 
 
 var app = express()
@@ -58,8 +60,15 @@ manager.load()
 var missions = new Missions(config)
 var mods = new Mods(config)
 mods.updateMods()
+var modUpdater = createModUpdater(config.modUpdater, function () { mods.updateMods() })
 
 var settings = new Settings(config)
+var liveViewData = createLiveViewData(io, config, {
+  missions: function () { return missions.missions },
+  mods: function () { return mods.mods },
+  servers: function () { return manager.getServers() },
+  settings: function () { return settings.getPublicSettings() }
+})
 
 app.use('/api/logs', routePermissions(config, 'logs', function (req) {
   return req.method === 'DELETE' ? 'delete' : 'view'
@@ -72,6 +81,7 @@ app.use('/api/missions', routePermissions(config, 'missions', function (req) {
 app.use('/api/mods', routePermissions(config, 'mods', function (req) {
   return req.method === 'DELETE' ? 'delete' : 'view'
 }), require('./routes/mods')(mods))
+app.use('/api/mod-updater', require('./routes/mod-updater')(config, modUpdater))
 app.use('/api/servers', routePermissions(config, 'servers', function (req) {
   if (req.method === 'DELETE') return 'delete'
   if (req.method === 'PUT' || req.method === 'PATCH') return 'edit'
@@ -85,29 +95,25 @@ app.use('/api/servers', routePermissions(config, 'servers', function (req) {
 }), require('./routes/servers')(manager, mods))
 app.use('/api/settings', require('./routes/settings')(settings))
 app.use('/api/games', require('./routes/games')(config.games))
-app.use('/api/accounts', require('./routes/accounts')(config, path.join(__dirname, 'accounts.json'), auth.disconnectInvalid))
+app.use('/api/accounts', require('./routes/accounts')(config, path.join(__dirname, 'accounts.json'), function () {
+  auth.disconnectInvalid()
+  liveViewData.refresh()
+}))
 if (config.presetsPath) {
   app.use('/api/preset-sets', require('./routes/preset-sets')(config))
   app.use('/api/preset-uploads', require('./routes/preset-uploads')(config))
 }
 
-io.on('connection', function (socket) {
-  socket.emit('missions', missions.missions)
-  socket.emit('mods', mods.mods)
-  socket.emit('servers', manager.getServers())
-  socket.emit('settings', settings.getPublicSettings())
+missions.on('missions', function () {
+  liveViewData.broadcast('missions')
 })
 
-missions.on('missions', function (missions) {
-  io.emit('missions', missions)
-})
-
-mods.on('mods', function (mods) {
-  io.emit('mods', mods)
+mods.on('mods', function () {
+  liveViewData.broadcast('mods')
 })
 
 manager.on('servers', function () {
-  io.emit('servers', manager.getServers())
+  liveViewData.broadcast('servers')
 })
 
 if (require.main === module) {

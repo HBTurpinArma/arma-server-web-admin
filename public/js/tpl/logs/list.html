@@ -1,4 +1,18 @@
-<table class="table table-striped">
+<% if (!canView) { %>
+<section class="panel panel-default" aria-labelledby="logs-access-heading">
+  <div class="panel-heading"><h2 class="panel-title" id="logs-access-heading">Logs</h2></div>
+  <div class="panel-body" role="status">
+    <% if (permissionsStatus === 'error') { %>
+    Unable to check log view permission.
+    <% } else if (permissionsStatus !== 'ready') { %>
+    Checking log view permission...
+    <% } else { %>
+    You do not have permission to view logs.
+    <% } %>
+  </div>
+</section>
+<% } %>
+<table class="table table-striped" <%= canView ? '' : 'hidden' %>>
   <thead>
     <tr>
       <th width="100%">Filename</th>

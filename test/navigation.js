@@ -20,6 +20,10 @@ describe('account navigation', function () {
     assert(html.indexOf('Settings') < html.indexOf('Signed in as'))
     assert(html.includes('class="theme-toggle-input" checked'))
     assert(html.includes('class="theme-switch-track" aria-hidden="true"'))
+    var settingsMenu = html.slice(html.indexOf('class="dropdown-menu settings-menu"'))
+    assert(settingsMenu.indexOf('Dark Mode') < settingsMenu.indexOf('class="divider"'))
+    assert(settingsMenu.indexOf('class="divider"') < settingsMenu.indexOf('href="#accounts"'))
+    assert(settingsMenu.indexOf('href="#accounts"') < settingsMenu.indexOf('account-logout'))
   })
 
   it('hides account controls when authentication is disabled', function () {
@@ -29,6 +33,7 @@ describe('account navigation', function () {
     assert(!html.includes('href="#accounts"'))
     assert(html.includes('class="theme-toggle-input"'))
     assert(!html.includes('class="theme-toggle-input" checked'))
+    assert(!html.slice(html.indexOf('class="dropdown-menu settings-menu"')).includes('class="divider"'))
   })
 
   it('handles the route before history starts and highlights server sections', function () {

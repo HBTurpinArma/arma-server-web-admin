@@ -29,10 +29,11 @@
             <% if (username) { %>
             <li class="dropdown-header account-signed-in">Signed in as <strong><%- username %></strong></li>
             <% } %>
+            <li><label class="theme-toggle"><span class="theme-switch"><input type="checkbox" class="theme-toggle-input" <%= darkMode ? 'checked' : '' %>><span class="theme-switch-track" aria-hidden="true"></span></span> Dark Mode</label></li>
             <% if (canManageAccounts) { %>
+            <li role="separator" class="divider"></li>
             <li class="<%= isActiveRoute('accounts') %>"><a href="#accounts">Account Management</a></li>
             <% } %>
-            <li><label class="theme-toggle"><span class="theme-switch"><input type="checkbox" class="theme-toggle-input" <%= darkMode ? 'checked' : '' %>><span class="theme-switch-track" aria-hidden="true"></span></span> Dark Mode</label></li>
             <% if (username) { %>
             <li role="separator" class="divider"></li>
             <li><button type="button" class="account-logout">Log Out</button></li>

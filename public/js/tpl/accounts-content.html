@@ -6,7 +6,8 @@
       stop: 'Stop servers.',
       create: 'Create new server instances.',
       edit: 'Change server settings.',
-      delete: 'Delete server instances.'
+      delete: 'Delete server instances.',
+      updateGame: 'Run the configured game updater and view its output.'
     },
     missions: {
       view: 'List and refresh missions.',
@@ -15,7 +16,8 @@
     },
     mods: {
       view: 'List and refresh mods.',
-      delete: 'Delete mods.'
+      delete: 'Delete mods.',
+      update: 'Run the configured mod updater and view its output.'
     },
     logs: {
       view: 'List, view, and download logs.',
@@ -30,6 +32,7 @@
     }
   }
   function displayName (name) {
+    if (name === 'updateGame') return 'Update'
     return name.charAt(0).toUpperCase() + name.slice(1)
   }
 %>
