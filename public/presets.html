@@ -46,6 +46,9 @@
     .col.fill .mod-list { flex: 1 1 auto; min-height: 0; max-height: none; }
 
     .search { margin-top: .75em; }
+    .panel-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: .75em; }
+    .panel-head h2 { margin: 0; }
+    .panel-head button { padding: .25em .7em; font-size: .85em; }
     .search + .mod-list { margin-top: .5em; }
     .mod-list { max-height: 520px; overflow-y: auto; margin-top: .75em; padding-right: .5em; }
     label { display: block; padding: .25em 0; font-size: .92em; }
@@ -136,7 +139,10 @@
 
     <div class="col fill">
       <section class="panel">
-        <h2>Optional mods</h2>
+        <div class="panel-head">
+          <h2>Optional mods</h2>
+          <button id="clear-optional" type="button">Clear all</button>
+        </div>
         <input type="search" id="optional-search" placeholder="Search optional mods...">
         <div id="optional" class="mod-list"></div>
       </section>

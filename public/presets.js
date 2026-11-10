@@ -292,16 +292,22 @@
     renderSets()
   }
 
-  // Ticks every mod in the set, or unticks them all if they are already ticked.
   function setTargets (entries) {
     var keys = {}
     entries.forEach(function (e) { keys[setEntryKey(e)] = true })
     return optionalChecks.filter(function (c) { return keys[modKey(c.data)] || keys['name:' + c.data.name.toLowerCase()] })
   }
 
-  function isSetSelected (entries) {
+  function isSetFullyTicked (entries) {
     var targets = setTargets(entries)
     return targets.length > 0 && targets.every(function (c) { return c.input.checked })
+  }
+
+  // Highlighted only when the ticked optional mods are exactly the set's mods.
+  function isSetSelected (entries) {
+    if (!isSetFullyTicked(entries)) return false
+    var targets = setTargets(entries)
+    return optionalChecks.every(function (c) { return !c.input.checked || targets.indexOf(c) > -1 })
   }
 
   function refreshSetStates () {
@@ -311,9 +317,16 @@
     })
   }
 
+  // Selecting a set replaces whatever is ticked; clicking the active set clears everything.
   function toggleSet (entries) {
-    var allOn = isSetSelected(entries)
-    setTargets(entries).forEach(function (c) { c.input.checked = !allOn })
+    var wasSelected = isSetSelected(entries)
+    optionalChecks.forEach(function (c) { c.input.checked = false })
+    if (!wasSelected) setTargets(entries).forEach(function (c) { c.input.checked = true })
+    save()
+  }
+
+  function clearOptional () {
+    optionalChecks.forEach(function (c) { c.input.checked = false })
     save()
   }
 
@@ -499,6 +512,7 @@
         $('save-set').addEventListener('click', saveSet)
         $('login').addEventListener('click', checkAuth)
         $('logout').addEventListener('click', logout)
+        $('clear-optional').addEventListener('click', clearOptional)
         // Only re-check silently if this tab logged in before, to avoid an unprompted login dialog.
         try { if (sessionStorage.getItem(ADMIN_FLAG)) checkAuth() } catch (e) { /* storage unavailable */ }
         $('optional-search').addEventListener('input', function () { applyFilter('optional-search', optionalChecks) })
