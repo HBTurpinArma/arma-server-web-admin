@@ -53,6 +53,7 @@ sessionSecureCookies | Set to `true` when using HTTPS through a trusted reverse 
 accountsPath | Optional path to the accounts JSON file; defaults to `accounts.json` in the application directory
 auditLogPath | Optional path for the persistent panel audit log; defaults to `panel-audit.log` in the application directory
 presetsPath | Optional folder containing public Arma Launcher `.html` presets; the Mods page lists these files
+branding | Optional browser/page branding: `title`, `navigationTitle`, and `icon` URL (for example `/favicon.png`; place the icon in `public/`)
 modUpdater | Optional updater configuration: `python`, absolute mod `script` and optional `gameScript`, `cwd` and `gameCwd` paths
 prefix | Text prepended to all game servers name
 suffix | Text appended to all game servers name
@@ -76,6 +77,10 @@ listing and changes still require authentication and the appropriate permissions
 Dark mode is enabled by default. Use **Settings > Dark Mode** to switch themes;
 the choice is saved in browser storage and shared by the sign-in page and Preset
 Builder on the same origin.
+
+The configured local branding icon is publicly accessible so it also appears on
+the sign-in page. Use a valid `.ico`, `.png`, or other browser-supported image,
+restart the app after changing the branding configuration, and refresh the browser.
 
 To enable **Update Mods** and **Update Game**, configure `modUpdater` as shown in
 `config.js.example`, restart the app, and grant **Mods Update** and/or **Servers

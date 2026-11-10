@@ -21,6 +21,11 @@ module.exports = {
       gamedigQuery: "arma3"
     }
   },
+  branding: {
+    title: "Arma Server Admin", // Browser tab title
+    navigationTitle: "Arma Server Admin", // Title shown in the navigation bar
+    icon: "/favicon.ico" // Browser icon URL; place custom icons in public/
+  },
   presetsPath: "S:\\Servers\\Arma3\\presets", // Public (no auth) Arma 3 Launcher preset .html files; omit to disable
   // modUpdater: {
   //   python: "C:\\Python315\\python.exe",
@@ -58,7 +63,6 @@ module.exports = {
   suffix: "", // Suffix to all server names
   logFormat: "dev", // expressjs/morgan log format
 };
-
 
 
 

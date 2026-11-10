@@ -18,7 +18,7 @@ var Settings = require('./lib/settings')
 var createModUpdater = require('./lib/mod-updater')
 var createLiveViewData = require('./lib/live-view-data')
 var createAuditLog = require('./lib/audit-log')
-
+var branding = require('./routes/branding')
 
 var app = express()
 var server = require('http').Server(app)
@@ -27,6 +27,9 @@ var io = require('socket.io')(server)
 app.get('/theme.js', function (req, res) {
   res.sendFile(path.join(__dirname, 'public', 'theme.js'))
 })
+
+app.get('/branding.js', branding(config))
+app.use(branding.icon(config, path.join(__dirname, 'public')))
 
 // Mounted before session authentication so presets are publicly accessible.
 if (config.presetsPath) {

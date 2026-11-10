@@ -17,6 +17,7 @@ module.exports = Marionette.ItemView.extend({
       canManageAccounts: !!this.canManageAccounts,
       canViewAuditLog: !!this.canViewAuditLog,
       username: this.username,
+      navigationTitle: window.armaBranding.navigationTitle,
       darkMode: window.armaTheme.get() === 'dark'
     }
   },

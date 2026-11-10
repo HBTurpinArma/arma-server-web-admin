@@ -6,9 +6,10 @@ var vm = require('vm')
 
 describe('account navigation', function () {
   it('shows an escaped account name and logout control for signed-in users', function () {
-    var html = template({ username: '<admin>', canManageAccounts: true, canViewAuditLog: true, darkMode: true, isActiveRoute: function () { return '' } })
+    var html = template({ username: '<admin>', navigationTitle: '<My Admin>', canManageAccounts: true, canViewAuditLog: true, darkMode: true, isActiveRoute: function () { return '' } })
     assert(html.includes('Signed in as'))
     assert(html.includes('&lt;admin&gt;'))
+    assert(html.includes('&lt;My Admin&gt;'))
     assert(!html.includes('<admin>'))
     assert(html.includes('account-logout'))
     assert(html.includes('href="#accounts"'))
@@ -30,7 +31,7 @@ describe('account navigation', function () {
   })
 
   it('hides account controls when authentication is disabled', function () {
-    var html = template({ username: null, canManageAccounts: false, canViewAuditLog: false, darkMode: false, isActiveRoute: function () { return '' } })
+    var html = template({ username: null, navigationTitle: 'Arma Server Admin', canManageAccounts: false, canViewAuditLog: false, darkMode: false, isActiveRoute: function () { return '' } })
     assert(!html.includes('Signed in as'))
     assert(!html.includes('account-logout'))
     assert(!html.includes('href="#accounts"'))
@@ -43,7 +44,7 @@ describe('account navigation', function () {
 
   it('shows audit and account management links independently', function () {
     function render (manage, audit) {
-      return template({ username: 'operator', canManageAccounts: manage, canViewAuditLog: audit, darkMode: false, isActiveRoute: function () { return '' } })
+      return template({ username: 'operator', navigationTitle: 'Arma Server Admin', canManageAccounts: manage, canViewAuditLog: audit, darkMode: false, isActiveRoute: function () { return '' } })
     }
     assert(render(false, true).includes('href="#audit-log"'))
     assert(!render(false, true).includes('href="#accounts"'))
@@ -64,10 +65,14 @@ describe('account navigation', function () {
     var source = fs.readFileSync(path.join(__dirname, '..', 'public', 'js', 'app', 'views', 'navigation.js'), 'utf8')
     vm.runInNewContext(source, {
       module: module,
-      window: { armaTheme: { get: function () { return 'dark' } } },
+      window: {
+        armaTheme: { get: function () { return 'dark' } },
+        armaBranding: { navigationTitle: 'Arma Server Admin' }
+      },
       require: function (name) { return dependencies[name] }
     })
     var helpers = module.exports.templateHelpers()
+    assert.strictEqual(helpers.navigationTitle, 'Arma Server Admin')
     assert.strictEqual(helpers.isActiveRoute('missions'), '')
     backbone.history.fragment = 'missions'
     assert.strictEqual(helpers.isActiveRoute('missions'), 'active')
