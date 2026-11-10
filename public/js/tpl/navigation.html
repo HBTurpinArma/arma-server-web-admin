@@ -12,17 +12,11 @@
     <div class="navbar-collapse collapse">
       <ul class="nav navbar-nav navbar-right">
         <li class="<%= isActiveRoute('') %>"><a href="#" id="dashboard">Dashboard</a></li>
-        <li class="dropdown <%= isServersActive() %>">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Servers <b class="caret"></b></a>
-          <ul class="dropdown-menu">
-            <li class="<%= isActiveRoute('missions') %>"><a href="#missions" id="missions">Missions</a></li>
-            <li class="<%= isActiveRoute('mods') %>"><a href="#mods" id="mods">Mods</a></li>
-            <li class="<%= isActiveRoute('logs') %>"><a href="#logs" id="logs">Logs</a></li>
-            <li role="separator" class="divider"></li>
-            <li class="dropdown-header">Servers</li>
-            <li class="server-list-container"><ul id="servers-list"></ul></li>
-          </ul>
-        </li>
+        <li role="separator" class="divider-vertical"></li>
+        <li class="<%= isActiveRoute('missions') %>"><a href="#missions" id="missions">Missions</a></li>
+        <li class="<%= isActiveRoute('mods') %>"><a href="#mods" id="mods">Mods</a></li>
+        <li class="<%= isActiveRoute('logs') %>"><a href="#logs" id="logs">Logs</a></li>
+        <li role="separator" class="divider-vertical"></li>
         <li class="dropdown <%= isActiveRoute('accounts') || isActiveRoute('audit-log') %>">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Settings <b class="caret"></b></a>
           <ul class="dropdown-menu settings-menu">

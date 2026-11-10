@@ -41,7 +41,7 @@ module.exports = Backbone.Router.extend({
 
   initialize: function () {
     permissions.refresh()
-    layoutView.navigation.show(new NavigationView({ settings: settings, servers: servers }))
+    layoutView.navigation.show(new NavigationView())
 
     var initialized = false
     var connected = false

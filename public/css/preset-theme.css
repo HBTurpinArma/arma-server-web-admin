@@ -68,6 +68,14 @@ html[data-theme="dark"] .navbar-default .navbar-nav > li > a {
   color: var(--app-text);
 }
 
+html .navbar-nav > .divider-vertical {
+  width: 1px;
+  height: 24px;
+  margin: 13px 10px;
+  padding: 0;
+  border-left: 1px solid var(--app-border);
+}
+
 html .navbar-default .navbar-nav > .active > a,
 html .navbar-default .navbar-nav > .open > a,
 html .navbar-default .navbar-nav > li > a:hover,
@@ -128,6 +136,16 @@ html[data-theme="dark"] .help-block {
 html .dropdown-menu .divider,
 html[data-theme="dark"] .dropdown-menu .divider {
   background: var(--app-border);
+}
+
+@media (max-width: 767px) {
+  html .navbar-nav > .divider-vertical {
+    width: auto;
+    height: 1px;
+    margin: 6px 15px;
+    border: 0;
+    background: var(--app-border);
+  }
 }
 
 html .panel,

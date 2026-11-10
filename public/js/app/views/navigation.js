@@ -3,7 +3,6 @@ var $ = require('jquery')
 var Backbone = require('backbone')
 var Marionette = require('marionette')
 
-var ServersListView = require('app/views/navigation/servers/list')
 var permissions = require('app/permissions')
 var tpl = require('tpl/navigation.html')
 
@@ -15,10 +14,6 @@ module.exports = Marionette.ItemView.extend({
       isActiveRoute: function (route) {
         return Backbone.history.fragment === route ? 'active' : ''
       },
-      isServersActive: function () {
-        var route = Backbone.history.fragment || ''
-        return route === 'missions' || route === 'mods' || route === 'logs' || route.indexOf('servers/') === 0 ? 'active' : ''
-      },
       canManageAccounts: !!this.canManageAccounts,
       canViewAuditLog: !!this.canViewAuditLog,
       username: this.username,
@@ -26,9 +21,7 @@ module.exports = Marionette.ItemView.extend({
     }
   },
 
-  initialize: function (options) {
-    this.servers = options.servers
-    this.serversListView = new ServersListView({ collection: this.servers })
+  initialize: function () {
     Backbone.history.on('route', this.render)
     var self = this
     this.themeChanged = function () {
@@ -73,11 +66,6 @@ module.exports = Marionette.ItemView.extend({
       button.prop('disabled', false)
       window.alert(response.responseText || 'Unable to sign out. Please try again.')
     })
-  },
-
-  onDomRefresh: function () {
-    this.serversListView.setElement('#servers-list')
-    this.serversListView.render()
   },
 
   onDestroy: function () {
