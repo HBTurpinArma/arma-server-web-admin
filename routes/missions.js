@@ -35,13 +35,6 @@ module.exports = function (missionsManager) {
     )
   })
 
-  router.get('/:mission/:game?', function (req, res) {
-    var filename = req.params.mission
-    var gameKey = req.params.game || 'arma3' // default to 'arma3' if not provided
-  
-    res.download(missionsManager.missionPath(gameKey, filename), decodeURI(filename))
-  })
-
   router.delete('/:mission', function (req, res) {
     var filename = req.params.mission
     var gameKey = "arma3"

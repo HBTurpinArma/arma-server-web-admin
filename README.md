@@ -66,6 +66,12 @@ suffix | Text appended to all game servers name
 
 4. Launch the web UI with `npm start` or install as a Windows Service with `npm run install-windows-service`
 
+Mission `.pbo` files in configured mission folders are publicly downloadable without
+signing in at `/api/missions/<filename>/<game-id>`. The game ID is optional and
+defaults to `arma3`; URL-encode the filename and game ID. Anyone with a file's
+name can download it, so do not place private missions in these folders. Mission
+listing and changes still require authentication and the appropriate permissions.
+
 Dark mode is enabled by default. Use **Settings > Dark Mode** to switch themes;
 the choice is saved in browser storage and shared by the sign-in page and Preset
 Builder on the same origin.

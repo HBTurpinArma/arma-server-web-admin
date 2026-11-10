@@ -42,6 +42,8 @@ if (config.presetsPath) {
   })
 }
 
+app.use('/api/missions', require('./routes/mission-downloads')(config))
+
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 

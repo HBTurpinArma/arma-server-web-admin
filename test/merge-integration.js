@@ -1,7 +1,11 @@
 var assert = require('assert')
 var EventEmitter = require('events').EventEmitter
+var fs = require('fs')
 var Module = require('module')
+var os = require('os')
+var path = require('path')
 var request = require('supertest')
+var underscore = require('underscore')
 
 describe('merged application routes', function () {
   var app
@@ -101,6 +105,71 @@ describe('merged application routes', function () {
       await request(app).post('/api/mods/refresh').set('Cookie', cookie).expect(403)
     } finally {
       groups.forEach(function (group) { config.auth[0].permissions[group].view = true })
+    }
+  })
+
+  it('allows public mission downloads without exposing the mission list or mutations', async function () {
+    var directory = fs.mkdtempSync(path.join(os.tmpdir(), 'mission-download-'))
+    var otherDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'mission-other-'))
+    var filename = 'mission #100%.pbo'
+    var file = path.join(directory, filename)
+    var otherFile = path.join(otherDirectory, 'other.pbo')
+    var nonMission = path.join(directory, 'secret.txt')
+    var originalArmaPath = config.games.arma3.missionPath
+    var originalReforgerPath = config.games.reforger.missionPath
+    try {
+      fs.writeFileSync(file, 'mission contents')
+      fs.writeFileSync(otherFile, 'other mission')
+      fs.writeFileSync(nonMission, 'private')
+      config.games.arma3.missionPath = directory
+      config.games.reforger.missionPath = otherDirectory
+
+      var url = '/api/missions/' + encodeURIComponent(filename)
+      var response = await request(app).get(url).expect(200)
+      assert.strictEqual(response.body.toString(), 'mission contents')
+      assert(response.headers['content-disposition'].includes('attachment'))
+      await request(app).head(url).expect(200)
+      response = await request(app).get('/api/missions/other.pbo/reforger').expect(200)
+      assert.strictEqual(response.body.toString(), 'other mission')
+      await request(app).get('/api/missions/missing.pbo').expect(404)
+      await request(app).get('/api/missions/other.pbo/unknown').expect(404)
+      await request(app).get('/api/missions/other.pbo/constructor').expect(404)
+      await request(app).get('/api/missions/secret.txt').expect(400)
+      await request(app).get('/api/missions/' + encodeURIComponent('../secret.pbo')).expect(400)
+      await request(app).get('/api/missions/' + encodeURIComponent('..\\secret.pbo')).expect(400)
+      await request(app).get('/api/missions/' + encodeURIComponent('secret.txt:stream.pbo')).expect(400)
+      await request(app).get('/api/missions').expect(401)
+      await request(app).post('/api/missions').expect(401)
+      await request(app).post('/api/missions/refresh').expect(401)
+      await request(app).delete(url).expect(401)
+
+      var login = await request(app).post('/api/session').set('X-Requested-With', 'XMLHttpRequest')
+        .send({ username: 'operator', password: 'secret' }).expect(200)
+      var cookie = login.headers['set-cookie'][0]
+      config.auth[0].permissions.missions.view = false
+      await request(app).get(url).set('Cookie', cookie).expect(200)
+      await request(app).get('/api/missions').set('Cookie', cookie).expect(403)
+
+      var template = fs.readFileSync(path.join(__dirname, '..', 'public', 'js', 'tpl', 'missions', 'list_item.html'), 'utf8')
+      var html = underscore.template(template)({
+        game: 'arma3',
+        name: filename,
+        missionName: 'mission',
+        worldName: 'world',
+        sizeFormatted: '1 B',
+        dateModified: '2026-01-01',
+        canDelete: true
+      })
+      assert(html.includes(url + '/arma3'))
+    } finally {
+      config.auth[0].permissions.missions.view = true
+      config.games.arma3.missionPath = originalArmaPath
+      config.games.reforger.missionPath = originalReforgerPath
+      fs.unlinkSync(file)
+      fs.unlinkSync(otherFile)
+      fs.unlinkSync(nonMission)
+      fs.rmdirSync(directory)
+      fs.rmdirSync(otherDirectory)
     }
   })
 })
