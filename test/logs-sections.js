@@ -17,8 +17,12 @@ describe('log file sections', function () {
     assert(html.includes('RPT Files (.rpt)'))
     assert(html.includes('aria-labelledby="log-files-heading"'))
     assert(html.includes('Log Files (.log)'))
+    assert.strictEqual((html.match(/class="panel-heading mods-section-heading"/g) || []).length, 2)
+    assert.strictEqual((html.match(/class="btn btn-default btn-xs refresh-logs"/g) || []).length, 2)
     assert(html.includes('<div class="table-responsive"><div id="rpt-list"></div></div>'))
     assert(html.includes('<div class="table-responsive"><div id="log-list"></div></div>'))
+    var denied = render({ canView: false, permissionsStatus: 'ready' })
+    assert(!denied.includes('refresh-logs'))
     var table = read('tpl/logs/file_list.html')
     assert(table.includes('<tbody></tbody>'))
     ;['Filename', 'Created', 'Modified', 'Size'].forEach(function (heading) {
@@ -79,6 +83,9 @@ describe('log file sections', function () {
     }
     view.initialize()
     view.collection = collection
+    view.$ = function () {
+      return { prop: function () {}, text: function () {} }
+    }
     view.rptList = { show: function (child) { shown.rpt = child } }
     view.logList = { show: function (child) { shown.log = child } }
     view.onRender()
@@ -89,5 +96,87 @@ describe('log file sections', function () {
     assert.strictEqual(shown.log.options.collection, collection)
     assert.strictEqual(shown.rpt.options.extension, '.rpt')
     assert.strictEqual(shown.log.options.extension, '.log')
+  })
+
+  it('refreshes both lists together and reports failures and success', function () {
+    var module = { exports: {} }
+    var allowed = true
+    var state = {}
+    var options
+    var requests = 0
+    var dependencies = {
+      underscore: underscore,
+      marionette: { LayoutView: { extend: function (view) { return view } } },
+      'app/permissions': { can: function () { return allowed } },
+      'app/views/logs/file_list': function () {},
+      'tpl/logs/list.html': ''
+    }
+    vm.runInNewContext(read('app/views/logs/list.js'), {
+      module: module,
+      require: function (name) { return dependencies[name] }
+    })
+    var view = module.exports
+    view.refreshing = false
+    view.$ = function (selector) {
+      if (selector === '.refresh-logs') return { prop: function (key, value) { state.disabled = value } }
+      if (selector === '.logs-refresh-status') return { text: function (value) { state.status = value } }
+    }
+    view.collection = {
+      fetch: function (requestOptions) {
+        requests++
+        options = requestOptions
+      }
+    }
+    assert.strictEqual(view.events['click .refresh-logs'], 'refresh')
+    view.refresh()
+    assert.strictEqual(requests, 1)
+    assert.strictEqual(state.disabled, true)
+    assert.strictEqual(state.status, 'Refreshing log files...')
+    view.refresh()
+    assert.strictEqual(requests, 1)
+    options.error(view.collection, { responseText: 'Not permitted' })
+    assert.strictEqual(state.disabled, false)
+    assert.strictEqual(state.status, 'Unable to refresh log files: Not permitted')
+    view.refresh()
+    options.success(view.collection)
+    assert.strictEqual(state.disabled, false)
+    assert.strictEqual(state.status, 'Log files refreshed.')
+    allowed = false
+    view.refresh()
+    assert.strictEqual(requests, 2)
+  })
+
+  it('updates, adds and removes entries in the shared collection on refresh', function () {
+    var module = { exports: {} }
+    var dependencies = {
+      underscore: underscore,
+      marionette: { LayoutView: { extend: function (view) { return view } } },
+      'app/permissions': { can: function () { return true } },
+      'app/views/logs/file_list': function () {},
+      'tpl/logs/list.html': ''
+    }
+    vm.runInNewContext(read('app/views/logs/list.js'), {
+      module: module,
+      require: function (name) { return dependencies[name] }
+    })
+    var Log = Backbone.Model.extend({ idAttribute: 'name' })
+    var collection = new Backbone.Collection([
+      { name: 'kept.rpt', size: 1 },
+      { name: 'removed.log', size: 1 }
+    ], { model: Log })
+    collection.sync = function (method, model, options) {
+      assert.strictEqual(method, 'read')
+      options.success([{ name: 'kept.rpt', size: 2 }, { name: 'new.log', size: 3 }])
+    }
+    var view = module.exports
+    view.collection = collection
+    view.refreshing = false
+    view.$ = function () { return { prop: function () {}, text: function () {} } }
+    view.refresh()
+    assert.strictEqual(collection.length, 2)
+    assert.strictEqual(collection.get('kept.rpt').get('size'), 2)
+    assert.strictEqual(collection.get('new.log').get('size'), 3)
+    assert.strictEqual(collection.get('removed.log'), undefined)
+    assert.strictEqual(view.refreshStatus, 'Log files refreshed.')
   })
 })

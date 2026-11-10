@@ -11,6 +11,7 @@ A simple to use web admin panel for Arma servers.
 - Create multiple instances of game servers in the same admin panel
 - See server status queryed from the instances with current mission and players
 - View and download game logs, with separate lists for `.rpt` and `.log` files
+- Refresh either log section to reload both lists from the server
 - Upload missions from your local computer and from Steam Workshop to the server
 - Download and update mods from withSIX
 

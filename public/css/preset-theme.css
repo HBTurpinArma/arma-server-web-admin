@@ -209,7 +209,8 @@ html .mods-section-heading {
 }
 
 html .mods-refresh-status:empty,
-html .missions-refresh-status:empty {
+html .missions-refresh-status:empty,
+html .logs-refresh-status:empty {
   display: none;
 }
 
