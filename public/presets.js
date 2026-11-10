@@ -2,12 +2,9 @@
   // PLACEHOLDER workshop ids: replace with the real compat mod for each DLC.
   // `match` is tested against the DLC name inside the preset's dlc-list.
   var DLC_COMPAT = {
-    'Contact': { match: /contact/i, displayName: 'Placeholder Contact compat', workshopId: '0' },
-    'Global Mobilization': { match: /global mobilization/i, displayName: 'Placeholder GM compat', workshopId: '0' },
-    'S.O.G. Prairie Fire': { match: /prairie fire/i, displayName: 'Placeholder SOG compat', workshopId: '0' },
-    'Reaction Forces': { match: /reaction forces/i, displayName: 'Placeholder Reaction Forces compat', workshopId: '0' },
-    'Western Sahara': { match: /western sahara/i, displayName: 'Placeholder Western Sahara compat', workshopId: '0' },
-    'Expeditionary Forces': { match: /expeditionary forces/i, displayName: 'Placeholder Expeditionary Forces compat', workshopId: '0' }
+    'Reaction Forces': { match: /reaction forces/i, displayName: 'Reaction Forces - Creator DLC Compatibility Data for Non-Owners', workshopId: '3150497912' },
+    'Western Sahara': { match: /western sahara/i, displayName: 'Western Sahara - Creator DLC Compatibility Data for Non-Owners', workshopId: '2636962953' },
+    'Expeditionary Forces': { match: /expeditionary forces/i, displayName: 'Expeditionary Forces - Compatibility Data For Non-Owners', workshopId: '3348605126' }
   }
 
   var STEAM_URL = 'https://steamcommunity.com/sharedfiles/filedetails/?id='
