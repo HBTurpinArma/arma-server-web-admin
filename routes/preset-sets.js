@@ -41,5 +41,40 @@ module.exports = function (config) {
       .catch(function (err) { res.status(500).send('Unable to save set: ' + err.code) })
   })
 
+  router.get('/me', function (req, res) {
+    var user = req.auth ? req.auth.user : null
+    res.json({ user: user, canEdit: !!(config.auth && user && canEdit(user)) })
+  })
+
+  router.delete('/:name', function (req, res) {
+    if (!config.auth || !req.auth || !canEdit(req.auth.user)) {
+      res.status(403).send('You do not have permission to edit preset sets...')
+      return
+    }
+    var name = req.params.name
+
+    // Match on the stored set name, since files may have been created by hand.
+    fs.promises.readdir(setsDir).then(function (files) {
+      var jsonFiles = files.filter(function (f) { return path.extname(f).toLowerCase() === '.json' })
+      return Promise.all(jsonFiles.map(function (f) {
+        var full = path.join(setsDir, f)
+        return fs.promises.readFile(full, 'utf8').then(function (text) {
+          var set = JSON.parse(text)
+          return (set.name || path.basename(f, path.extname(f))) === name ? full : null
+        }).catch(function () { return null })
+      }))
+    }).then(function (matches) {
+      var found = matches.filter(Boolean)
+      if (!found.length) {
+        res.status(404).send('Set not found')
+        return
+      }
+      return Promise.all(found.map(function (f) { return fs.promises.unlink(f) }))
+        .then(function () { res.json({ success: true }) })
+    }).catch(function (err) {
+      res.status(err.code === 'ENOENT' ? 404 : 500).send('Unable to delete set: ' + err.code)
+    })
+  })
+
   return router
 }

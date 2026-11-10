@@ -23,9 +23,10 @@
       margin: 0 auto;
       padding: 2em 1em;
     }
-    h1 { font-weight: 600; margin: 0 0 .5em; }
+    h1 { font-weight: 600; margin: 0; }
     h2 { font-size: .8em; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0 0 .75em; }
-    #status { color: var(--muted); min-height: 1.2em; }
+    #status { color: var(--muted); margin: .5em 0 0; }
+    #status:empty { display: none; }
 
     .columns { display: flex; gap: 1em; align-items: stretch; margin-bottom: 1em; }
     .panel {
@@ -36,7 +37,7 @@
       margin-bottom: 1em;
     }
     .columns > .col { display: flex; flex-direction: column; flex: 1 1 0; min-width: 0; }
-    .columns > .col.narrow { flex: 0 0 200px; }
+    .columns > .col.narrow { flex: 0 0 240px; }
     .col .panel:last-child { margin-bottom: 0; }
 
     /* Absolutely positioned so the optional list stretches to the left column's height without adding to it. */
@@ -77,13 +78,25 @@
     button:hover { border-color: var(--accent); }
     #dlc button { margin: 0 .4em .4em 0; border-radius: 999px; }
     #dlc button[aria-pressed="true"] { background: var(--ok); border-color: var(--ok); color: #fff; }
-    #sets button { display: block; width: 100%; margin: 0 0 .5em; text-align: left; }
+    .set-row { display: flex; gap: .4em; margin-bottom: .5em; }
+    .set-row .set-apply { flex: 1; min-width: 0; text-align: left; }
+    .set-row .set-apply[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .set-row .set-delete { flex: 0 0 auto; color: #ff6b6b; }
+    .top { display: flex; justify-content: space-between; align-items: center; gap: 1em; flex-wrap: wrap; margin-bottom: 1em; }
+    #auth-status { color: var(--muted); font-size: .9em; margin-left: .5em; }
+    #admin-save { margin-top: 1em; }
+    #admin-save input { margin-bottom: .5em; }
+    #admin-save button { width: 100%; }
     #download { background: var(--accent); border-color: var(--accent); color: #fff; }
     .dlc-hint { color: var(--muted); font-size: .85em; margin: 0 0 .75em; }
 
     .actions { display: flex; gap: .75em; align-items: center; flex-wrap: wrap; }
     .actions label { display: flex; align-items: center; gap: .5em; flex: 1 1 240px; padding: 0; }
     .actions label input { flex: 1; }
+    .name-field { display: flex; flex: 1; align-items: center; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding-right: .7em; }
+    .name-field:focus-within { outline: 2px solid var(--accent); outline-offset: 1px; }
+    .name-field input { border: 0; background: transparent; outline: none; }
+    .name-field .ext { color: var(--muted); }
     #share-status { color: var(--muted); font-size: .9em; }
     #set-status { color: var(--muted); font-size: .9em; }
 
@@ -96,7 +109,14 @@
   </style>
 </head>
 <body>
-  <h1>Preset Builder</h1>
+  <header class="top">
+    <h1>AM2 Preset Builder</h1>
+    <div>
+      <button id="login" type="button">Login</button>
+      <span id="auth-status"></span>
+      <button id="logout" type="button" hidden>Log out</button>
+    </div>
+  </header>
   <p id="status">Loading presets...</p>
 
   <div class="columns">
@@ -104,7 +124,6 @@
       <section class="panel">
         <h2>Required mods</h2>
         <select id="base"></select>
-        <input type="search" id="base-search" class="search" placeholder="Search required mods...">
         <div id="base-mods" class="mod-list"></div>
       </section>
 
@@ -125,21 +144,22 @@
 
     <div class="col narrow">
       <div id="sets"></div>
+      <section id="admin-save" class="panel" hidden>
+        <h2>Save set</h2>
+        <input id="set-name" placeholder="Set name">
+        <button id="save-set" type="button">Save Set</button>
+        <p id="set-status"></p>
+      </section>
     </div>
   </div>
 
   <section class="panel">
     <h2>Download</h2>
     <div class="actions">
-      <label>Name <input id="name" value="Custom Preset"></label>
-      <button id="download" type="button">Download preset</button>
-      <button id="share" type="button">Copy share link</button>
+      <label>Name <span class="name-field"><input id="name" value="Custom Preset"><span class="ext">.html</span></span></label>
+      <button id="download" type="button">Download</button>
+      <button id="share" type="button">Copy Share Link</button>
       <span id="share-status"></span>
-    </div>
-    <div class="actions" style="margin-top: .75em">
-      <label>Set name <input id="set-name" placeholder="Curated set name (admin)"></label>
-      <button id="save-set" type="button">Save ticked optional mods as set</button>
-      <span id="set-status"></span>
     </div>
   </section>
 

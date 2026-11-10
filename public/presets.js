@@ -21,6 +21,8 @@
   var dlcButtons = []
   var owned = {} // DLC_COMPAT key -> true
   var curatedSets = {}
+  var isAdmin = false
+  var ADMIN_FLAG = 'presetBuilder.admin'
 
   function $ (id) { return document.getElementById(id) }
 
@@ -94,6 +96,7 @@
   function save () {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(currentState())) } catch (e) { /* storage unavailable */ }
     history.replaceState(null, '', shareLink())
+    refreshSetStates()
   }
 
   function loadStored () {
@@ -159,7 +162,6 @@
         c.input.disabled = true // required mods are not user-editable
         return c
       })
-      applyFilter('base-search', baseChecks)
       renderDlc()
     })
   }
@@ -217,21 +219,101 @@
       return
     }
     names.forEach(function (name) {
+      var row = document.createElement('div')
+      row.className = 'set-row'
       var btn = document.createElement('button')
       btn.type = 'button'
+      btn.className = 'set-apply'
+      btn.dataset.set = name
       btn.textContent = name
       btn.addEventListener('click', function () { toggleSet(curatedSets[name]) })
-      el.appendChild(btn)
+      row.appendChild(btn)
+      if (isAdmin) {
+        var del = document.createElement('button')
+        del.type = 'button'
+        del.className = 'set-delete'
+        del.textContent = '\u00d7'
+        del.title = 'Delete set'
+        del.addEventListener('click', function () { deleteSet(name) })
+        row.appendChild(del)
+      }
+      el.appendChild(row)
     })
+    refreshSetStates()
+  }
+
+  function deleteSet (name) {
+    if (!window.confirm('Delete set "' + name + '"?')) return
+    var status = $('set-status')
+    fetch('/api/preset-sets/' + encodeURIComponent(name), { method: 'DELETE', credentials: 'same-origin' })
+      .then(function (r) {
+        if (r.status === 401 || r.status === 403) throw new Error('Not authorised to delete sets.')
+        if (!r.ok) return r.text().then(function (t) { throw new Error('Delete failed (' + r.status + '): ' + t) })
+        return fetchSets()
+      })
+      .then(function (sets) {
+        curatedSets = sets || {}
+        renderSets()
+        status.textContent = 'Deleted.'
+      })
+      .catch(function (e) { status.textContent = e.message })
+  }
+
+  // The route is behind basic auth, so the browser prompts for credentials here.
+  function checkAuth () {
+    var status = $('auth-status')
+    fetch('/api/preset-sets/me', { credentials: 'same-origin' })
+      .then(function (r) {
+        if (r.status === 401) throw new Error('Login cancelled.')
+        if (!r.ok) throw new Error('Login check failed.')
+        return r.json()
+      })
+      .then(function (me) {
+        if (!me.canEdit) throw new Error('Logged in as ' + me.user + ' without permission to edit sets.')
+        isAdmin = true
+        try { sessionStorage.setItem(ADMIN_FLAG, '1') } catch (e) { /* storage unavailable */ }
+        $('admin-save').hidden = false
+        $('login').hidden = true
+        $('logout').hidden = false
+        status.textContent = 'Logged in as ' + me.user
+        renderSets()
+      })
+      .catch(function (e) { status.textContent = e.message })
+  }
+
+  // Only hides the admin controls; the browser keeps its Basic-auth credentials until it is closed.
+  function logout () {
+    isAdmin = false
+    try { sessionStorage.removeItem(ADMIN_FLAG) } catch (e) { /* storage unavailable */ }
+    $('admin-save').hidden = true
+    $('logout').hidden = true
+    $('login').hidden = false
+    $('auth-status').textContent = ''
+    renderSets()
   }
 
   // Ticks every mod in the set, or unticks them all if they are already ticked.
-  function toggleSet (entries) {
+  function setTargets (entries) {
     var keys = {}
     entries.forEach(function (e) { keys[setEntryKey(e)] = true })
-    var targets = optionalChecks.filter(function (c) { return keys[modKey(c.data)] || keys['name:' + c.data.name.toLowerCase()] })
-    var allOn = targets.length > 0 && targets.every(function (c) { return c.input.checked })
-    targets.forEach(function (c) { c.input.checked = !allOn })
+    return optionalChecks.filter(function (c) { return keys[modKey(c.data)] || keys['name:' + c.data.name.toLowerCase()] })
+  }
+
+  function isSetSelected (entries) {
+    var targets = setTargets(entries)
+    return targets.length > 0 && targets.every(function (c) { return c.input.checked })
+  }
+
+  function refreshSetStates () {
+    Array.prototype.forEach.call(document.querySelectorAll('#sets .set-apply'), function (btn) {
+      var entries = curatedSets[btn.dataset.set]
+      btn.setAttribute('aria-pressed', entries && isSetSelected(entries) ? 'true' : 'false')
+    })
+  }
+
+  function toggleSet (entries) {
+    var allOn = isSetSelected(entries)
+    setTargets(entries).forEach(function (c) { c.input.checked = !allOn })
     save()
   }
 
@@ -318,7 +400,7 @@
   }
 
   function download () {
-    var name = $('name').value.trim() || 'Custom Preset'
+    var name = $('name').value.trim().replace(/\.html$/i, '') || 'Custom Preset'
     var blob = new Blob([buildPreset(name, collect(), collectDlcRows())], { type: 'text/html' })
     var a = document.createElement('a')
     a.href = URL.createObjectURL(blob)
@@ -379,7 +461,8 @@
         var files = results[0]
         curatedSets = results[1] || {}
         var isClientside = function (f) { return /clientside/i.test(f) }
-        var baseFiles = files.filter(function (f) { return !isClientside(f) })
+        var isServerside = function (f) { return /serverside/i.test(f) }
+        var baseFiles = files.filter(function (f) { return !isClientside(f) && !isServerside(f) })
         var clientsideFile = files.filter(isClientside)[0]
         if (!baseFiles.length) {
           $('status').textContent = 'No base presets available.'
@@ -399,11 +482,25 @@
         })
         if (state.base && baseFiles.indexOf(state.base) > -1) select.value = state.base
 
-        select.addEventListener('change', function () { renderBase(select.value).then(save) })
+        // Follow the selected preset until the user types their own name.
+        var nameEdited = false
+        var updateDefaultName = function () {
+          if (!nameEdited) $('name').value = select.value.replace(/\.html$/i, '') + '_modified'
+        }
+        $('name').addEventListener('input', function () { nameEdited = true })
+        updateDefaultName()
+
+        select.addEventListener('change', function () {
+          updateDefaultName()
+          renderBase(select.value).then(save)
+        })
         $('download').addEventListener('click', download)
         $('share').addEventListener('click', copyShareLink)
         $('save-set').addEventListener('click', saveSet)
-        $('base-search').addEventListener('input', function () { applyFilter('base-search', baseChecks) })
+        $('login').addEventListener('click', checkAuth)
+        $('logout').addEventListener('click', logout)
+        // Only re-check silently if this tab logged in before, to avoid an unprompted login dialog.
+        try { if (sessionStorage.getItem(ADMIN_FLAG)) checkAuth() } catch (e) { /* storage unavailable */ }
         $('optional-search').addEventListener('input', function () { applyFilter('optional-search', optionalChecks) })
         renderSets()
 

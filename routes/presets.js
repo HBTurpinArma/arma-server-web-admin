@@ -12,7 +12,8 @@ module.exports = function (presetsPath) {
   router.get('/', function (req, res) {
     fs.readdir(presetsPath, { withFileTypes: true }, function (err, entries) {
       if (err) {
-        res.status(500).send('Unable to read presets folder')
+        console.error('Presets: cannot read ' + presetsPath + ': ' + err.message)
+        res.status(500).send('Unable to read presets folder (' + err.code + ')')
         return
       }
       var files = entries
