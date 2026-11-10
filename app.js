@@ -19,6 +19,17 @@ var app = express()
 var server = require('http').Server(app)
 var io = require('socket.io')(server)
 
+// Mounted before basic auth so presets are publicly accessible.
+if (config.presetsPath) {
+  app.use('/api/presets', require('./routes/presets')(config.presetsPath))
+  app.get('/presets', function (req, res) {
+    res.sendFile(path.join(__dirname, 'public', 'presets.html'))
+  })
+  app.get('/presets.js', function (req, res) {
+    res.sendFile(path.join(__dirname, 'public', 'presets.js'))
+  })
+}
+
 setupBasicAuth(config, app)
 
 app.use(bodyParser.json())
@@ -44,6 +55,9 @@ app.use('/api/missions', require('./routes/missions')(missions))
 app.use('/api/mods', require('./routes/mods')(mods))
 app.use('/api/servers', require('./routes/servers')(manager, mods))
 app.use('/api/games', require('./routes/games')(config.games))
+if (config.presetsPath) {
+  app.use('/api/preset-sets', require('./routes/preset-sets')(config))
+}
 
 app.get('/logout', function (req, res) {
   res.set('WWW-Authenticate', 'Basic realm=Authorization Required');

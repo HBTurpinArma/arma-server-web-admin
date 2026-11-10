@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Preset Builder</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --bg: #12151a;
+      --panel: #1b1f27;
+      --border: #2b313c;
+      --text: #e6e8ec;
+      --muted: #8b93a1;
+      --accent: #4f8cff;
+      --ok: #2e9e5b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2em 1em;
+    }
+    h1 { font-weight: 600; margin: 0 0 .5em; }
+    h2 { font-size: .8em; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0 0 .75em; }
+    #status { color: var(--muted); min-height: 1.2em; }
+
+    .columns { display: flex; gap: 1em; align-items: stretch; margin-bottom: 1em; }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1em;
+      margin-bottom: 1em;
+    }
+    .columns > .col { display: flex; flex-direction: column; flex: 1 1 0; min-width: 0; }
+    .columns > .col.narrow { flex: 0 0 200px; }
+    .col .panel:last-child { margin-bottom: 0; }
+
+    /* Absolutely positioned so the optional list stretches to the left column's height without adding to it. */
+    .col.fill { position: relative; }
+    .col.fill > .panel { position: absolute; inset: 0; display: flex; flex-direction: column; margin: 0; }
+    .col.fill .mod-list { flex: 1 1 auto; min-height: 0; max-height: none; }
+
+    .search { margin-top: .75em; }
+    .search + .mod-list { margin-top: .5em; }
+    .mod-list { max-height: 520px; overflow-y: auto; margin-top: .75em; padding-right: .5em; }
+    label { display: block; padding: .25em 0; font-size: .92em; }
+    label:hover { color: #fff; }
+    [hidden] { display: none !important; }
+    input[type="checkbox"] { accent-color: var(--accent); margin-right: .4em; }
+    input[type="checkbox"]:disabled { opacity: .6; }
+
+    select, input[type="text"], input[type="search"], input:not([type]) {
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: .5em .7em;
+      font: inherit;
+      width: 100%;
+    }
+    select:focus, input:focus, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+    button {
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: .5em .9em;
+      font: inherit;
+      cursor: pointer;
+      transition: background .15s, border-color .15s;
+    }
+    button:hover { border-color: var(--accent); }
+    #dlc button { margin: 0 .4em .4em 0; border-radius: 999px; }
+    #dlc button[aria-pressed="true"] { background: var(--ok); border-color: var(--ok); color: #fff; }
+    #sets button { display: block; width: 100%; margin: 0 0 .5em; text-align: left; }
+    #download { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .dlc-hint { color: var(--muted); font-size: .85em; margin: 0 0 .75em; }
+
+    .actions { display: flex; gap: .75em; align-items: center; flex-wrap: wrap; }
+    .actions label { display: flex; align-items: center; gap: .5em; flex: 1 1 240px; padding: 0; }
+    .actions label input { flex: 1; }
+    #share-status { color: var(--muted); font-size: .9em; }
+    #set-status { color: var(--muted); font-size: .9em; }
+
+    @media (max-width: 800px) {
+      .columns { flex-direction: column; }
+      .columns > .col, .columns > .col.narrow { flex: 1 1 auto; width: 100%; }
+      .col.fill > .panel { position: static; }
+      .col.fill .mod-list { max-height: 520px; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Preset Builder</h1>
+  <p id="status">Loading presets...</p>
+
+  <div class="columns">
+    <div class="col">
+      <section class="panel">
+        <h2>Required mods</h2>
+        <select id="base"></select>
+        <input type="search" id="base-search" class="search" placeholder="Search required mods...">
+        <div id="base-mods" class="mod-list"></div>
+      </section>
+
+      <section class="panel">
+        <h2>DLC owned</h2>
+        <p class="dlc-hint">Select the DLC you own. Unselected DLC adds its compatibility patch.</p>
+        <div id="dlc"></div>
+      </section>
+    </div>
+
+    <div class="col fill">
+      <section class="panel">
+        <h2>Optional mods</h2>
+        <input type="search" id="optional-search" placeholder="Search optional mods...">
+        <div id="optional" class="mod-list"></div>
+      </section>
+    </div>
+
+    <div class="col narrow">
+      <div id="sets"></div>
+    </div>
+  </div>
+
+  <section class="panel">
+    <h2>Download</h2>
+    <div class="actions">
+      <label>Name <input id="name" value="Custom Preset"></label>
+      <button id="download" type="button">Download preset</button>
+      <button id="share" type="button">Copy share link</button>
+      <span id="share-status"></span>
+    </div>
+    <div class="actions" style="margin-top: .75em">
+      <label>Set name <input id="set-name" placeholder="Curated set name (admin)"></label>
+      <button id="save-set" type="button">Save ticked optional mods as set</button>
+      <span id="set-status"></span>
+    </div>
+  </section>
+
+  <script src="/presets.js"></script>
+</body>
+</html>
