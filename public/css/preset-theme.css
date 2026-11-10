@@ -345,8 +345,7 @@ html .server-editor-header h2 {
   overflow-wrap: anywhere;
 }
 
-html .server-editor-eyebrow,
-html .server-mods-label {
+html .server-editor-eyebrow {
   color: var(--app-muted);
   font-size: 12px;
   font-weight: 600;
@@ -375,28 +374,24 @@ html .server-info-form .form-group:last-child {
   margin-bottom: 0;
 }
 
-html .server-mods-toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 16px;
-  margin-bottom: 20px;
-}
-
-html .server-mods-filter label,
-html .server-mods-label {
-  display: block;
-  margin-bottom: 6px;
-}
-
 html .server-mods-filter-controls {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
 html .server-mods-filter-controls .form-control {
-  width: 140px;
+  flex: 1 1 180px;
+  width: auto;
+  min-width: 0;
+}
+
+html .server-mods-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
 }
 
 html .server-mods-checkbox-column {

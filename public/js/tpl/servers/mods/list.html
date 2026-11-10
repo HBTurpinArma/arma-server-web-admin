@@ -1,32 +1,71 @@
-<section class="panel panel-default" aria-labelledby="server-mods-heading">
-  <div class="panel-heading"><h3 class="panel-title" id="server-mods-heading">Server Mods</h3></div>
-  <div class="panel-body">
-    <form>
-      <div class="cc cc-arma3 server-mods-toolbar">
-        <div class="server-mods-filter">
-          <label for="include-required">Required</label>
-          <div class="server-mods-filter-controls">
-            <button type="button" class="btn btn-default btn-xs toggle-required">Toggle All</button>
-            <input class="form-control input-sm" type="text" placeholder="battalion\" id="include-required">
-            <button type="button" class="btn btn-primary btn-xs check-include-required" aria-label="Select required mods matching path"><span class="glyphicon glyphicon-check" aria-hidden="true"></span></button>
+<form>
+  <div class="row cc cc-arma3">
+    <div class="col-md-8">
+      <section class="panel panel-default" aria-labelledby="server-mods-controls-heading">
+        <div class="panel-heading">
+          <h3 class="panel-title" id="server-mods-controls-heading">Mod Selection
+            <span class="account-info">
+              <button type="button" class="account-info-trigger" aria-label="Mod selection information" aria-describedby="server-mods-selection-help">i</button>
+              <span class="account-info-text" role="tooltip" id="server-mods-selection-help">Select matching replaces the selection with mods whose paths contain the entered text. An empty path matches all mods; required mods exclude \optionals\. Toggle all selects or clears a category based on its first mod.</span>
+            </span>
+          </h3>
+        </div>
+        <div class="panel-body">
+          <div class="server-mods-filter form-group">
+            <label for="include-server-only">Server Only</label>
+            <div class="server-mods-filter-controls">
+              <input class="form-control" type="text" value="serverside\" placeholder="serverside\" id="include-server-only">
+              <div class="server-mods-actions">
+                <button type="button" class="btn btn-primary check-include-server-only" aria-label="Select server-only mods matching path"><span class="glyphicon glyphicon-check" aria-hidden="true"></span> Select matching</button>
+                <button type="button" class="btn btn-default toggle-server-only" aria-label="Toggle all server-only mods">Toggle all</button>
+              </div>
+            </div>
+          </div>
+          <div class="server-mods-filter form-group">
+            <label for="include-required">Required</label>
+            <div class="server-mods-filter-controls">
+              <input class="form-control" type="text" value="am2\" placeholder="am2\" id="include-required">
+              <div class="server-mods-actions">
+                <button type="button" class="btn btn-primary check-include-required" aria-label="Select required mods matching path"><span class="glyphicon glyphicon-check" aria-hidden="true"></span> Select matching</button>
+                <button type="button" class="btn btn-default toggle-required" aria-label="Toggle all required mods">Toggle all</button>
+              </div>
+            </div>
+          </div>
+          <div class="server-mods-filter form-group">
+            <label for="include-optional">Optional</label>
+            <div class="server-mods-filter-controls">
+              <input class="form-control" type="text" value="clientside\" placeholder="clientside\" id="include-optional">
+              <div class="server-mods-actions">
+                <button type="button" class="btn btn-primary check-include-optional" aria-label="Select optional mods matching path"><span class="glyphicon glyphicon-check" aria-hidden="true"></span> Select matching</button>
+                <button type="button" class="btn btn-default toggle-optional" aria-label="Toggle all optional mods">Toggle all</button>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="server-mods-filter">
-          <label for="include-optional">Optional</label>
-          <div class="server-mods-filter-controls">
-            <button type="button" class="btn btn-default btn-xs toggle-optional">Toggle All</button>
-            <input class="form-control input-sm" type="text" placeholder="clientside\" id="include-optional">
-            <button type="button" class="btn btn-primary btn-xs check-include-optional" aria-label="Select optional mods matching path"><span class="glyphicon glyphicon-check" aria-hidden="true"></span></button>
+      </section>
+    </div>
+    <div class="col-md-4">
+      <section class="panel panel-default" aria-labelledby="server-mods-presets-heading">
+        <div class="panel-heading">
+          <h3 class="panel-title" id="server-mods-presets-heading">Presets
+            <span class="account-info">
+              <button type="button" class="account-info-trigger" aria-label="Mod presets information" aria-describedby="server-mods-presets-help">i</button>
+              <span class="account-info-text" role="tooltip" id="server-mods-presets-help">Apply a predefined modpack to quickly configure the server with a set of mods.</span>
+            </span>
+          </h3>
+        </div>
+        <div class="panel-body">
+          <div class="server-mods-actions">
+            <button type="button" class="btn btn-default preset-battalion">AM2 Preset</button>
+            <button type="button" class="btn btn-default preset-am2035">AM2035 Preset</button>
           </div>
         </div>
-        <div class="server-mods-presets">
-          <span class="server-mods-label">Presets</span>
-          <div class="server-mods-filter-controls">
-            <button type="button" class="btn btn-info btn-xs preset-battalion">Battalion Preset</button>
-            <button type="button" class="btn btn-info btn-xs preset-ww2">WW2 Preset</button>
-          </div>
-        </div>
-      </div>
+      </section>
+    </div>
+  </div>
+  <section class="panel panel-default" aria-labelledby="server-mods-heading">
+    <div class="panel-heading"><h3 class="panel-title" id="server-mods-heading">Server Mods</h3></div>
+    <div class="panel-body">
       <div class="table-responsive cc cc-arma3">
         <table class="table table-striped">
           <thead class="cc cc-arma3">
@@ -58,6 +97,6 @@
 ]</pre>
         </div>
       </div>
-    </form>
-  </div>
-</section>
+    </div>
+  </section>
+</form>

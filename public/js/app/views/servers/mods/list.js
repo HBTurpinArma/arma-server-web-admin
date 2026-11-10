@@ -12,14 +12,31 @@ module.exports = ModsListView.extend({
 
 
   events: {
+    'click .toggle-server-only': 'toggleServerOnly',
+    'click .check-include-server-only': 'checkIncludeServerOnly',
+    'keypress #include-server-only': 'checkOnEnterServerOnly',
     'click .toggle-required': 'toggleRequired',
     'click .toggle-optional': 'toggleOptional',
     'click .check-include-required': 'checkIncludeRequired',
     'click .check-include-optional': 'checkIncludeOptional',
     'keypress #include-required' : 'checkOnEnterRequired',
     'keypress #include-optional' : 'checkOnEnterOptional',
-    'click .preset-battalion': 'setPresetBattlaion',
+    'click .preset-battalion': 'setPresetAM2',
+    'click .preset-am2035': 'setPresetAM2035',
     'click .preset-ww2': 'setPresetWW2',
+    'keydown .account-info-trigger': 'dismissInfo',
+    'mouseleave .account-info': 'resetInfo',
+    'focusout .account-info': 'resetInfo'
+  },
+
+  dismissInfo: function (event) {
+    if (event.key === 'Escape' || event.keyCode === 27) {
+      $(event.currentTarget).closest('.account-info').addClass('info-dismissed')
+    }
+  },
+
+  resetInfo: function (event) {
+    $(event.currentTarget).removeClass('info-dismissed')
   },
 
   onRender: function() {
@@ -43,6 +60,24 @@ module.exports = ModsListView.extend({
     this.$('input[name='+name+']:checkbox').map(function (idx, el) {
       return $(el).prop('checked', checked)
     })
+  },
+
+  toggleServerOnly: function (e) {
+    e.preventDefault()
+    var checkboxes = this.$('input[name=server_only]:checkbox')
+    if (checkboxes.length) this.changeAllCheckbox(!checkboxes[0].checked, 'server_only')
+  },
+
+  checkIncludeServerOnly: function (e) {
+    e.preventDefault()
+    var filter = this.$('#include-server-only').val()
+    this.$('input[name=server_only]:checkbox').map(function (idx, el) {
+      return $(el).prop('checked', $(el).val().includes(filter))
+    })
+  },
+
+  checkOnEnterServerOnly: function (e) {
+    if (e.which === 13) this.checkIncludeServerOnly(e)
   },
 
   toggleRequired: function (e) {
@@ -75,24 +110,28 @@ module.exports = ModsListView.extend({
     })
   },
 
-  setPresetBattlaion: function (e) {
-    e.preventDefault()
-
-    this.changeAllCheckbox(false, "optional")
-    var filter = "clientside\\"
+  applyModPreset: function (requiredPath, dlcs) {
     this.$('input[name=optional]:checkbox').map(function (idx, el) {
-      return $(el).prop('checked', $(el).val().includes(filter))
+      return $(el).prop('checked', $(el).val().includes('clientside\\'))
     })
-
-    var filter = "battalion\\"
     this.$('input[name=required]:checkbox').map(function (idx, el) {
-      return ($(el).prop('checked', $(el).val().includes(filter) && !($(el).val().includes("\\optionals\\"))))
+      var name = $(el).val()
+      return $(el).prop('checked', dlcs.indexOf(name.toLowerCase()) !== -1 ||
+        (name.includes(requiredPath) && !name.includes('\\optionals\\')))
     })
-
-    var filter = "serverside\\"
     this.$('input[name=server_only]:checkbox').map(function (idx, el) {
-      return $(el).prop('checked', $(el).val().includes(filter))
+      return $(el).prop('checked', $(el).val().includes('serverside\\'))
     })
+  },
+
+  setPresetAM2: function (e) {
+    e.preventDefault()
+    this.applyModPreset('am2\\', ['ws'])
+  },
+
+  setPresetAM2035: function (e) {
+    e.preventDefault()
+    this.applyModPreset('am2035\\', ['ws', 'rf', 'ef'])
   },
 
   setPresetWW2: function (e) {
