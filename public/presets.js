@@ -2,12 +2,14 @@
   // PLACEHOLDER workshop ids: replace with the real compat mod for each DLC.
   // `match` is tested against the DLC name inside the preset's dlc-list.
   var DLC_COMPAT = {
-    'Reaction Forces': { match: /reaction forces/i, displayName: 'Reaction Forces - Creator DLC Compatibility Data for Non-Owners', workshopId: '3150497912' },
-    'Western Sahara': { match: /western sahara/i, displayName: 'Western Sahara - Creator DLC Compatibility Data for Non-Owners', workshopId: '2636962953' },
-    'Expeditionary Forces': { match: /expeditionary forces/i, displayName: 'Expeditionary Forces - Compatibility Data For Non-Owners', workshopId: '3348605126' }
+    'Reaction Forces': { match: /reaction forces/i, displayName: 'Reaction Forces - Creator DLC Compatibility Data for Non-Owners', workshopId: '3150497912', storeUrl: 'https://store.steampowered.com/app/2647760' },
+    'Western Sahara': { match: /western sahara/i, displayName: 'Western Sahara - Creator DLC Compatibility Data for Non-Owners', workshopId: '2636962953', storeUrl: 'https://store.steampowered.com/app/1681170' },
+    'Expeditionary Forces': { match: /expeditionary forces/i, displayName: 'Expeditionary Forces - Compatibility Data For Non-Owners', workshopId: '3348605126', storeUrl: 'https://store.steampowered.com/app/2647830' }
   }
 
   var STEAM_URL = 'https://steamcommunity.com/sharedfiles/filedetails/?id='
+  var EXTERNAL_LINK_ICON = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>'
+  var STORE_ICON = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>'
   var STORAGE_KEY = 'presetBuilder.v1'
   var cache = {}
 
@@ -64,13 +66,34 @@
 
   function makeCheckbox (container, labelText, checked, data) {
     var label = document.createElement('label')
+    label.className = 'mod-item'
     var input = document.createElement('input')
     input.type = 'checkbox'
     input.checked = checked
     label.appendChild(input)
-    label.appendChild(document.createTextNode(' ' + labelText))
+    var nameEl = document.createElement('span')
+    nameEl.className = 'mod-name'
+    nameEl.textContent = labelText
+    nameEl.title = labelText
+    label.appendChild(nameEl)
+    if (data && data.id) {
+      var link = document.createElement('a')
+      link.className = 'mod-link'
+      link.href = STEAM_URL + data.id
+      link.target = '_blank'
+      link.rel = 'noopener noreferrer'
+      link.title = 'Open workshop page'
+      link.innerHTML = EXTERNAL_LINK_ICON
+      label.appendChild(link)
+    }
     container.appendChild(label)
     return { input: input, label: label, data: data }
+  }
+
+  function updateCounts () {
+    $('base-count').textContent = baseChecks.length ? '(' + baseChecks.length + ')' : ''
+    var selected = optionalChecks.filter(function (c) { return c.input.checked }).length
+    $('optional-count').textContent = optionalChecks.length ? '(' + selected + ' of ' + optionalChecks.length + ' selected)' : ''
   }
 
   function applyFilter (searchId, checks) {
@@ -94,6 +117,7 @@
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(currentState())) } catch (e) { /* storage unavailable */ }
     history.replaceState(null, '', shareLink())
     refreshSetStates()
+    updateCounts()
   }
 
   function loadStored () {
@@ -159,6 +183,7 @@
         c.input.disabled = true // required mods are not user-editable
         return c
       })
+      updateCounts()
       renderDlc()
     })
   }
@@ -178,8 +203,20 @@
         return c
       })
       applyFilter('optional-search', optionalChecks)
+      updateCounts()
       renderDlc()
     })
+  }
+
+  function makeDlcLink (iconHtml, url, title) {
+    var a = document.createElement('a')
+    a.className = 'dlc-link'
+    a.href = url
+    a.target = '_blank'
+    a.rel = 'noopener noreferrer'
+    a.title = title
+    a.innerHTML = iconHtml
+    return a
   }
 
   // Only DLC that the loaded presets list and that have a compat entry are offered.
@@ -192,6 +229,8 @@
       var compat = DLC_COMPAT[key]
       var present = listed.some(function (d) { return compat.match.test(d.name) })
       if (!present) return
+      var item = document.createElement('span')
+      item.className = owned[key] ? 'dlc-item owned' : 'dlc-item'
       var btn = document.createElement('button')
       btn.type = 'button'
       btn.textContent = key
@@ -199,9 +238,13 @@
       btn.addEventListener('click', function () {
         owned[key] = !owned[key]
         btn.setAttribute('aria-pressed', owned[key] ? 'true' : 'false')
+        item.classList.toggle('owned', !!owned[key])
         save()
       })
-      el.appendChild(btn)
+      item.appendChild(btn)
+      item.appendChild(makeDlcLink(EXTERNAL_LINK_ICON, STEAM_URL + compat.workshopId, 'Compatibility patch on the workshop'))
+      item.appendChild(makeDlcLink(STORE_ICON, compat.storeUrl, 'Buy on the Steam store'))
+      el.appendChild(item)
       dlcButtons.push({ key: key, button: btn, data: { name: compat.displayName, id: compat.workshopId } })
     })
     if (!dlcButtons.length) el.textContent = 'This preset requires no DLC.'

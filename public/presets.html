@@ -25,6 +25,7 @@
     }
     h1 { font-weight: 600; margin: 0; }
     h2 { font-size: .8em; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0 0 .75em; }
+    h2 .count { color: var(--text); text-transform: none; letter-spacing: 0; font-weight: 400; margin-left: .4em; }
     #status { color: var(--muted); margin: .5em 0 0; }
     #status:empty { display: none; }
 
@@ -46,16 +47,24 @@
     .col.fill .mod-list { flex: 1 1 auto; min-height: 0; max-height: none; }
 
     .search { margin-top: .75em; }
-    .panel-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: .75em; }
+    .panel-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: .75em; min-height: 2em; }
     .panel-head h2 { margin: 0; }
+    #base, #optional-search { height: 2.5em; }
     .panel-head button { padding: .25em .7em; font-size: .85em; }
     .search + .mod-list { margin-top: .5em; }
     .mod-list { max-height: 520px; overflow-y: auto; margin-top: .75em; padding-right: .5em; }
     label { display: block; padding: .25em 0; font-size: .92em; }
     label:hover { color: #fff; }
+    .mod-item { display: flex; align-items: center; gap: .5em; user-select: none; }
+    button, .dlc-item { user-select: none; }
+    .mod-item input { margin: 0; flex: 0 0 auto; }
+    .mod-name { flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mod-link { color: var(--muted); text-decoration: none; margin-left: 0; flex: 0 0 auto; display: inline-flex; }
+    .mod-link:hover { color: var(--accent); }
     [hidden] { display: none !important; }
     input[type="checkbox"] { accent-color: var(--accent); margin-right: .4em; }
     input[type="checkbox"]:disabled { opacity: .6; }
+    input[type="checkbox"]:focus:not(:focus-visible) { outline: none; }
 
     select, input[type="text"], input[type="search"], input:not([type]) {
       background: var(--bg);
@@ -79,8 +88,14 @@
       transition: background .15s, border-color .15s;
     }
     button:hover { border-color: var(--accent); }
-    #dlc button { margin: 0 .4em .4em 0; border-radius: 999px; }
-    #dlc button[aria-pressed="true"] { background: var(--ok); border-color: var(--ok); color: #fff; }
+    #dlc button { background: transparent; border: 0; border-radius: 999px 0 0 999px; color: inherit; padding: .4em .4em .4em .9em; }
+    .dlc-item { display: inline-flex; align-items: center; gap: .15em; margin: 0 .6em .5em 0; background: var(--bg); border: 1px solid var(--border); border-radius: 999px; padding-right: .6em; }
+    .dlc-item:hover { border-color: var(--accent); }
+    .dlc-item.owned { background: var(--ok); border-color: var(--ok); color: #fff; }
+    .dlc-link { display: inline-flex; color: var(--muted); padding: .2em; }
+    .dlc-link:hover { color: var(--accent); }
+    .dlc-item.owned .dlc-link { color: rgba(255, 255, 255, .75); }
+    .dlc-item.owned .dlc-link:hover { color: #fff; }
     .set-row { display: flex; gap: .4em; margin-bottom: .5em; }
     .set-row .set-apply { flex: 1; min-width: 0; text-align: left; }
     .set-row .set-apply[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
@@ -125,7 +140,9 @@
   <div class="columns">
     <div class="col">
       <section class="panel">
-        <h2>Required mods</h2>
+        <div class="panel-head">
+          <h2>Required mods <span id="base-count" class="count"></span></h2>
+        </div>
         <select id="base"></select>
         <div id="base-mods" class="mod-list"></div>
       </section>
@@ -140,7 +157,7 @@
     <div class="col fill">
       <section class="panel">
         <div class="panel-head">
-          <h2>Optional mods</h2>
+          <h2>Optional mods <span id="optional-count" class="count"></span></h2>
           <button id="clear-optional" type="button">Clear all</button>
         </div>
         <input type="search" id="optional-search" placeholder="Search optional mods...">
