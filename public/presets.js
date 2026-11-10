@@ -361,8 +361,20 @@
     }).catch(function (e) { status.textContent = e.message })
   }
 
+  function fetchList () {
+    return fetch('/api/presets').then(function (r) {
+      if (!r.ok) {
+        return r.text().then(function (t) {
+          var hint = r.status === 401 ? ' (route is behind login: presetsPath missing from config.js?)' : ''
+          throw new Error('Could not load presets (' + r.status + ')' + hint + ': ' + t.slice(0, 120))
+        })
+      }
+      return r.json()
+    })
+  }
+
   function init () {
-    Promise.all([fetch('/api/presets').then(function (r) { return r.json() }), fetchSets()])
+    Promise.all([fetchList(), fetchSets()])
       .then(function (results) {
         var files = results[0]
         curatedSets = results[1] || {}
