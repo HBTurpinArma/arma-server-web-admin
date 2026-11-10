@@ -48,6 +48,9 @@ module.exports = function (presetsPath) {
       res.status(400).send('Invalid preset name')
       return
     }
+    res.set('Content-Disposition', 'attachment')
+    res.set('X-Content-Type-Options', 'nosniff')
+    res.set('Content-Security-Policy', "default-src 'none'; sandbox")
     res.sendFile(name, { root: presetsPath, dotfiles: 'deny' }, function (err) {
       if (err && !res.headersSent) {
         res.status(err.status === 404 ? 404 : 500).send('Preset not found')

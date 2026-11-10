@@ -7,6 +7,7 @@ var tpl = require('tpl/servers/mods/list.html')
 
 module.exports = ModsListView.extend({
   childView: ListItemView,
+  childViewContainer: 'tbody',
   template: _.template(tpl),
 
 

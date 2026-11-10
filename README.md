@@ -40,15 +40,18 @@ A simple to use web admin panel for Arma servers.
 
 Key | Description
 --- | ---
-game | Which game server to launch, see above
-path | Folder path to game server
+games | Game configurations keyed by game ID, including server, mod and mission paths
+logsPath | Folder containing server logs
 port | Web port to use
 host | IP or Hostname to listen on
 type | Which kind of server to use, can be 'linux', 'windows' or 'wine'
 additionalConfigurationOptions | Additional configuration options appended to server.cfg file
 parameters | Extra startup parameters added to servers and headless clients
 serverMods | Mods that always and only will be used by the game servers
-auth | If both username and password is set, HTTP Basic Auth will be used
+auth | Array of accounts used to sign in
+sessionSecureCookies | Set to `true` when using HTTPS through a trusted reverse proxy; trusts one proxy hop
+accountsPath | Optional path to the accounts JSON file; defaults to `accounts.json` in the application directory
+presetsPath | Optional folder containing public Arma Launcher `.html` presets; the Mods page lists these files
 prefix | Text prepended to all game servers name
 suffix | Text appended to all game servers name
 
@@ -61,6 +64,64 @@ suffix | Text appended to all game servers name
 3. Install all dependencies with `npm install`
 
 4. Launch the web UI with `npm start` or install as a Windows Service with `npm run install-windows-service`
+
+Dark mode is enabled by default. Use **Settings > Dark Mode** to switch themes;
+the choice is saved in browser storage and shared by the sign-in page and Preset
+Builder on the same origin.
+
+An existing single-account `auth` object continues to work for sign-in and,
+without explicit permissions, retains access to server, mission, mod and log
+operations. Account management requires the accounts array to be loaded from
+`accounts.json`.
+
+## Account management
+
+Copy `accounts.json.example` to `accounts.json` and change the example credentials.
+To bootstrap an account manager, add `"accounts": { "manage": true }` inside that
+account's `permissions` object, then restart the application. Account managers can
+open **Accounts** to create, edit, or delete accounts and assign individual
+permissions. Existing accounts without this permission cannot manage accounts.
+Use **Copy** beside an account to start a new account with the same available
+permissions; choose a new username and password. At least one account manager must
+remain.
+
+Accounts with **Presets Edit** permission can upload launcher `.html` presets from
+the Mods page (up to 5 MiB per file). Uploading a file with an existing filename
+replaces it after confirmation. Presets in `presetsPath` are publicly accessible.
+Select a preset filename in the Mods page to download the HTML file and open it
+locally. Only open preset files from sources you trust: downloaded HTML can run
+scripts in your browser.
+**Presets Delete** separately permits deleting launcher preset files from the Mods
+page; existing accounts do not have this permission until an account manager grants
+it. Deleting curated preset sets remains controlled by **Presets Edit**.
+The server Save and server, mission, log, and preset Delete buttons remain visible
+but are disabled when the signed-in account lacks the corresponding permission.
+Permission checks on the server remain authoritative.
+
+The page can generate a 16-character random password containing uppercase,
+lowercase, numbers, and symbols; copy it before saving because existing
+passwords are not displayed. Changing your own credentials may require signing in
+again. Changes to authentication and account permissions apply on subsequent
+requests and are saved to the accounts file. If that file
+is edited externally while the application is running, restart before using the
+page so external changes are not overwritten. If using a custom file, set
+`accountsPath` to the same file loaded into `auth`.
+
+Passwords are stored as plaintext. Protect the file with appropriate filesystem
+permissions and use HTTPS (for example through a trusted reverse proxy); do not
+expose the HTTP service directly to untrusted networks. Set
+`sessionSecureCookies: true` when using HTTPS through a trusted reverse proxy.
+The application trusts one proxy hop with this setting, so only allow the proxy
+to reach the application port. Sessions are held in memory, expire after eight
+hours, and are lost when the application restarts. Logging out invalidates the
+current session; other signed-in devices remain signed in. Existing integrations
+using HTTP Basic authentication must switch to the session login endpoint.
+
+**Permission limitation:** Existing application permissions do not enforce complete
+data isolation: socket broadcasts are not scoped to each account. Do not use these
+permissions as a security boundary for untrusted users.
+The existing `servers.rcon` field is not currently enforced by a route and is not
+offered as an account-management option.
 
 ## System Configuration
 

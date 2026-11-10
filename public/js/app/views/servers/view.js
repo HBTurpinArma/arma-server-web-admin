@@ -3,6 +3,7 @@ var _ = require('underscore')
 var Backbone = require('backbone')
 var Marionette = require('marionette')
 var sweetAlert = require('sweet-alert')
+var permissions = require('app/permissions')
 
 var FormView = require('app/views/servers/form')
 var InfoView = require('app/views/servers/info')
@@ -26,7 +27,7 @@ module.exports = Marionette.LayoutView.extend({
 
   events: {
     'click .nav-tabs a': 'tabs',
-    submit: 'save'
+    submit: 'submitForm'
   },
 
   modelEvents: {
@@ -38,6 +39,11 @@ module.exports = Marionette.LayoutView.extend({
     this.mods = options.mods
     this.mods_optional = options.mods_optional
     this.mods_server_only = options.mods_server_only
+    this.listenTo(permissions, 'change', this.updateEditPermission)
+  },
+
+  templateHelpers: function () {
+    return { canEdit: permissions.can('servers', 'edit') }
   },
 
   onRender: function () {
@@ -47,6 +53,13 @@ module.exports = Marionette.LayoutView.extend({
     this.parametersView.show(new ParametersListView({ model: this.model }))
     this.playersView.show(new PlayersView({ model: this.model }))
     this.settingsView.show(new FormView({ model: this.model }))
+    this.updateEditPermission()
+  },
+
+  updateEditPermission: function () {
+    var allowed = permissions.can('servers', 'edit')
+    this.$('.server-save-form button[type=submit]').prop('disabled', !allowed)
+      .attr('title', allowed ? '' : 'Requires Servers Edit permission')
   },
 
   serverUpdated: function () {
@@ -57,8 +70,13 @@ module.exports = Marionette.LayoutView.extend({
     this.settingsView.currentView.render()
   },
 
-  save: function (e) {
+  submitForm: function (e) {
     e.preventDefault()
+    if ($(e.target).is('.server-save-form')) this.save()
+  },
+
+  save: function () {
+    if (!permissions.can('servers', 'edit')) return
 
     var self = this
     var oldId = this.model.get('id')

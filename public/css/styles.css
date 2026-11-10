@@ -12,3 +12,443 @@ body {
 .text-nowrap {
   white-space: nowrap;
 }
+
+.app-container {
+  max-width: 1600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.settings-menu .account-signed-in {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.settings-menu .account-logout,
+.settings-menu .theme-toggle {
+  display: block;
+  width: 100%;
+  padding: 3px 20px;
+  border: 0;
+  background: transparent;
+  color: #333;
+  text-align: left;
+  white-space: nowrap;
+  font-weight: normal;
+  margin: 0;
+  cursor: pointer;
+}
+
+.settings-menu .account-logout:hover,
+.settings-menu .account-logout:focus,
+.settings-menu .theme-toggle:hover,
+.settings-menu .theme-toggle:focus-within {
+  background: #f5f5f5;
+  color: #262626;
+}
+
+.settings-menu .theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.theme-switch {
+  display: inline-block;
+  position: relative;
+  flex: 0 0 36px;
+  width: 36px;
+  height: 20px;
+}
+
+.theme-switch .theme-toggle-input {
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.theme-switch-track {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 1px solid #687483;
+  border-radius: 999px;
+  background: #687483;
+  transition: background-color 0.15s;
+}
+
+.theme-switch-track::before {
+  content: "";
+  display: block;
+  width: 14px;
+  height: 14px;
+  margin: 2px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.15s;
+}
+
+.theme-toggle-input:checked + .theme-switch-track {
+  background: #286090;
+  border-color: #286090;
+}
+
+.theme-toggle-input:checked + .theme-switch-track::before {
+  transform: translateX(16px);
+}
+
+.theme-toggle-input:focus + .theme-switch-track {
+  outline: 2px solid #4f8cff;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-switch-track,
+  .theme-switch-track::before {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .theme-switch-track::before {
+    background: ButtonText;
+  }
+}
+
+.server-list-container > ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.server-list-container > ul > li > a {
+  display: block;
+  padding: 3px 20px;
+  color: #333;
+  line-height: 1.42857143;
+  white-space: nowrap;
+}
+
+.server-list-container > ul > li > a:hover,
+.server-list-container > ul > li > a:focus {
+  background: #f5f5f5;
+  color: #262626;
+  text-decoration: none;
+}
+
+.server-list-container > ul > li.active > a {
+  background: #337ab7;
+  color: #fff;
+}
+
+.accounts-panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.accounts-table {
+  margin-bottom: 0;
+}
+
+.accounts-actions {
+  white-space: nowrap;
+}
+
+.accounts-actions .btn {
+  margin: 2px 2px 2px 0;
+}
+
+.accounts-permissions-heading {
+  margin-top: 25px;
+}
+
+.accounts-permission-groups {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.accounts-permission-group {
+  flex: 1 1 200px;
+  min-width: 0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px 12px;
+}
+
+.accounts-permission-group legend {
+  width: auto;
+  padding: 0 5px;
+  margin: 0;
+  border: 0;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.accounts-permission,
+.account-form > .form-group {
+  position: relative;
+}
+
+.accounts-permission {
+  margin: 5px 0;
+}
+
+.accounts-permission label {
+  margin: 0;
+  font-weight: normal;
+}
+
+.account-info {
+  position: relative;
+  display: inline-block;
+  margin-left: 4px;
+}
+
+.account-info-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border: 0;
+  padding: 0;
+  border-radius: 50%;
+  background: #333;
+  color: #fff;
+  font-size: 10px;
+  font-weight: bold;
+  line-height: 1;
+  cursor: pointer;
+  list-style: none;
+}
+
+.account-info-trigger:focus {
+  outline: 2px solid #337ab7;
+  outline-offset: 2px;
+}
+
+.account-info-text {
+  display: none;
+  position: absolute;
+  z-index: 20;
+  top: 100%;
+  left: 0;
+  width: 280px;
+  max-width: calc(100vw - 32px);
+  padding: 8px 10px;
+  margin: 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  color: #333;
+  font-size: 13px;
+  font-weight: normal;
+}
+
+@media (hover: hover) {
+  .account-info:not(.info-dismissed):hover .account-info-text {
+    display: block;
+  }
+}
+
+.account-info:not(.info-dismissed):focus-within .account-info-text {
+  display: block;
+}
+
+.accounts-permission .account-info {
+  position: static;
+}
+
+.accounts-permission .account-info-text {
+  max-width: 100%;
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+  background: #12151a;
+}
+
+html[data-theme="dark"] body {
+  background: #12151a;
+  color: #e6e8ec;
+}
+
+html[data-theme="dark"] a {
+  color: #8dbaff;
+}
+
+html[data-theme="dark"] a:hover,
+html[data-theme="dark"] a:focus {
+  color: #bdd5ff;
+}
+
+html[data-theme="dark"] a.btn,
+html[data-theme="dark"] a.btn:hover,
+html[data-theme="dark"] a.btn:focus {
+  color: #fff;
+}
+
+html[data-theme="dark"] .navbar-default,
+html[data-theme="dark"] .dropdown-menu,
+html[data-theme="dark"] .panel,
+html[data-theme="dark"] .modal-content,
+html[data-theme="dark"] .sweet-alert,
+html[data-theme="dark"] .well {
+  background: #1b1f27;
+  border-color: #3b4350;
+  color: #e6e8ec;
+}
+
+html[data-theme="dark"] .navbar-default .navbar-brand,
+html[data-theme="dark"] .navbar-default .navbar-nav > li > a,
+html[data-theme="dark"] .dropdown-menu > li > a,
+html[data-theme="dark"] .server-list-container > ul > li > a,
+html[data-theme="dark"] .settings-menu .account-logout,
+html[data-theme="dark"] .settings-menu .theme-toggle {
+  color: #e6e8ec;
+}
+
+html[data-theme="dark"] .navbar-default .navbar-nav > .active > a,
+html[data-theme="dark"] .navbar-default .navbar-nav > .open > a,
+html[data-theme="dark"] .navbar-default .navbar-nav > li > a:hover,
+html[data-theme="dark"] .dropdown-menu > li > a:hover,
+html[data-theme="dark"] .dropdown-menu > li > a:focus,
+html[data-theme="dark"] .server-list-container > ul > li > a:hover,
+html[data-theme="dark"] .server-list-container > ul > li > a:focus,
+html[data-theme="dark"] .settings-menu .account-logout:hover,
+html[data-theme="dark"] .settings-menu .account-logout:focus,
+html[data-theme="dark"] .settings-menu .theme-toggle:hover,
+html[data-theme="dark"] .settings-menu .theme-toggle:focus-within {
+  background: #343c49;
+  color: #fff;
+}
+
+html[data-theme="dark"] .server-list-container > ul > li.active > a {
+  background: #286090;
+  color: #fff;
+}
+
+html[data-theme="dark"] .dropdown-header,
+html[data-theme="dark"] .help-block {
+  color: #abb5c3;
+}
+
+html[data-theme="dark"] .dropdown-menu .divider {
+  background: #3b4350;
+}
+
+html[data-theme="dark"] .panel-default > .panel-heading {
+  background: #292f39;
+  border-color: #3b4350;
+  color: #e6e8ec;
+}
+
+html[data-theme="dark"] .panel-danger > .panel-heading {
+  background: #5b292d;
+  border-color: #8d4a4e;
+  color: #ffdddd;
+}
+
+html[data-theme="dark"] .table > tbody > tr > td,
+html[data-theme="dark"] .table > tbody > tr > th,
+html[data-theme="dark"] .table > thead > tr > th,
+html[data-theme="dark"] .accounts-permission-group,
+html[data-theme="dark"] .nav-tabs,
+html[data-theme="dark"] .modal-header,
+html[data-theme="dark"] .modal-footer {
+  border-color: #3b4350;
+}
+
+html[data-theme="dark"] .table-striped > tbody > tr:nth-of-type(odd) {
+  background: #202630;
+}
+
+html[data-theme="dark"] .nav-tabs > li.active > a,
+html[data-theme="dark"] .nav-tabs > li.active > a:hover,
+html[data-theme="dark"] .nav-tabs > li.active > a:focus,
+html[data-theme="dark"] .nav > li > a:hover,
+html[data-theme="dark"] .nav > li > a:focus {
+  background: #292f39;
+  border-color: #3b4350;
+  color: #fff;
+}
+
+html[data-theme="dark"] .form-control,
+html[data-theme="dark"] .sweet-alert input,
+html[data-theme="dark"] pre {
+  background: #12151a;
+  border-color: #66717f;
+  color: #e6e8ec;
+}
+
+html[data-theme="dark"] .form-control[disabled],
+html[data-theme="dark"] .form-control[readonly] {
+  background: #303641;
+}
+
+html[data-theme="dark"] .btn-default {
+  background: #343c49;
+  border-color: #66717f;
+  color: #fff;
+}
+
+html[data-theme="dark"] .btn-primary {
+  background: #286090;
+  border-color: #337ab7;
+  color: #fff;
+}
+
+html[data-theme="dark"] .btn-default:hover,
+html[data-theme="dark"] .btn-default:focus {
+  background: #465262;
+  color: #fff;
+}
+
+html[data-theme="dark"] .alert-warning {
+  background: #4a3b1b;
+  border-color: #806b37;
+  color: #f9e3a9;
+}
+
+html[data-theme="dark"] .alert-danger {
+  background: #522b30;
+  border-color: #8d4a4e;
+  color: #ffdddd;
+}
+
+html[data-theme="dark"] .account-info-trigger {
+  background: #e6e8ec;
+  color: #12151a;
+}
+
+html[data-theme="dark"] .account-info-text {
+  background: #292f39;
+  border-color: #66717f;
+  color: #e6e8ec;
+}
+
+html[data-theme="dark"] .sweet-alert h2,
+html[data-theme="dark"] .sweet-alert p {
+  color: #e6e8ec;
+}
+
+@media (max-width: 767px) {
+  html[data-theme="dark"] .navbar-default .navbar-nav .open .dropdown-menu > li > a {
+    color: #e6e8ec;
+  }
+
+  html[data-theme="dark"] .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover,
+  html[data-theme="dark"] .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
+    background: #343c49;
+    color: #fff;
+  }
+}

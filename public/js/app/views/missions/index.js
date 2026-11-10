@@ -22,7 +22,7 @@ module.exports = Marionette.LayoutView.extend({
   },
 
   events: {
-    'click #refresh': 'refresh',
+    'click .refresh-missions': 'refresh',
     'keyup #filterMissions': 'updateFilter'
   },
 
@@ -42,17 +42,20 @@ module.exports = Marionette.LayoutView.extend({
     this.listView.show(new ListView({ collection: this.options.missions, filterValue: this.filterValue }))
   },
 
-  refresh: function (event) {
-    event.preventDefault()
+  refresh: function () {
+    var button = this.$('.refresh-missions')
+    var status = this.$('.missions-refresh-status')
+    button.prop('disabled', true)
+    status.text('Requesting mission refresh...')
     $.ajax({
       url: '/api/missions/refresh',
-      type: 'POST',
-      success: function (resp) {
-
-      },
-      error: function (resp) {
-
-      }
+      type: 'POST'
+    }).done(function () {
+      status.text('Mission refresh requested.')
+    }).fail(function (response) {
+      status.text('Unable to refresh missions: ' + (response.responseText || 'request failed.'))
+    }).always(function () {
+      button.prop('disabled', false)
     })
   }
 })

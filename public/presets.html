@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <title>Preset Builder</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="/theme.js"></script>
   <style>
     :root {
       --bg: #12151a;
@@ -14,12 +15,21 @@
       --accent: #4f8cff;
       --ok: #2e9e5b;
     }
+    :root[data-theme="light"] {
+      --bg: #f5f6f8;
+      --panel: #fff;
+      --border: #c9cfd8;
+      --text: #202630;
+      --muted: #596575;
+      --accent: #245ebc;
+      --ok: #237b47;
+    }
     * { box-sizing: border-box; }
     body {
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
       background: var(--bg);
       color: var(--text);
-      max-width: 1200px;
+      max-width: 1600px;
       margin: 0 auto;
       padding: 2em 1em;
     }
@@ -54,7 +64,7 @@
     .search + .mod-list { margin-top: .5em; }
     .mod-list { max-height: 520px; overflow-y: auto; margin-top: .75em; padding-right: .5em; }
     label { display: block; padding: .25em 0; font-size: .92em; }
-    label:hover { color: #fff; }
+    label:hover { color: var(--accent); }
     .mod-item { display: flex; align-items: center; gap: .5em; user-select: none; }
     button, .dlc-item { user-select: none; }
     .mod-item input { margin: 0; flex: 0 0 auto; }

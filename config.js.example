@@ -44,12 +44,12 @@ module.exports = {
   type: 'windows', 
   admins: [], 
   auth: auth,
+  // sessionSecureCookies: true, // Use with HTTPS behind a trusted reverse proxy
+  // accountsPath: "S:\\path\\to\\accounts.json", // Optional; defaults to accounts.json beside app.js
   prefix: "", // Prefix to all server names
   suffix: "", // Suffix to all server names
   logFormat: "dev", // expressjs/morgan log format
 };
-
-
 
 
 

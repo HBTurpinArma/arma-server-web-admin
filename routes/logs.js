@@ -1,14 +1,9 @@
 var express = require('express')
-const config = require('../config');
 
 module.exports = function (logsManager) {
   var router = express.Router()
 
   router.get('/', function (req, res) {
-    if (!logsManager.canUserView(req.auth.user)){
-      res.status(403).send('You do not have permission to view logs...')
-      return
-    }
     logsManager.logFiles(function (err, files) {
       if (err) {
         res.status(500).send(err)
@@ -19,10 +14,6 @@ module.exports = function (logsManager) {
   })
 
   router.delete('/:log', function (req, res) {
-    if (!logsManager.canUserDelete(req.auth.user)){
-      res.status(403).send('You do not have permission to delete logs...')
-      return
-    }
     var filename = req.params.log
     logsManager.delete(filename, function (err) {
       if (err) {
@@ -34,11 +25,6 @@ module.exports = function (logsManager) {
   })
 
   router.get('/:log/:mode', function (req, res) {
-    if (!logsManager.canUserView(req.auth.user)){
-      res.status(403).send('You do not have permission to view logs...')
-      res.send("No")
-      return
-    }
     var requestedFilename = req.params.log
     var mode = req.params.mode === 'view' ? 'view' : 'download'
     logsManager.getLogFile(requestedFilename, function (err, file) {

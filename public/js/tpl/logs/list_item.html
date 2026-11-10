@@ -22,8 +22,8 @@
   </a>
 </td>
 <td>
-  <a class="btn btn-danger btn-xs destroy ladda-button pull-right" data-style="expand-left">
+  <button type="button" class="btn btn-danger btn-xs destroy ladda-button pull-right" data-style="expand-left" <%= canDelete ? '' : 'disabled title="Requires Logs Delete permission"' %>>
     <span class="glyphicon glyphicon-trash"></span>
     Delete
-  </a>
+  </button>
 </td>

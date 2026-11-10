@@ -5,6 +5,7 @@ require('ladda/dist/ladda-themeless.min.css')
 require('sweetalert/dist/sweetalert.css')
 require('sweetalert/dist/sweetalert.css')
 require('../css/styles.css')
+require('../css/preset-theme.css')
 
 require.config({
 
@@ -49,5 +50,8 @@ require.config({
 })
 
 require(['jquery', 'bootstrap', 'backbone', 'app/router'], function ($, Bootstrap, Backbone, Router) {
+  $(document).ajaxError(function (event, response) {
+    if (response.status === 401) window.location.assign('/login')
+  })
   return new Router()
 })

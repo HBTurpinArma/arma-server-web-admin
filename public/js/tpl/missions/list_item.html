@@ -7,7 +7,7 @@
 <td class="text-nowrap"><%-sizeFormatted%></td>
 <td class="text-nowrap"><%-dateModified.substring(0, 10)%></td>
 <td>
-  <button type="button" class="btn btn-danger btn-xs delete">
+  <button type="button" class="btn btn-danger btn-xs delete" <%= canDelete ? '' : 'disabled title="Requires Missions Delete permission"' %>>
     <span class="glyphicon glyphicon-trash"></span> Delete
   </button>
 </td>

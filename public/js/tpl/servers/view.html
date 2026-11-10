@@ -1,14 +1,17 @@
-<h2><%-title%></h2>
+<div class="server-editor-header">
+  <div>
+    <p class="server-editor-eyebrow">Server</p>
+    <h2><%-title%></h2>
+  </div>
+  <form class="server-save-form">
+    <button class="btn btn-primary" type="submit" <%= canEdit ? '' : 'disabled title="Requires Servers Edit permission"' %>>
+      <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
+      Save
+    </button>
+  </form>
+</div>
 
-<form>
-  <button class="btn btn-default btn-primary pull-right" type="submit">
-    <span class="glyphicon glyphicon-floppy-disk"></span>
-    Save
-  </button>
-</form>
-
-<!-- Nav tabs -->
-<ul class="nav nav-tabs" style="margin-bottom: 15px;">
+<ul class="nav nav-tabs server-editor-tabs">
   <li class="active"><a href="#tab-info" data-toggle="tab">Info</a></li>
   <li><a href="#tab-mods" data-toggle="tab">Mods</a></li>
   <li><a href="#tab-missions" data-toggle="tab">Missions</a></li>
@@ -17,14 +20,19 @@
 </ul>
 
 
-<!-- Tab panes -->
-<div class="tab-content">
+<div class="tab-content server-editor-content">
   <div class="tab-pane active" id="tab-info"></div>
   <div class="tab-pane" id="tab-mods"></div>
   <div class="tab-pane" id="tab-missions"></div>
   <div class="tab-pane" id="tab-settings">
-    <div id="settings"></div>
-    <div id="parameters"></div>
+    <section class="panel panel-default" aria-labelledby="server-settings-heading">
+      <div class="panel-heading"><h3 class="panel-title" id="server-settings-heading">Server Settings</h3></div>
+      <div class="panel-body" id="settings"></div>
+    </section>
+    <section class="panel panel-default" aria-labelledby="server-parameters-heading">
+      <div class="panel-heading"><h3 class="panel-title" id="server-parameters-heading">Startup Parameters</h3></div>
+      <div class="panel-body" id="parameters"></div>
+    </section>
   </div>
   <div class="tab-pane" id="tab-players"></div>
 </div>

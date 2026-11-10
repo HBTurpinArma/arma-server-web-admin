@@ -1,4 +1,8 @@
+<section class="panel panel-default" aria-labelledby="server-players-heading">
+  <div class="panel-heading"><h3 class="panel-title" id="server-players-heading">Players</h3></div>
+  <div class="panel-body">
 <% if (state) { %>
+  <div class="table-responsive">
   <table class="table table-striped">
     <thead>
       <tr>
@@ -24,10 +28,10 @@
       </tr>
     <% }); %>
     </tbody>
-  </table> 
+  </table>
+  </div>
 <% } else { %>
-  <tr>
-    <td>The server is offline and can't be queried.</td>
-    <td>&nbsp;</td>
-  </tr>
+  <p class="help-block">The server is offline and can't be queried.</p>
 <% } %>
+  </div>
+</section>

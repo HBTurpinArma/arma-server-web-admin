@@ -14,31 +14,26 @@
       <div class="panel-body" id="workshop"></div>
     </div> -->
 
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title">Refresh missions list</h3>
-      </div>
-      <div class="panel-body">
-        <p>
-          A refresh is needed if a mission is added manually to the missions directory on the server.
-          Uploads or downloads through this manager will update the list automatically.
-        </p>
-
-        <a class="btn btn-primary" id="refresh" href="#">
-          <span class="glyphicon glyphicon-refresh"></span>
-          Refresh
-        </a>
-      </div>
-    </div>
   </div>
   <div class="col-sm-8 col-sm-pull-4">
-    <form>
-      <div class="form-group">
-        <label for="filterMissions">Filter</label>
-        <input type="text" class="form-control" id="filterMissions" placeholder="Filter missions..." value="<%-filterValue%>">
+    <section class="panel panel-default" aria-labelledby="mission-list-heading">
+      <div class="panel-heading mods-section-heading">
+        <h2 class="panel-title" id="mission-list-heading">Missions</h2>
+        <button type="button" class="btn btn-default btn-xs refresh-missions" aria-label="Refresh missions" aria-describedby="missions-refresh-help">
+          <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> Refresh
+        </button>
       </div>
-    </form>
-
-    <div id="list"></div>
+      <div class="panel-body">
+        <p class="help-block" id="missions-refresh-help">Refresh after adding missions manually to the server. Uploads and downloads through this manager update the list automatically.</p>
+        <p class="missions-refresh-status" role="status"></p>
+        <form>
+          <div class="form-group">
+            <label for="filterMissions">Filter</label>
+            <input type="text" class="form-control" id="filterMissions" placeholder="Filter missions..." value="<%-filterValue%>">
+          </div>
+        </form>
+        <div class="table-responsive"><div id="list"></div></div>
+      </div>
+    </section>
   </div>
 </div>

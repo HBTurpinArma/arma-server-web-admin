@@ -1,5 +1,5 @@
 <div class="navbar navbar-default navbar-fixed-top" role="navigation">
-  <div class="container">
+  <div class="container-fluid app-container">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
         <span class="sr-only">Toggle navigation</span>
@@ -12,12 +12,34 @@
     <div class="navbar-collapse collapse">
       <ul class="nav navbar-nav navbar-right">
         <li class="<%= isActiveRoute('') %>"><a href="#" id="dashboard">Dashboard</a></li>
-        <li class="<%= isActiveRoute('logs') %>"><a href="#logs" id="logs">Logs</a></li>
-        <li class="<%= isActiveRoute('missions') %>"><a href="#missions" id="missions">Missions</a></li>
-        <li class="<%= isActiveRoute('mods') %>"><a href="#mods" id="mods">Mods</a></li>
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Servers <b class="caret"></b></a>
-          <ul class="dropdown-menu" id="servers-list"></ul>
+        <li class="dropdown <%= isServersActive() %>">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Servers <b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li class="<%= isActiveRoute('missions') %>"><a href="#missions" id="missions">Missions</a></li>
+            <li class="<%= isActiveRoute('mods') %>"><a href="#mods" id="mods">Mods</a></li>
+            <li class="<%= isActiveRoute('logs') %>"><a href="#logs" id="logs">Logs</a></li>
+            <li role="separator" class="divider"></li>
+            <li class="dropdown-header">Servers</li>
+            <li class="server-list-container"><ul id="servers-list"></ul></li>
+          </ul>
+        </li>
+        <li class="dropdown <%= isActiveRoute('accounts') %>">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Settings <b class="caret"></b></a>
+          <ul class="dropdown-menu settings-menu">
+            <% if (username) { %>
+            <li class="dropdown-header account-signed-in">Signed in as <strong><%- username %></strong></li>
+            <% } %>
+            <% if (canManageAccounts) { %>
+            <li class="<%= isActiveRoute('accounts') %>"><a href="#accounts">Account Management</a></li>
+            <% } %>
+            <li><label class="theme-toggle"><span class="theme-switch"><input type="checkbox" class="theme-toggle-input" <%= darkMode ? 'checked' : '' %>><span class="theme-switch-track" aria-hidden="true"></span></span> Dark Mode</label></li>
+            <% if (username) { %>
+            <li role="separator" class="divider"></li>
+            <li><button type="button" class="account-logout">Log Out</button></li>
+            <% } else { %>
+            <li class="dropdown-header">Not signed in</li>
+            <% } %>
+          </ul>
         </li>
       </ul>
     </div>

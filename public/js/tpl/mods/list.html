@@ -1,19 +1,69 @@
-<a class="btn btn-primary" id="refresh" href="#">
-  <span class="glyphicon glyphicon-refresh"></span>
-  Refresh
-</a>
+<div class="row">
+  <div class="col-sm-4 col-sm-push-8">
+    <section class="panel panel-default" aria-labelledby="upload-preset-heading">
+      <div class="panel-heading"><h2 class="panel-title" id="upload-preset-heading">Upload Preset</h2></div>
+      <div class="panel-body">
+        <p class="presets-upload-availability" role="status">Checking preset upload availability...</p>
+        <div class="presets-upload-panel" hidden>
+          <form class="preset-upload-form" enctype="multipart/form-data">
+            <div class="form-group">
+              <label for="preset-file">Launcher Preset (.html)</label>
+              <input type="file" id="preset-file" name="preset" accept=".html,text/html" class="form-control" required>
+              <p class="help-block">Maximum file size: 5 MiB. Existing files with the same name will be replaced.</p>
+            </div>
+            <button type="submit" class="btn btn-primary">
+              <span class="glyphicon glyphicon-cloud-upload"></span> Upload
+            </button>
+            <p class="preset-upload-status" role="status"></p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="col-sm-8 col-sm-pull-4">
+    <section class="panel panel-default mods-presets" aria-labelledby="launcher-presets-heading">
+      <div class="panel-heading mods-section-heading">
+        <h2 class="panel-title" id="launcher-presets-heading">Launcher Presets</h2>
+        <button type="button" class="btn btn-default btn-xs refresh-presets" aria-label="Refresh launcher presets">
+          <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> Refresh
+        </button>
+      </div>
+      <div class="panel-body">
+        <p class="presets-status" role="status">Loading presets...</p>
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead><tr><th scope="col">Preset File</th><th scope="col">Actions</th></tr></thead>
+            <tbody class="presets-list"></tbody>
+          </table>
+        </div>
+        <p class="presets-builder" hidden><a href="/presets" target="_blank" rel="noopener noreferrer">Open Preset Builder</a></p>
+      </div>
+    </section>
+  </div>
+</div>
 
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th>Game</th>
-      <th width="50%">Path</th>
-      <th width="50%">Mod</th>
-      <th>Size</th>
-      <th></th>
-    </tr>
-  </thead>
-
-  <!-- want to insert collection items, here -->
-  <tbody></tbody>
-</table>
+<section class="panel panel-default">
+  <div class="panel-heading mods-section-heading">
+    <h2 class="panel-title">Installed Mods</h2>
+    <button type="button" class="btn btn-default btn-xs refresh-mods" aria-label="Refresh installed mods">
+      <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> Refresh
+    </button>
+  </div>
+  <div class="panel-body">
+    <p class="mods-refresh-status" role="status"></p>
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Game</th>
+            <th width="50%">Path</th>
+            <th width="50%">Mod</th>
+            <th>Size</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody class="mods-list"></tbody>
+      </table>
+    </div>
+  </div>
+</section>

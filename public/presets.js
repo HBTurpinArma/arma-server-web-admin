@@ -299,16 +299,21 @@
       .catch(function (e) { status.textContent = e.message })
   }
 
-  // The route is behind basic auth, so the browser prompts for credentials here.
-  function checkAuth () {
+  function checkAuth (redirectOnLogin) {
     var status = $('auth-status')
     fetch('/api/preset-sets/me', { credentials: 'same-origin' })
       .then(function (r) {
-        if (r.status === 401) throw new Error('Login cancelled.')
+        if (r.status === 401 && redirectOnLogin) {
+          try { sessionStorage.setItem(ADMIN_FLAG, '1') } catch (e) { /* storage unavailable */ }
+          window.location.assign('/login?returnTo=%2Fpresets')
+          return null
+        }
+        if (r.status === 401) throw new Error('Sign in to edit sets.')
         if (!r.ok) throw new Error('Login check failed.')
         return r.json()
       })
       .then(function (me) {
+        if (!me) return
         if (!me.canEdit) throw new Error('Logged in as ' + me.user + ' without permission to edit sets.')
         isAdmin = true
         try { sessionStorage.setItem(ADMIN_FLAG, '1') } catch (e) { /* storage unavailable */ }
@@ -321,15 +326,21 @@
       .catch(function (e) { status.textContent = e.message })
   }
 
-  // Only hides the admin controls; the browser keeps its Basic-auth credentials until it is closed.
   function logout () {
-    isAdmin = false
-    try { sessionStorage.removeItem(ADMIN_FLAG) } catch (e) { /* storage unavailable */ }
-    $('admin-save').hidden = true
-    $('logout').hidden = true
-    $('login').hidden = false
-    $('auth-status').textContent = ''
-    renderSets()
+    fetch('/api/session/logout', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    }).then(function (response) {
+      if (!response.ok) throw new Error('Unable to sign out.')
+      isAdmin = false
+      try { sessionStorage.removeItem(ADMIN_FLAG) } catch (e) { /* storage unavailable */ }
+      $('admin-save').hidden = true
+      $('logout').hidden = true
+      $('login').hidden = false
+      $('auth-status').textContent = 'Signed out.'
+      renderSets()
+    }).catch(function (err) { $('auth-status').textContent = err.message })
   }
 
   function setTargets (entries) {
@@ -470,7 +481,7 @@
       .catch(function () { return {} })
   }
 
-  // The route is behind basic auth, so the browser prompts for credentials on 401.
+  // Saved sets require an authenticated session.
   function saveSet () {
     var status = $('set-status')
     var name = $('set-name').value.trim()
@@ -550,7 +561,7 @@
         $('download').addEventListener('click', download)
         $('share').addEventListener('click', copyShareLink)
         $('save-set').addEventListener('click', saveSet)
-        $('login').addEventListener('click', checkAuth)
+        $('login').addEventListener('click', function () { checkAuth(true) })
         $('logout').addEventListener('click', logout)
         $('clear-optional').addEventListener('click', clearOptional)
         // Only re-check silently if this tab logged in before, to avoid an unprompted login dialog.

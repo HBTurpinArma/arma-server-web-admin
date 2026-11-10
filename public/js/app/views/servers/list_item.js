@@ -1,6 +1,7 @@
 var _ = require('underscore')
 var Marionette = require('marionette')
 var sweetAlert = require('sweet-alert')
+var permissions = require('app/permissions')
 
 var tpl = require('tpl/servers/list_item.html')
 
@@ -19,6 +20,14 @@ module.exports = Marionette.ItemView.extend({
 
   modelEvents: {
     change: 'serverUpdated'
+  },
+
+  initialize: function () {
+    this.listenTo(permissions, 'change', this.render)
+  },
+
+  templateHelpers: function () {
+    return { canDelete: permissions.can('servers', 'delete') }
   },
 
   clone: function (e) {
@@ -40,6 +49,7 @@ module.exports = Marionette.ItemView.extend({
   },
 
   delete: function (event) {
+    if (!permissions.can('servers', 'delete')) return
     var self = this
     sweetAlert({
       title: 'Are you sure?',

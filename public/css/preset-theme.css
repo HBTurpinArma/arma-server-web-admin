@@ -1,0 +1,395 @@
+html {
+  --app-bg: #f5f6f8;
+  --app-panel: #fff;
+  --app-border: #c9cfd8;
+  --app-text: #202630;
+  --app-muted: #596575;
+  --app-accent: #245ebc;
+  --app-row: #f0f3f7;
+  --app-hover: #e6ecf5;
+}
+
+html[data-theme="dark"] {
+  --app-bg: #12151a;
+  --app-panel: #1b1f27;
+  --app-border: #2b313c;
+  --app-text: #e6e8ec;
+  --app-muted: #aab4c2;
+  --app-accent: #4f8cff;
+  --app-row: #20252e;
+  --app-hover: #303948;
+}
+
+html body {
+  background: var(--app-bg);
+  color: var(--app-text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+html a {
+  color: var(--app-accent);
+}
+
+html h1, html h2, html h3 {
+  font-weight: 600;
+}
+
+html h1 {
+  font-size: 28px;
+}
+
+html h2 {
+  font-size: 20px;
+}
+
+html h3 {
+  font-size: 16px;
+}
+
+html .page-header {
+  border-color: var(--app-border);
+  margin-top: 0;
+}
+
+html .navbar-default,
+html[data-theme="dark"] .navbar-default {
+  background: var(--app-panel);
+  border-color: var(--app-border);
+}
+
+html .navbar-default .navbar-brand,
+html[data-theme="dark"] .navbar-default .navbar-brand {
+  color: var(--app-text);
+  font-weight: 600;
+}
+
+html .navbar-default .navbar-nav > li > a,
+html[data-theme="dark"] .navbar-default .navbar-nav > li > a {
+  color: var(--app-text);
+}
+
+html .navbar-default .navbar-nav > .active > a,
+html .navbar-default .navbar-nav > .open > a,
+html .navbar-default .navbar-nav > li > a:hover,
+html[data-theme="dark"] .navbar-default .navbar-nav > .active > a,
+html[data-theme="dark"] .navbar-default .navbar-nav > .open > a,
+html[data-theme="dark"] .navbar-default .navbar-nav > li > a:hover {
+  background: var(--app-hover);
+  color: var(--app-text);
+}
+
+html .dropdown-menu,
+html[data-theme="dark"] .dropdown-menu {
+  background: var(--app-panel);
+  border: 1px solid var(--app-border);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  padding: 6px 0;
+}
+
+html .dropdown-menu > li > a,
+html .server-list-container > ul > li > a,
+html .settings-menu .account-logout,
+html .settings-menu .theme-toggle,
+html[data-theme="dark"] .dropdown-menu > li > a,
+html[data-theme="dark"] .server-list-container > ul > li > a,
+html[data-theme="dark"] .settings-menu .account-logout,
+html[data-theme="dark"] .settings-menu .theme-toggle {
+  color: var(--app-text);
+}
+
+html .dropdown-menu > li > a:hover,
+html .dropdown-menu > li > a:focus,
+html .server-list-container > ul > li > a:hover,
+html .server-list-container > ul > li > a:focus,
+html .settings-menu .account-logout:hover,
+html .settings-menu .account-logout:focus,
+html .settings-menu .theme-toggle:hover,
+html .settings-menu .theme-toggle:focus-within,
+html[data-theme="dark"] .dropdown-menu > li > a:hover,
+html[data-theme="dark"] .dropdown-menu > li > a:focus,
+html[data-theme="dark"] .server-list-container > ul > li > a:hover,
+html[data-theme="dark"] .server-list-container > ul > li > a:focus,
+html[data-theme="dark"] .settings-menu .account-logout:hover,
+html[data-theme="dark"] .settings-menu .account-logout:focus,
+html[data-theme="dark"] .settings-menu .theme-toggle:hover,
+html[data-theme="dark"] .settings-menu .theme-toggle:focus-within {
+  background: var(--app-hover);
+  color: var(--app-text);
+}
+
+html .dropdown-header,
+html .help-block,
+html[data-theme="dark"] .dropdown-header,
+html[data-theme="dark"] .help-block {
+  color: var(--app-muted);
+}
+
+html .dropdown-menu .divider,
+html[data-theme="dark"] .dropdown-menu .divider {
+  background: var(--app-border);
+}
+
+html .panel,
+html .modal-content,
+html .sweet-alert,
+html .well,
+html[data-theme="dark"] .panel,
+html[data-theme="dark"] .modal-content,
+html[data-theme="dark"] .sweet-alert,
+html[data-theme="dark"] .well {
+  background: var(--app-panel);
+  border: 1px solid var(--app-border);
+  border-radius: 10px;
+  color: var(--app-text);
+  box-shadow: none;
+}
+
+html .panel-default > .panel-heading,
+html[data-theme="dark"] .panel-default > .panel-heading {
+  background: transparent;
+  border-color: var(--app-border);
+  color: var(--app-text);
+  padding: 14px 16px;
+  border-radius: 10px 10px 0 0;
+}
+
+html .panel-title {
+  color: var(--app-muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+html .panel-body {
+  padding: 16px;
+}
+
+html .mods-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+html .mods-refresh-status:empty,
+html .missions-refresh-status:empty {
+  display: none;
+}
+
+html .table {
+  background: var(--app-panel);
+}
+
+html .table > thead > tr > th,
+html .table > tbody > tr > td,
+html .table > tbody > tr > th,
+html[data-theme="dark"] .table > thead > tr > th,
+html[data-theme="dark"] .table > tbody > tr > td,
+html[data-theme="dark"] .table > tbody > tr > th {
+  border-color: var(--app-border);
+  vertical-align: middle;
+}
+
+html .table > thead > tr > th {
+  color: var(--app-muted);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+html .table-striped > tbody > tr:nth-of-type(odd),
+html[data-theme="dark"] .table-striped > tbody > tr:nth-of-type(odd) {
+  background: var(--app-row);
+}
+
+html .form-control,
+html[data-theme="dark"] .form-control {
+  background: var(--app-bg);
+  border: 1px solid var(--app-border);
+  border-radius: 6px;
+  box-shadow: none;
+  color: var(--app-text);
+}
+
+html .form-control:focus,
+html[data-theme="dark"] .form-control:focus {
+  border-color: var(--app-accent);
+  box-shadow: 0 0 0 2px var(--app-accent);
+}
+
+html input[type="checkbox"],
+html input[type="radio"] {
+  accent-color: var(--app-accent);
+}
+
+html .btn {
+  border-radius: 6px;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+html .btn-default,
+html[data-theme="dark"] .btn-default {
+  background: var(--app-bg);
+  border-color: var(--app-border);
+  color: var(--app-text);
+}
+
+html .btn-default:hover,
+html .btn-default:focus,
+html[data-theme="dark"] .btn-default:hover,
+html[data-theme="dark"] .btn-default:focus {
+  background: var(--app-hover);
+  border-color: var(--app-accent);
+  color: var(--app-text);
+}
+
+html .btn-primary,
+html[data-theme="dark"] .btn-primary {
+  background: #245ebc;
+  border-color: #245ebc;
+  color: #fff;
+}
+
+html .btn-primary:hover,
+html .btn-primary:focus,
+html[data-theme="dark"] .btn-primary:hover,
+html[data-theme="dark"] .btn-primary:focus {
+  background: #1b4e9e;
+  border-color: #4f8cff;
+  color: #fff;
+}
+
+html .nav-tabs,
+html[data-theme="dark"] .nav-tabs {
+  border-color: var(--app-border);
+}
+
+html .nav-tabs > li > a {
+  border-radius: 6px 6px 0 0;
+}
+
+html .nav-tabs > li.active > a,
+html .nav-tabs > li.active > a:hover,
+html .nav-tabs > li.active > a:focus,
+html[data-theme="dark"] .nav-tabs > li.active > a,
+html[data-theme="dark"] .nav-tabs > li.active > a:hover,
+html[data-theme="dark"] .nav-tabs > li.active > a:focus {
+  background: var(--app-panel);
+  border-color: var(--app-border);
+  border-bottom-color: var(--app-panel);
+  color: var(--app-text);
+}
+
+html .tab-content {
+  background: var(--app-panel);
+  border: 1px solid var(--app-border);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+html .server-editor-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+html .server-editor-header h2 {
+  margin: 3px 0 0;
+  overflow-wrap: anywhere;
+}
+
+html .server-editor-eyebrow,
+html .server-mods-label {
+  color: var(--app-muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+html .server-editor-eyebrow {
+  margin: 0;
+}
+
+html .server-editor-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+html .server-editor-content {
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+
+html .server-editor-content .panel-body > :last-child,
+html .server-info-form .form-group:last-child {
+  margin-bottom: 0;
+}
+
+html .server-mods-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+html .server-mods-filter label,
+html .server-mods-label {
+  display: block;
+  margin-bottom: 6px;
+}
+
+html .server-mods-filter-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+html .server-mods-filter-controls .form-control {
+  width: 140px;
+}
+
+html .server-mods-checkbox-column {
+  min-width: 90px;
+  text-align: center;
+}
+
+html .server-editor-content pre {
+  background: var(--app-bg);
+  border-color: var(--app-border);
+  color: var(--app-text);
+  margin: 10px 0 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+html .accounts-permission-group,
+html[data-theme="dark"] .accounts-permission-group {
+  border-color: var(--app-border);
+  border-radius: 8px;
+}
+
+html .accounts-permission-group legend {
+  color: var(--app-text);
+}
+
+html .modal-header,
+html .modal-footer,
+html[data-theme="dark"] .modal-header,
+html[data-theme="dark"] .modal-footer {
+  border-color: var(--app-border);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html .btn {
+    transition: none;
+  }
+}

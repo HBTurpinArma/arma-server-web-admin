@@ -1,0 +1,119 @@
+<%
+  var descriptions = {
+    servers: {
+      view: 'View server details through the server API.',
+      start: 'Start servers and restart headless clients.',
+      stop: 'Stop servers.',
+      create: 'Create new server instances.',
+      edit: 'Change server settings.',
+      delete: 'Delete server instances.'
+    },
+    missions: {
+      view: 'List and refresh missions.',
+      create: 'Upload missions and download them from Steam Workshop.',
+      delete: 'Delete missions.'
+    },
+    mods: {
+      view: 'List and refresh mods.',
+      delete: 'Delete mods.'
+    },
+    logs: {
+      view: 'List, view, and download logs.',
+      delete: 'Delete logs.'
+    },
+    presets: {
+      edit: 'Upload and replace launcher presets, and save or delete preset sets when the preset builder is enabled.',
+      delete: 'Delete launcher preset files from the Mods page. This does not control preset sets.'
+    },
+    accounts: {
+      manage: 'Create, edit, and delete accounts, including assigning account-management and other permissions.'
+    }
+  }
+  function displayName (name) {
+    return name.charAt(0).toUpperCase() + name.slice(1)
+  }
+%>
+<div class="row accounts-page">
+  <div class="col-md-5">
+    <section class="panel panel-default">
+      <div class="panel-heading accounts-panel-heading">
+        <h2 class="panel-title">Existing Accounts</h2>
+        <button type="button" class="btn btn-primary btn-sm new-account">New Account</button>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-striped accounts-table">
+          <thead><tr><th scope="col">Username</th><th scope="col">Actions</th></tr></thead>
+          <tbody>
+          <% accounts.forEach(function (item, index) { %>
+            <tr>
+              <td><%- item.username %></td>
+              <td class="accounts-actions">
+                <button type="button" class="btn btn-default btn-sm edit-account" data-index="<%= index %>" aria-label="Edit <%- item.username %>">Edit</button>
+                <button type="button" class="btn btn-default btn-sm copy-account" data-index="<%= index %>" aria-label="Copy <%- item.username %>">Copy</button>
+                <button type="button" class="btn btn-danger btn-sm delete-account" data-index="<%= index %>" aria-label="Delete <%- item.username %>">Delete</button>
+              </td>
+            </tr>
+          <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+  <div class="col-md-7">
+    <section class="panel panel-default">
+      <div class="panel-heading"><h2 class="panel-title"><%= editing ? 'Edit Account' : 'New Account' %></h2></div>
+      <div class="panel-body">
+        <form class="account-form">
+          <div class="form-group">
+            <label for="account-username">Username</label>
+            <span class="account-info">
+              <button type="button" class="account-info-trigger" aria-label="Username information" aria-describedby="account-info-username">i</button>
+              <span class="account-info-text" role="tooltip" id="account-info-username">Use 1-64 letters, numbers, or the characters . _ @ -. Usernames must be unique.</span>
+            </span>
+            <input id="account-username" class="form-control" value="<%- account.username || '' %>" required maxlength="64" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label for="account-password">Password</label>
+            <span class="account-info">
+              <button type="button" class="account-info-trigger" aria-label="Password information" aria-describedby="account-info-password">i</button>
+              <span class="account-info-text" role="tooltip" id="account-info-password">
+                <%= editing ? 'Leave blank to keep the current password. Copy a new password before saving.' : 'A password is required. Copy generated passwords before saving.' %>
+                Passwords may be up to 256 characters. Generate creates a 16-character password with uppercase and lowercase letters, numbers, and symbols.
+              </span>
+            </span>
+            <div class="input-group">
+              <input id="account-password" class="form-control" type="password" maxlength="256" autocomplete="new-password" <%= editing ? '' : 'required' %>>
+              <span class="input-group-btn">
+                <button type="button" class="btn btn-default show-password">Show</button>
+                <button type="button" class="btn btn-default generate-password">Generate</button>
+              </span>
+            </div>
+          </div>
+          <h3 class="accounts-permissions-heading">Permissions</h3>
+          <div class="alert alert-warning">Permissions do not restrict every data channel. Do not rely on them to isolate untrusted users.</div>
+          <div class="accounts-permission-groups">
+            <% Object.keys(permissions).forEach(function (group) { %>
+              <fieldset class="accounts-permission-group">
+                <legend><%- displayName(group) %></legend>
+                <% permissions[group].forEach(function (action) { %>
+                  <div class="accounts-permission">
+                    <label>
+                      <input type="checkbox" class="permission" data-group="<%- group %>" data-action="<%- action %>"
+                        <%= account.permissions && account.permissions[group] && account.permissions[group][action] === true ? 'checked' : '' %>>
+                      <%- displayName(action) %>
+                    </label>
+                    <span class="account-info">
+                      <button type="button" class="account-info-trigger" aria-label="<%- displayName(group) %> <%- displayName(action) %> permission information" aria-describedby="account-info-<%- group %>-<%- action %>">i</button>
+                      <span class="account-info-text" role="tooltip" id="account-info-<%- group %>-<%- action %>"><%- (descriptions[group] && descriptions[group][action]) || 'No description is available for this permission.' %></span>
+                    </span>
+                  </div>
+                <% }) %>
+              </fieldset>
+            <% }) %>
+          </div>
+          <button type="submit" class="btn btn-primary">Save Account</button>
+        </form>
+      </div>
+    </section>
+  </div>
+</div>
