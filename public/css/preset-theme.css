@@ -243,6 +243,11 @@ html .table {
   background: var(--app-panel);
 }
 
+html .table .table,
+html[data-theme="dark"] .table .table {
+  background: var(--app-panel);
+}
+
 html .table > thead > tr > th,
 html .table > tbody > tr > td,
 html .table > tbody > tr > th,
@@ -261,7 +266,11 @@ html .table > thead > tr > th {
 }
 
 html .table-striped > tbody > tr:nth-of-type(odd),
-html[data-theme="dark"] .table-striped > tbody > tr:nth-of-type(odd) {
+html[data-theme="dark"] .table-striped > tbody > tr:nth-of-type(odd),
+html .table-striped > tbody > tr:nth-of-type(odd) > td,
+html .table-striped > tbody > tr:nth-of-type(odd) > th,
+html[data-theme="dark"] .table-striped > tbody > tr:nth-of-type(odd) > td,
+html[data-theme="dark"] .table-striped > tbody > tr:nth-of-type(odd) > th {
   background: var(--app-row);
 }
 

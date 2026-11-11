@@ -19,6 +19,14 @@ describe('server editor layout', function () {
     })
   })
 
+  it('keeps striped table cells on the themed row background', function () {
+    var css = read('public/css/preset-theme.css')
+    assert(css.includes('html .table .table'))
+    assert(css.includes('html .table-striped > tbody > tr:nth-of-type(odd) > td'))
+    assert(css.includes('html[data-theme="dark"] .table-striped > tbody > tr:nth-of-type(odd) > td'))
+    assert(css.includes('background: var(--app-row);'))
+  })
+
   it('keeps the editor regions and permission-aware save control', function () {
     var template = underscore.template(read('public/js/tpl/servers/view.html'))
     var html = template({ title: '<Test>', canEdit: false })

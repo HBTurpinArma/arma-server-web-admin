@@ -62,6 +62,7 @@ describe('preset uploads', function () {
     assert.deepStrictEqual(list.body, ['test.html'])
     var file = await request(publicApp).get('/api/presets/test.html').expect(200)
     assert.strictEqual(file.headers['content-disposition'], 'attachment')
+    assert(file.headers['last-modified'])
     assert.strictEqual(file.headers['x-content-type-options'], 'nosniff')
     assert(file.headers['content-security-policy'].includes('sandbox'))
   })

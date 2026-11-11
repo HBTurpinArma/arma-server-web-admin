@@ -18,6 +18,7 @@ describe('launcher presets on the Mods page', function () {
     assert(html.includes('aria-labelledby="launcher-presets-heading"'))
     assert(html.includes('class="btn btn-default btn-xs refresh-presets"'))
     assert(html.includes('class="btn btn-default btn-xs refresh-mods"'))
+    assert(html.includes('<th scope="col">Updated</th>'))
   })
 
   it('groups the mission filter and list in a titled section', function () {
@@ -120,6 +121,11 @@ describe('launcher presets on the Mods page', function () {
       app.use('/api/presets', require('../routes/presets')(directory))
       var response = await request(app).get('/api/presets').expect(200)
       assert.deepStrictEqual(response.body, ['Preset B.HTML'])
+      var metadata = await request(app).get('/api/presets/metadata').expect(200)
+      assert.deepStrictEqual(metadata.body, [{
+        name: 'Preset B.HTML',
+        lastModified: fs.statSync(html).mtime.toISOString()
+      }])
     } finally {
       fs.unlinkSync(html)
       fs.unlinkSync(other)
@@ -132,12 +138,16 @@ describe('launcher presets on the Mods page', function () {
     var source = fs.readFileSync(path.join(__dirname, '..', 'public', 'js', 'app', 'views', 'mods', 'list.js'), 'utf8')
     var module = { exports: {} }
     var callbacks = {}
-    var state = { items: [], links: [], status: '', uploadDisabled: true, availability: '', deleteDisabled: null }
+    var state = { items: [], links: [], dates: [], status: '', uploadDisabled: true, availability: '', deleteDisabled: null }
     var jquery = function (tag, attributes) {
       var item = {}
       if (tag === '<a>') state.links.push(attributes)
       return {
-        text: function (name) { item.text = name; return this },
+        text: function (name) {
+          item.text = name
+          if (tag === '<td>') state.dates.push(name)
+          return this
+        },
         append: function (child) { if (!item.child) item.child = child; return this },
         appendTo: function (target) { if (tag === '<tr>') state.items.push(item.child.value); return this },
         attr: function () { return this },
@@ -181,7 +191,7 @@ describe('launcher presets on the Mods page', function () {
       if (selector === '.mod-update-status') return { text: function () {} }
     }
     view.onRender()
-    var presets = callbacks['/api/presets']
+    var presets = callbacks['/api/presets/metadata']
     var me = callbacks['/api/accounts/me']
     me.success({})
     assert(state.availability.includes('Restart the server'))
@@ -191,8 +201,15 @@ describe('launcher presets on the Mods page', function () {
     me.success({ canEditPresets: true, canDeletePresets: true })
     assert(state.availability.includes('until the presets list loads'))
     assert.strictEqual(state.uploadDisabled, true)
-    presets.success(['<script>.html', 'Preset B.HTML'])
+    presets.success([
+      { name: '<script>.html', lastModified: '2024-01-02T03:04:05.000Z' },
+      { name: 'Preset B.HTML', lastModified: '2024-02-03T04:05:06.000Z' }
+    ])
     assert.deepStrictEqual(state.items, ['<script>.html', 'Preset B.HTML'])
+    assert.deepStrictEqual(state.dates, [
+      new Date('2024-01-02T03:04:05.000Z').toLocaleDateString(),
+      new Date('2024-02-03T04:05:06.000Z').toLocaleDateString()
+    ])
     assert.strictEqual(state.links[0].href, '/api/presets/%3Cscript%3E.html')
     assert.strictEqual(state.links[0].download, '<script>.html')
     assert.strictEqual(state.status, '')
@@ -211,9 +228,9 @@ describe('launcher presets on the Mods page', function () {
     presets.success({ unexpected: true })
     assert(state.status.includes('invalid response'))
     view.loadPresets()
-    var latest = callbacks['/api/presets']
-    latest.success(['new.html'])
-    presets.success(['old.html'])
+    var latest = callbacks['/api/presets/metadata']
+    latest.success([{ name: 'new.html', lastModified: '2024-01-02T03:04:05.000Z' }])
+    presets.success([{ name: 'old.html', lastModified: '2024-02-03T04:05:06.000Z' }])
     assert.deepStrictEqual(state.items, ['new.html'])
     presets.failure({ status: 500, responseText: 'Outdated failure' })
     assert.strictEqual(state.status, '')

@@ -135,13 +135,18 @@ module.exports = Marionette.CompositeView.extend({
     this.presetsRequestId = requestId
     this.presetsLoaded = false
     this.updateUploadVisibility()
-    return $.getJSON('/api/presets').done(function (presets) {
+    return $.getJSON('/api/presets/metadata').done(function (presets) {
       if (requestId !== self.presetsRequestId) return
-      if (!Array.isArray(presets) || !presets.every(function (name) { return typeof name === 'string' })) {
+      if (!Array.isArray(presets) || !presets.every(function (preset) {
+        return preset && typeof preset.name === 'string' &&
+          typeof preset.lastModified === 'string' && !isNaN(Date.parse(preset.lastModified))
+      })) {
         self.$('.presets-status').text('Unable to load presets: invalid response.')
         return
       }
-      self.presets = presets
+      self.presets = presets.map(function (preset) { return preset.name })
+      self.presetLastModified = {}
+      presets.forEach(function (preset) { self.presetLastModified[preset.name] = preset.lastModified })
       self.presetsLoaded = true
       self.renderPresets()
       self.$('.presets-status').text(presets.length ? '' : 'No launcher presets found.')
@@ -171,7 +176,10 @@ module.exports = Marionette.CompositeView.extend({
         download: name,
         title: 'Download preset'
       }).text(name)
-      $('<tr>').append($('<td>').append(link)).append(actions).appendTo(list)
+      var lastModified = self.presetLastModified && self.presetLastModified[name]
+      var updatedCell = $('<td>').text(lastModified ? new Date(lastModified).toLocaleDateString() : 'Unknown')
+      if (lastModified) updatedCell.attr('title', new Date(lastModified).toLocaleString())
+      $('<tr>').append($('<td>').append(link)).append(updatedCell).append(actions).appendTo(list)
     })
   },
 

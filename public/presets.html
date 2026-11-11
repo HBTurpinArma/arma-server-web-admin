@@ -59,8 +59,11 @@
     .search { margin-top: .75em; }
     .panel-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: .75em; min-height: 2em; }
     .panel-head h2 { margin: 0; }
+    .panel-head .updated { color: var(--muted); font-size: .8em; white-space: nowrap; }
     #base, #optional-search { height: 2.5em; }
-    .panel-head button { padding: .25em .7em; font-size: .85em; }
+    .optional-search-row { display: flex; align-items: center; gap: .5em; }
+    #optional-search { flex: 1 1 auto; min-width: 0; }
+    #clear-optional { flex: 0 0 auto; height: 2.5em; padding: .25em .7em; font-size: .85em; }
     .search + .mod-list { margin-top: .5em; }
     .mod-list { max-height: 520px; overflow-y: auto; margin-top: .75em; padding-right: .5em; }
     label { display: block; padding: .25em 0; font-size: .92em; }
@@ -152,6 +155,7 @@
       <section class="panel">
         <div class="panel-head">
           <h2>Required mods <span id="base-count" class="count"></span></h2>
+          <span id="base-updated" class="updated"></span>
         </div>
         <select id="base"></select>
         <div id="base-mods" class="mod-list"></div>
@@ -168,9 +172,12 @@
       <section class="panel">
         <div class="panel-head">
           <h2>Optional mods <span id="optional-count" class="count"></span></h2>
+          <span id="optional-updated" class="updated"></span>
+        </div>
+        <div class="optional-search-row">
+          <input type="search" id="optional-search" placeholder="Search optional mods...">
           <button id="clear-optional" type="button">Clear all</button>
         </div>
-        <input type="search" id="optional-search" placeholder="Search optional mods...">
         <div id="optional" class="mod-list"></div>
       </section>
     </div>

@@ -34,9 +34,12 @@
     return fetch('/api/presets/' + encodeURIComponent(file))
       .then(function (r) {
         if (!r.ok) throw new Error('Failed to load ' + file)
-        return r.text()
+        return r.text().then(function (text) {
+          return { text: text, lastModified: r.headers.get('Last-Modified') }
+        })
       })
-      .then(function (text) {
+      .then(function (result) {
+        var text = result.text
         var doc = new DOMParser().parseFromString(text, 'text/html')
         var mods = Array.prototype.map.call(doc.querySelectorAll('tr[data-type="ModContainer"]'), function (tr) {
           var nameEl = tr.querySelector('[data-type="DisplayName"]')
@@ -50,9 +53,21 @@
           var nameEl = tr.querySelector('[data-type="DisplayName"]')
           return { name: nameEl ? nameEl.textContent.trim() : '', row: tr }
         })
-        cache[file] = { mods: mods, dlcs: dlcs }
+        cache[file] = { mods: mods, dlcs: dlcs, lastModified: result.lastModified }
         return cache[file]
       })
+  }
+
+  function showUpdatedDate (id, lastModified) {
+    var el = $(id)
+    if (!lastModified) {
+      el.textContent = ''
+      el.removeAttribute('title')
+      return
+    }
+    var date = new Date(lastModified)
+    el.textContent = 'Updated ' + date.toLocaleDateString()
+    el.title = date.toLocaleString()
   }
 
   function modKey (mod) {
@@ -177,6 +192,7 @@
     el.textContent = 'Loading...'
     return fetchPreset(file).then(function (data) {
       baseData = data
+      showUpdatedDate('base-updated', data.lastModified)
       el.textContent = ''
       baseChecks = data.mods.map(function (m) {
         var c = makeCheckbox(el, m.name, true, m)
@@ -192,9 +208,13 @@
     var el = $('optional')
     el.textContent = ''
     optionalChecks = []
-    if (!file) return Promise.resolve()
+    if (!file) {
+      showUpdatedDate('optional-updated', null)
+      return Promise.resolve()
+    }
     return fetchPreset(file).then(function (data) {
       optionalData = data
+      showUpdatedDate('optional-updated', data.lastModified)
       var selected = {}
       selectedKeys.forEach(function (k) { selected[k] = true })
       optionalChecks = data.mods.map(function (m) {

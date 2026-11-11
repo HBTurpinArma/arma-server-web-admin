@@ -24,6 +24,31 @@ module.exports = function (presetsPath) {
     })
   })
 
+  router.get('/metadata', function (req, res) {
+    fs.readdir(presetsPath, { withFileTypes: true }, function (err, entries) {
+      if (err) {
+        console.error('Presets: cannot read ' + presetsPath + ': ' + err.message)
+        res.status(500).send('Unable to read presets folder (' + err.code + ')')
+        return
+      }
+      Promise.all(entries
+        .filter(function (e) { return e.isFile() && isValidName(e.name) })
+        .map(function (e) {
+          return fs.promises.stat(path.join(presetsPath, e.name)).then(function (stat) {
+            return { name: e.name, lastModified: stat.mtime.toISOString() }
+          })
+        }))
+        .then(function (presets) {
+          presets.sort(function (a, b) { return a.name.localeCompare(b.name) })
+          res.json(presets)
+        })
+        .catch(function (statErr) {
+          console.error('Presets: cannot read file metadata in ' + presetsPath + ': ' + statErr.message)
+          res.status(500).send('Unable to read preset metadata (' + statErr.code + ')')
+        })
+    })
+  })
+
   router.get('/sets', function (req, res) {
     var dir = path.join(presetsPath, 'sets')
     fs.promises.readdir(dir).then(function (files) {
