@@ -21,7 +21,7 @@ module.exports = Marionette.LayoutView.extend({
   },
 
   updateContent: function () {
-    if (!this.isRendered) return
+    if (!this.isRendered || this.isDestroyed) return
     if (permissions.can(this.group, 'view')) {
       if (!this.allowed) {
         this.allowed = true

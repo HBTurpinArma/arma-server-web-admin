@@ -111,6 +111,7 @@ module.exports = Marionette.LayoutView.extend({
 
     this.model.save(data, {
       success: function () {
+        if (self.isDestroyed) return
         var newId = self.model.get('id')
         if (oldId !== newId) {
           Backbone.history.navigate('#servers/' + newId, true)
@@ -121,7 +122,7 @@ module.exports = Marionette.LayoutView.extend({
       error: function (model, response) {
         sweetAlert({
           title: 'Error',
-          text: response.responseText,
+          text: response.responseText || 'Unable to save the server. Check your connection and verify the server settings before retrying.',
           type: 'error'
         })
       }
