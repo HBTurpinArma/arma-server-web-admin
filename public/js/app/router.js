@@ -2,6 +2,7 @@ var $ = require('jquery')
 var _ = require('underscore')
 var Backbone = require('backbone')
 var Marionette = require('marionette')
+require('app/marionette-compat')
 
 var LayoutView = require('app/views/layout')
 var NavigationView = require('app/views/navigation')
