@@ -21,7 +21,26 @@ function isAdmin (user) {
     user.permissions.accounts.manage === true)
 }
 
-function publicAccount (user) {
+// Other applications that sign in against this accounts file (config.extraServices).
+// The panel only stores a yes/no per service in permissions.services; each
+// application reads the file itself and decides what that access means.
+function extraServices (config) {
+  var seen = {}
+  return (Array.isArray(config.extraServices) ? config.extraServices : []).filter(function (service) {
+    if (!service || typeof service.id !== 'string' || !/^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$/.test(service.id) || seen[service.id]) return false
+    seen[service.id] = true
+    return true
+  }).map(function (service) {
+    return {
+      id: service.id,
+      group: typeof service.group === 'string' && service.group ? service.group : 'Other',
+      name: typeof service.name === 'string' && service.name ? service.name : service.id,
+      description: typeof service.description === 'string' ? service.description : ''
+    }
+  })
+}
+
+function publicAccount (user, services) {
   var permissions = Object.assign({}, user.permissions)
   permissions.accounts = Object.assign({}, permissions.accounts, { auditLog: canViewAuditLog(user) })
   permissions.servers = Object.assign({}, permissions.servers, { updateGame: canUpdateGame(user) })
@@ -29,12 +48,22 @@ function publicAccount (user) {
     permissions.mods = Object.assign({}, permissions.mods)
     delete permissions.mods.updateGame
   }
+  var stored = user.permissions && user.permissions.services
+  if (services.length) {
+    permissions.services = {}
+    services.forEach(function (service) {
+      permissions.services[service.id] = !!(stored && stored[service.id] === true)
+    })
+  } else {
+    delete permissions.services
+  }
   return { username: user.username, permissions: permissions }
 }
 
 module.exports = function (config, defaultPath, onChange) {
   var router = express.Router()
   var file = config.accountsPath || defaultPath
+  var services = extraServices(config)
 
   router.use(function (req, res, next) {
     res.set('Cache-Control', 'no-store')
@@ -86,7 +115,11 @@ module.exports = function (config, defaultPath, onChange) {
   })
 
   router.get('/', function (req, res) {
-    res.json({ accounts: config.auth.map(publicAccount), permissions: permissions })
+    res.json({
+      accounts: config.auth.map(function (user) { return publicAccount(user, services) }),
+      permissions: permissions,
+      services: services
+    })
   })
 
   function save (nextAccounts, res) {
@@ -127,6 +160,14 @@ module.exports = function (config, defaultPath, onChange) {
           return typeof body.permissions[group][action] === 'boolean'
         })
     })
+    // Extra services are optional in a request: anything left out keeps its saved value.
+    var requested = body.permissions.services
+    if (requested !== undefined) {
+      valid = valid && !!requested && typeof requested === 'object' && !Array.isArray(requested) &&
+        services.every(function (service) {
+          return requested[service.id] === undefined || typeof requested[service.id] === 'boolean'
+        })
+    }
     return valid ? null : 'Invalid permissions'
   }
 
@@ -144,6 +185,16 @@ module.exports = function (config, defaultPath, onChange) {
       })
     })
     delete merged.mods.updateGame
+    var requested = body.permissions.services || {}
+    if (services.length || merged.services) {
+      // Ids no longer in config.extraServices are kept, so removing a service
+      // from the config and adding it back restores everyone's access.
+      merged.services = Object.assign({}, merged.services)
+      services.forEach(function (service) {
+        if (typeof requested[service.id] === 'boolean') merged.services[service.id] = requested[service.id]
+        else if (merged.services[service.id] === undefined) merged.services[service.id] = false
+      })
+    }
     result.username = body.username
     result.password = body.password || existing.password
     result.permissions = merged

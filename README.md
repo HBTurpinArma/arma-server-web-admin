@@ -55,6 +55,7 @@ accountsPath | Optional path to the accounts JSON file; defaults to `accounts.js
 auditLogPath | Optional path for the persistent panel audit log; defaults to `panel-audit.log` in the application directory
 presetsPath | Optional folder containing public Arma Launcher `.html` presets; the Mods page lists these files
 branding | Optional browser/page branding: `title`, `navigationTitle`, and `icon` URL (for example `/favicon.png`; place the icon in `public/`)
+extraServices | Optional list of other applications that sign in with these accounts (`id`, `group`, `name`, `description`); see [Extra services](#extra-services)
 modUpdater | Optional updater configuration: `python`, absolute mod `script` and optional `gameScript`, `cwd` and `gameCwd` paths
 prefix | Text prepended to all game servers name
 suffix | Text appended to all game servers name
@@ -143,6 +144,22 @@ permissions. Existing accounts without this permission cannot manage accounts.
 Use **Copy** beside an account to start a new account with the same available
 permissions; choose a new username and password. At least one account manager must
 remain.
+
+### Extra services
+
+Other applications on the same machine can use these accounts for their own
+sign-in, so each person has one username and password. List them in
+`extraServices` in `config.js` (see `config.js.example`) and restart: **Accounts**
+then shows an **Extra Services** section with a checkbox per entry, grouped by
+`group`. Ticks are saved in the account's `permissions.services` object, keyed by
+`id`; the panel itself grants nothing from them. Each application reads the
+accounts file and treats an account as allowed when `permissions.services[id]` is
+`true`, or when the account has **Accounts Manage**. Removing an entry from
+`extraServices` hides it but keeps the saved ticks.
+
+Passwords in the accounts file are stored as entered, so any application reading
+it can see them. Only point applications you trust at it, keep the file readable
+only by the service accounts that need it, and use HTTPS where you can.
 
 Accounts with **Presets Edit** permission can upload launcher `.html` presets from
 the Mods page (up to 5 MiB per file). Uploading a file with an existing filename

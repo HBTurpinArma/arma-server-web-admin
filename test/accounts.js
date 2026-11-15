@@ -220,6 +220,108 @@ describe('account management', function () {
     assert(html.indexOf('Leave blank to keep') !== -1)
   })
 
+  describe('extra services', function () {
+    var services = [
+      { id: 'arma3', group: 'Reddit Poster', name: 'AM2 - Arma 3', description: 'Post for AM2.' },
+      { id: 'briefing-am2', group: 'Briefing Site', name: 'Upload' },
+      { id: 'bad id' },
+      { id: 'arma3', name: 'duplicate' }
+    ]
+
+    beforeEach(async function () {
+      // The route reads extraServices when it is mounted, so mount a fresh app.
+      config.extraServices = services
+      app = express()
+      app.use(express.json())
+      setupAuth(config, app)
+      app.use('/api/accounts', accountsRoute(config, file))
+      adminCookie = (await login('admin', 'secret').expect(200)).headers['set-cookie'][0]
+    })
+
+    function save (username, body) {
+      return admin('put', '/api/accounts/' + username).set('X-Requested-With', 'XMLHttpRequest').send(body)
+    }
+
+    it('lists configured services and each account\'s access, defaulting to none', async function () {
+      var listing = await admin('get', '/api/accounts').expect(200)
+      assert.deepStrictEqual(listing.body.services.map(function (s) { return s.id }), ['arma3', 'briefing-am2'])
+      assert.strictEqual(listing.body.services[1].group, 'Briefing Site')
+      assert.deepStrictEqual(listing.body.accounts[1].permissions.services, { arma3: false, 'briefing-am2': false })
+      assert.strictEqual(listing.body.permissions.services, undefined)
+    })
+
+    it('saves ticks, keeps omitted ones and ignores unknown ids', async function () {
+      var body = { username: 'user', password: '', permissions: permissions(false) }
+      body.permissions.services = { arma3: true, 'briefing-am2': false, unknown: true }
+      await save('user', body).expect(200)
+      var saved = JSON.parse(fs.readFileSync(file))[1].permissions.services
+      assert.deepStrictEqual(saved, { arma3: true, 'briefing-am2': false })
+
+      body.permissions.services = { 'briefing-am2': true }
+      await save('user', body).expect(200)
+      saved = JSON.parse(fs.readFileSync(file))[1].permissions.services
+      assert.deepStrictEqual(saved, { arma3: true, 'briefing-am2': true })
+
+      delete body.permissions.services
+      await save('user', body).expect(200)
+      saved = JSON.parse(fs.readFileSync(file))[1].permissions.services
+      assert.deepStrictEqual(saved, { arma3: true, 'briefing-am2': true })
+      var listing = await admin('get', '/api/accounts').expect(200)
+      assert.strictEqual(listing.body.accounts[1].permissions.services.arma3, true)
+    })
+
+    it('rejects service values that are not true or false', async function () {
+      var body = { username: 'user', password: '', permissions: permissions(false) }
+      body.permissions.services = { arma3: 'yes' }
+      await save('user', body).expect(400)
+      body.permissions.services = ['arma3']
+      await save('user', body).expect(400)
+    })
+
+    it('keeps ticks for services removed from the config', async function () {
+      config.auth[1].permissions.services = { retired: true }
+      fs.writeFileSync(file, JSON.stringify(config.auth))
+      var body = { username: 'user', password: '', permissions: permissions(false) }
+      body.permissions.services = { arma3: true }
+      await save('user', body).expect(200)
+      var saved = JSON.parse(fs.readFileSync(file))[1].permissions.services
+      assert.deepStrictEqual(saved, { retired: true, arma3: true, 'briefing-am2': false })
+      var listing = await admin('get', '/api/accounts').expect(200)
+      assert.strictEqual(listing.body.accounts[1].permissions.services.retired, undefined)
+    })
+
+    it('renders an Extra Services section grouped by service, with current ticks', async function () {
+      var body = { username: 'user', password: '', permissions: permissions(false) }
+      body.permissions.services = { arma3: true }
+      await save('user', body).expect(200)
+      var listing = await admin('get', '/api/accounts').expect(200)
+      var template = require('underscore').template(fs.readFileSync(path.join(__dirname, '..', 'public', 'js', 'tpl', 'accounts-content.html'), 'utf8'))
+      var html = template({
+        accounts: listing.body.accounts,
+        account: listing.body.accounts[1],
+        permissions: listing.body.permissions,
+        services: listing.body.services,
+        editing: true
+      })
+      assert(html.includes('Extra Services'))
+      assert(html.includes('<legend>Reddit Poster</legend>'))
+      assert(html.includes('<legend>Briefing Site</legend>'))
+      assert(/data-service="arma3"\s+checked/.test(html))
+      assert(!/data-service="briefing-am2"\s+checked/.test(html))
+      assert(html.includes('Post for AM2.'))
+      assert(html.includes('id="account-info-service-briefing-am2"'))
+    })
+  })
+
+  it('shows no Extra Services section or service data when none are configured', async function () {
+    var listing = await admin('get', '/api/accounts').expect(200)
+    assert.deepStrictEqual(listing.body.services, [])
+    assert.strictEqual(listing.body.accounts[1].permissions.services, undefined)
+    var template = require('underscore').template(fs.readFileSync(path.join(__dirname, '..', 'public', 'js', 'tpl', 'accounts-content.html'), 'utf8'))
+    var html = template({ accounts: [], account: {}, permissions: listing.body.permissions, editing: false })
+    assert(!html.includes('Extra Services'))
+  })
+
   it('renders information controls for every available permission and credential field', async function () {
     var response = await admin('get', '/api/accounts').expect(200)
     var template = require('underscore').template(fs.readFileSync(path.join(__dirname, '..', 'public', 'js', 'tpl', 'accounts-content.html'), 'utf8'))

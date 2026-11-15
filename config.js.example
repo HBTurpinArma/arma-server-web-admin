@@ -59,6 +59,13 @@ module.exports = {
   // sessionSecureCookies: true, // Use with HTTPS behind a trusted reverse proxy
   // accountsPath: "S:\\path\\to\\accounts.json", // Optional; defaults to accounts.json beside app.js
   // auditLogPath: "S:\\path\\to\\panel-audit.log", // Optional; defaults to panel-audit.log beside app.js
+  // extraServices: [ // Optional; other apps that sign in with these accounts, shown under "Extra Services" in Accounts
+  //   { id: "arma3", group: "Reddit Poster", name: "AM2 - Arma 3", description: "Build and post AM2 recruitment posts." },
+  //   { id: "reforger", group: "Reddit Poster", name: "AM1 - Reforger", description: "Build and post AM1 recruitment posts." },
+  //   { id: "website-am2", group: "CTC Site", name: "2nd Battalion", description: "Edit 2nd Battalion badge notes." },
+  //   { id: "website-am1", group: "CTC Site", name: "1st Battalion", description: "Edit 1st Battalion badge notes." },
+  //   { id: "briefing-am2", group: "Briefing Site", name: "Upload", description: "Publish and remove briefing pages." }
+  // ],
   prefix: "", // Prefix to all server names
   suffix: "", // Suffix to all server names
   logFormat: "dev", // expressjs/morgan log format

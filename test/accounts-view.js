@@ -77,6 +77,53 @@ describe('account copy', function () {
     assert.strictEqual(view.copyDraft, null)
     assert(!/data-group="accounts" data-action="manage"\s+checked/.test(html))
   })
+
+  it('sends Extra Services ticks only when services are configured', function () {
+    var root = path.join(__dirname, '..', 'public', 'js')
+    var source = fs.readFileSync(path.join(root, 'app', 'views', 'accounts.js'), 'utf8')
+    var module = { exports: {} }
+    var jquery = function (element) {
+      return {
+        attr: function (name) { return element[name.replace('data-', '')] },
+        prop: function () { return element.checked }
+      }
+    }
+    vm.runInNewContext(source, {
+      module: module,
+      require: function (name) {
+        return {
+          underscore: underscore,
+          jquery: jquery,
+          marionette: { ItemView: { extend: function (view) { return view } } },
+          'app/password-generator': require('../public/js/app/password-generator'),
+          'tpl/accounts.html': '',
+          'tpl/accounts-content.html': ''
+        }[name]
+      }
+    })
+    var view = module.exports
+    var submitted
+    var items = {
+      '.permission': [{ group: 'accounts', action: 'manage', checked: false }],
+      '.service-permission': [{ service: 'arma3', checked: true }, { service: 'briefing-am2', checked: false }]
+    }
+    view.accounts = []
+    view.permissions = { accounts: ['manage'] }
+    view.editing = null
+    view.request = function (options) { submitted = JSON.parse(options.data) }
+    view.$ = function (selector) {
+      if (items[selector]) return { each: function (callback) { items[selector].forEach(function (item) { callback.call(item) }) } }
+      return { val: function () { return 'x' } }
+    }
+
+    view.services = [{ id: 'arma3' }, { id: 'briefing-am2' }]
+    view.saveAccount({ preventDefault: function () {} })
+    assert.deepStrictEqual(submitted.permissions.services, { arma3: true, 'briefing-am2': false })
+
+    view.services = []
+    view.saveAccount({ preventDefault: function () {} })
+    assert.strictEqual(submitted.permissions.services, undefined)
+  })
 })
 
 describe('account information popovers', function () {

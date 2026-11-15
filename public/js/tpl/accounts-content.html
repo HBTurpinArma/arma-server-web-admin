@@ -116,6 +116,39 @@
               </fieldset>
             <% }) %>
           </div>
+          <% var serviceList = typeof services === 'undefined' ? [] : (services || []) %>
+          <% if (serviceList.length) { %>
+            <%
+              var serviceGroups = []
+              serviceList.forEach(function (service) {
+                var group = serviceGroups.filter(function (item) { return item.name === service.group })[0]
+                if (!group) serviceGroups.push(group = { name: service.group, items: [] })
+                group.items.push(service)
+              })
+            %>
+            <h3 class="accounts-permissions-heading">Extra Services</h3>
+            <p class="help-block">Other applications that sign in with these accounts. Account managers can use all of them.</p>
+            <div class="accounts-permission-groups accounts-services">
+              <% serviceGroups.forEach(function (group) { %>
+                <fieldset class="accounts-permission-group">
+                  <legend><%- group.name %></legend>
+                  <% group.items.forEach(function (service) { %>
+                    <div class="accounts-permission">
+                      <label>
+                        <input type="checkbox" class="service-permission" data-service="<%- service.id %>"
+                          <%= account.permissions && account.permissions.services && account.permissions.services[service.id] === true ? 'checked' : '' %>>
+                        <%- service.name %>
+                      </label>
+                      <span class="account-info">
+                        <button type="button" class="account-info-trigger" aria-label="<%- group.name %> <%- service.name %> access information" aria-describedby="account-info-service-<%- service.id %>">i</button>
+                        <span class="account-info-text" role="tooltip" id="account-info-service-<%- service.id %>"><%- service.description || ('Sign in to ' + group.name + ': ' + service.name + '.') %></span>
+                      </span>
+                    </div>
+                  <% }) %>
+                </fieldset>
+              <% }) %>
+            </div>
+          <% } %>
           <button type="submit" class="btn btn-primary">Save Account</button>
         </form>
       </div>

@@ -47,6 +47,7 @@ module.exports = Marionette.ItemView.extend({
     $.getJSON('/api/accounts').done(function (data) {
       self.accounts = data.accounts
       self.permissions = data.permissions
+      self.services = data.services || []
       self.editing = null
       self.copyDraft = null
       self.renderContent()
@@ -57,6 +58,7 @@ module.exports = Marionette.ItemView.extend({
     this.$('.accounts-content').html(contentTemplate({
       accounts: this.accounts,
       permissions: this.permissions,
+      services: this.services || [],
       account: this.editing === null ? (this.copyDraft || {}) : this.accounts[this.editing],
       editing: this.editing !== null
     }))
@@ -112,6 +114,13 @@ module.exports = Marionette.ItemView.extend({
       var input = $(this)
       values[input.attr('data-group')][input.attr('data-action')] = input.prop('checked')
     })
+    if (this.services && this.services.length) {
+      values.services = {}
+      this.$('.service-permission').each(function () {
+        var input = $(this)
+        values.services[input.attr('data-service')] = input.prop('checked')
+      })
+    }
     var url = '/api/accounts'
     if (this.editing !== null) url += '/' + encodeURIComponent(this.accounts[this.editing].username)
     this.request({
