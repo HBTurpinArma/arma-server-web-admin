@@ -75,6 +75,16 @@ defaults to `arma3`; URL-encode the filename and game ID. Anyone with a file's
 name can download it, so do not place private missions in these folders. Mission
 listing and changes still require authentication and the appropriate permissions.
 
+Mission uploads replace an existing mission with the same lowercased filename.
+The panel stages uploads in the mission directory before atomically replacing
+the destination, so an interrupted transfer does not truncate an existing PBO.
+API clients sign in with `POST /api/session` (JSON `username` and `password`,
+header `X-Requested-With: XMLHttpRequest`), retain the session cookie, then send
+multipart `POST /api/missions` with a `missions` file field and `game` game ID.
+The account needs `missions.create`. Clients that copy files directly to the
+configured mission folder can request `POST /api/missions/refresh` with
+`missions.view` permission to update the panel list.
+
 Dark mode is enabled by default. Use **Settings > Dark Mode** to switch themes;
 the choice is saved in browser storage and shared by the sign-in page and Preset
 Builder on the same origin.
