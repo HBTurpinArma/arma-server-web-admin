@@ -1,13 +1,28 @@
+<%
+  var logSource = typeof source === 'undefined' ? 'primary' : source
+  var logFiles = typeof files === 'undefined' ? [{ name: name, size: size }] : files
+  var tawMissionName = typeof missionName === 'undefined' ? '' : missionName
+  var tawPlayerCount = typeof playerCount === 'undefined' ? null : playerCount
+%>
 <td>
-  <% if (size < 100 * 1024 * 1024) { %>
-    <!-- Only show files under 100 MB -->
-    <a href='/api/logs/<%-name%>/view' target=_blank><%-name%></a>
-  <% } else { %>
-    <%-name%>
+  <div class="log-file-links">
+    <% logFiles.forEach(function (logFile) { %>
+      <span>
+        <% if (logFile.size < 100 * 1024 * 1024) { %>
+          <a href='/api/logs/<%-encodeURIComponent(logSource)%>/<%-encodeURIComponent(logFile.name)%>/view' target=_blank><%-logFile.name%></a>
+        <% } else { %>
+          <%-logFile.name%>
+        <% } %>
+      </span>
+    <% }) %>
+  </div>
+  <% if (logSource === 'taw' && (tawMissionName || tawPlayerCount !== null)) { %>
+    <div class="log-file-metadata">
+      <% if (tawMissionName) { %><strong><%-tawMissionName%></strong><% } %>
+      <% if (tawMissionName && tawPlayerCount !== null) { %> · <% } %>
+      <% if (tawPlayerCount !== null) { %><%-tawPlayerCount%> <%-tawPlayerCount === 1 ? 'player' : 'players'%><% } %>
+    </div>
   <% } %>
-</td>
-<td class="hidden-xs hidden-sm" style="text-align: right; white-space: nowrap;">
-  <%- new Date(created).toLocaleString() %>
 </td>
 <td class="hidden-xs hidden-sm" style="text-align: right; white-space: nowrap;">
   <%- new Date(modified).toLocaleString() %>
@@ -16,10 +31,17 @@
   <%-formattedSize%>
 </td>
 <td>
-  <a class="btn btn-primary btn-xs" href="/api/logs/<%-name%>/download">
-    <span class="glyphicon glyphicon-download"></span>
-    Download
-  </a>
+  <div class="log-download-buttons">
+    <% if (logSource === 'taw') { %>
+      <% var jsonFile = logFiles.find(function (file) { return file.name.toLowerCase().endsWith('.json') }) %>
+      <% if (jsonFile) { %>
+        <a class="btn btn-success btn-xs" href="/api/logs/taw/<%-encodeURIComponent(jsonFile.name)%>/leaderboard" download="<%-jsonFile.name.replace(/\.json$/i, '-leaderboard.png')%>" title="Generate and download leaderboard image">
+          <span class="glyphicon glyphicon-picture"></span>
+          Leaderboard
+        </a>
+      <% } %>
+    <% } %>
+  </div>
 </td>
 <td>
   <button type="button" class="btn btn-danger btn-xs destroy ladda-button pull-right" data-style="expand-left" <%= canDelete ? '' : 'disabled title="Requires Logs Delete permission"' %>>

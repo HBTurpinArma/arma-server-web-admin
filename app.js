@@ -14,6 +14,7 @@ var Manager = require('./lib/manager')
 var Missions = require('./lib/missions')
 var Mods = require('./lib/mods')
 var Logs = require('./lib/logs')
+var createDebriefing = require('./lib/debriefing')
 var Settings = require('./lib/settings')
 var createModUpdater = require('./lib/mod-updater')
 var createLiveViewData = require('./lib/live-view-data')
@@ -63,6 +64,7 @@ app.use(morgan(config.logFormat || 'dev'))
 app.use(serveStatic(path.join(__dirname, 'public')))
 
 var logs = new Logs(config)
+var debriefing = createDebriefing(config.debriefing)
 
 var manager = new Manager(config, logs)
 manager.load()
@@ -82,7 +84,7 @@ var liveViewData = createLiveViewData(io, config, {
 
 app.use('/api/logs', routePermissions(config, 'logs', function (req) {
   return req.method === 'DELETE' ? 'delete' : 'view'
-}), require('./routes/logs')(logs))
+}), require('./routes/logs')(logs, debriefing))
 app.use('/api/missions', routePermissions(config, 'missions', function (req) {
   if (req.method === 'DELETE') return 'delete'
   if (req.method === 'POST') return req.path === '/refresh' ? 'view' : 'create'

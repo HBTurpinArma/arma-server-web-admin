@@ -10,27 +10,58 @@ function read (name) {
 }
 
 describe('log file sections', function () {
-  it('renders two titled sections with responsive list containers', function () {
+  it('renders three titled sections with responsive list containers', function () {
     var render = underscore.template(read('tpl/logs/list.html'))
     var html = render({ canView: true, permissionsStatus: 'ready' })
     assert(html.includes('aria-labelledby="rpt-logs-heading"'))
     assert(html.includes('RPT Files (.rpt)'))
     assert(html.includes('aria-labelledby="log-files-heading"'))
     assert(html.includes('Log Files (.log)'))
-    assert.strictEqual((html.match(/class="panel-heading mods-section-heading"/g) || []).length, 2)
-    assert.strictEqual((html.match(/class="btn btn-default btn-xs refresh-logs"/g) || []).length, 2)
-    assert(html.includes('<div class="table-responsive"><div id="rpt-list"></div></div>'))
-    assert(html.includes('<div class="table-responsive"><div id="log-list"></div></div>'))
+    assert(html.includes('aria-labelledby="taw-logs-heading"'))
+    assert(html.includes('TAW Logging (.log, .json)'))
+    assert.strictEqual((html.match(/class="panel-heading mods-section-heading"/g) || []).length, 3)
+    assert.strictEqual((html.match(/class="btn btn-default btn-xs refresh-logs"/g) || []).length, 3)
+    assert(html.includes('<div class="table-responsive logs-table-scroll"><div id="rpt-list"></div></div>'))
+    assert(html.includes('<div class="table-responsive logs-table-scroll"><div id="log-list"></div></div>'))
+    assert(html.includes('<div class="table-responsive logs-table-scroll"><div id="taw-log-list"></div></div>'))
+    assert(html.includes('<div class="logs-primary-grid">'))
     var denied = render({ canView: false, permissionsStatus: 'ready' })
     assert(!denied.includes('refresh-logs'))
     var table = read('tpl/logs/file_list.html')
     assert(table.includes('<tbody></tbody>'))
-    ;['Filename', 'Created', 'Modified', 'Size'].forEach(function (heading) {
+    ;['Filename', 'Modified', 'Size'].forEach(function (heading) {
       assert(table.includes(heading))
     })
+    assert(!table.includes('Created'))
+    var pairedRow = underscore.template(read('tpl/logs/list_item.html'))({
+      name: 'event',
+      source: 'taw',
+      files: [{ name: 'event.log', size: 10 }, { name: 'event.json', size: 20 }],
+      missionName: 'operation_test',
+      playerCount: 12,
+      modified: '2026-01-01',
+      formattedSize: '30 B',
+      canDelete: true
+    })
+    assert(pairedRow.includes('/api/logs/taw/event.json/leaderboard'))
+    assert(pairedRow.includes('download="event-leaderboard.png"'))
+    assert(pairedRow.includes('Leaderboard'))
+    assert(pairedRow.includes('operation_test'))
+    assert(pairedRow.includes('12 players'))
+    assert(!pairedRow.includes('/api/logs/taw/event.json/download'))
+    assert(!pairedRow.includes('/api/logs/taw/event.log/download'))
+    var primaryRow = underscore.template(read('tpl/logs/list_item.html'))({
+      name: 'server.rpt',
+      source: 'primary',
+      size: 10,
+      modified: '2026-01-01',
+      formattedSize: '10 B',
+      canDelete: true
+    })
+    assert(!primaryRow.includes('/download'))
   })
 
-  it('filters the shared collection by extension and reflects additions and removals', function () {
+  it('filters the shared collection by extension and source and reflects additions and removals', function () {
     var module = { exports: {} }
     var dependencies = {
       underscore: underscore,
@@ -43,22 +74,31 @@ describe('log file sections', function () {
       require: function (name) { return dependencies[name] }
     })
     var view = module.exports
-    var logs = new Backbone.Collection([{ name: 'first.rpt' }, { name: 'second.log' }, { name: 'other.txt' }])
-    var rpt = { extension: '.rpt' }
-    var log = { extension: '.log' }
+    var logs = new Backbone.Collection([
+      { name: 'first.rpt', source: 'primary' },
+      { name: 'second.log', source: 'primary' },
+      { name: 'event', source: 'taw', files: [{ name: 'event.json' }, { name: 'event.log' }] },
+      { name: 'taw', source: 'taw', files: [{ name: 'taw.log' }] },
+      { name: 'other.txt', source: 'primary' }
+    ])
+    var rpt = { extensions: ['.rpt'], source: 'primary' }
+    var log = { extensions: ['.log'], source: 'primary' }
+    var taw = { extensions: ['.log', '.json'], source: 'taw' }
     function names (context) {
       return logs.filter(function (model) { return view.filter.call(context, model) })
         .map(function (model) { return model.get('name') })
     }
     assert.deepStrictEqual(names(rpt), ['first.rpt'])
     assert.deepStrictEqual(names(log), ['second.log'])
-    logs.add({ name: 'third.rpt' })
+    assert.deepStrictEqual(names(taw), ['event', 'taw'])
+    logs.add({ name: 'third.rpt', source: 'primary' })
     logs.remove(logs.at(1))
     assert.deepStrictEqual(names(rpt), ['first.rpt', 'third.rpt'])
     assert.deepStrictEqual(names(log), [])
+    assert.deepStrictEqual(names(taw), ['event', 'taw'])
   })
 
-  it('only creates the two filtered lists when viewing is permitted', function () {
+  it('only creates the three filtered lists when viewing is permitted', function () {
     var module = { exports: {} }
     var allowed = false
     var shown = {}
@@ -88,6 +128,7 @@ describe('log file sections', function () {
     }
     view.rptList = { show: function (child) { shown.rpt = child } }
     view.logList = { show: function (child) { shown.log = child } }
+    view.tawLogList = { show: function (child) { shown.taw = child } }
     view.onRender()
     assert.deepStrictEqual(shown, {})
     allowed = true
@@ -95,7 +136,11 @@ describe('log file sections', function () {
     assert.strictEqual(shown.rpt.options.collection, collection)
     assert.strictEqual(shown.log.options.collection, collection)
     assert.strictEqual(shown.rpt.options.extension, '.rpt')
+    assert.strictEqual(shown.rpt.options.source, 'primary')
     assert.strictEqual(shown.log.options.extension, '.log')
+    assert.strictEqual(shown.log.options.source, 'primary')
+    assert.strictEqual(shown.taw.options.extensions.join(','), '.log,.json')
+    assert.strictEqual(shown.taw.options.source, 'taw')
   })
 
   it('refreshes both lists together and reports failures and success', function () {

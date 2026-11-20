@@ -13,6 +13,63 @@ body {
   white-space: nowrap;
 }
 
+.logs-primary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.logs-primary-grid .logs-panel {
+  min-width: 0;
+  margin-bottom: 20px;
+}
+
+.logs-table-scroll {
+  height: 760px;
+  overflow-y: auto;
+}
+
+.log-file-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+
+.log-file-links span + span::before {
+  content: "/";
+  margin-right: 8px;
+  color: #999;
+}
+
+.log-file-metadata {
+  margin-top: 3px;
+  color: #888;
+  font-size: 12px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.log-download-buttons {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.log-download-buttons .btn {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 991px) {
+  .logs-primary-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
+
 .app-container {
   max-width: 1600px;
   margin-left: auto;

@@ -43,6 +43,8 @@ Key | Description
 --- | ---
 games | Game configurations keyed by game ID, including server, mod and mission paths
 logsPath | Folder containing server logs
+tawLogsPath | Optional folder containing TAW `.log` and `.json` files; defaults to `taw_logging` inside `logsPath`
+debriefing | Optional leaderboard generator configuration with `python` and the adapted `debriefing.py` script path
 port | Web port to use
 host | IP or Hostname to listen on
 type | Which kind of server to use, can be 'linux', 'windows' or 'wine'

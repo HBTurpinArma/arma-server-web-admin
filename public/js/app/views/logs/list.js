@@ -12,7 +12,8 @@ module.exports = Marionette.LayoutView.extend({
 
   regions: {
     rptList: '#rpt-list',
-    logList: '#log-list'
+    logList: '#log-list',
+    tawLogList: '#taw-log-list'
   },
 
   events: {
@@ -34,8 +35,9 @@ module.exports = Marionette.LayoutView.extend({
 
   onRender: function () {
     if (!permissions.can('logs', 'view')) return
-    this.rptList.show(new FileListView({ collection: this.collection, extension: '.rpt' }))
-    this.logList.show(new FileListView({ collection: this.collection, extension: '.log' }))
+    this.rptList.show(new FileListView({ collection: this.collection, extension: '.rpt', source: 'primary' }))
+    this.logList.show(new FileListView({ collection: this.collection, extension: '.log', source: 'primary' }))
+    this.tawLogList.show(new FileListView({ collection: this.collection, extensions: ['.log', '.json'], source: 'taw' }))
     this.updateRefreshStatus()
   },
 

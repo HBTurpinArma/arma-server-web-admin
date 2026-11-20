@@ -10,10 +10,17 @@ module.exports = Marionette.CompositeView.extend({
   template: _.template(tpl),
 
   initialize: function (options) {
-    this.extension = options.extension
+    this.extensions = options.extensions || [options.extension]
+    this.source = options.source || 'primary'
   },
 
   filter: function (child) {
-    return child.get('name').endsWith(this.extension)
+    var names = child.get('files')
+      ? child.get('files').map(function (file) { return file.name.toLowerCase() })
+      : [child.get('name').toLowerCase()]
+    var matchesExtension = this.extensions.some(function (extension) {
+      return names.some(function (name) { return name.endsWith(extension) })
+    })
+    return (child.get('source') || 'primary') === this.source && matchesExtension
   }
 })

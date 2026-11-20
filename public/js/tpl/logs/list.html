@@ -12,7 +12,8 @@
   </div>
 </section>
 <% } else { %>
-<section class="panel panel-default" aria-labelledby="rpt-logs-heading">
+<div class="logs-primary-grid">
+<section class="panel panel-default logs-panel" aria-labelledby="rpt-logs-heading">
   <div class="panel-heading mods-section-heading">
     <h2 class="panel-title" id="rpt-logs-heading">RPT Files (.rpt)</h2>
     <button type="button" class="btn btn-default btn-xs refresh-logs" aria-label="Refresh log files">
@@ -21,10 +22,10 @@
   </div>
   <div class="panel-body">
     <p class="logs-refresh-status" role="status"></p>
-    <div class="table-responsive"><div id="rpt-list"></div></div>
+    <div class="table-responsive logs-table-scroll"><div id="rpt-list"></div></div>
   </div>
 </section>
-<section class="panel panel-default" aria-labelledby="log-files-heading">
+<section class="panel panel-default logs-panel" aria-labelledby="log-files-heading">
   <div class="panel-heading mods-section-heading">
     <h2 class="panel-title" id="log-files-heading">Log Files (.log)</h2>
     <button type="button" class="btn btn-default btn-xs refresh-logs" aria-label="Refresh log files">
@@ -33,7 +34,20 @@
   </div>
   <div class="panel-body">
     <p class="logs-refresh-status" role="status"></p>
-    <div class="table-responsive"><div id="log-list"></div></div>
+    <div class="table-responsive logs-table-scroll"><div id="log-list"></div></div>
+  </div>
+</section>
+</div>
+<section class="panel panel-default logs-panel" aria-labelledby="taw-logs-heading">
+  <div class="panel-heading mods-section-heading">
+    <h2 class="panel-title" id="taw-logs-heading">TAW Logging (.log, .json)</h2>
+    <button type="button" class="btn btn-default btn-xs refresh-logs" aria-label="Refresh log files">
+      <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> Refresh
+    </button>
+  </div>
+  <div class="panel-body">
+    <p class="logs-refresh-status" role="status"></p>
+    <div class="table-responsive logs-table-scroll"><div id="taw-log-list"></div></div>
   </div>
 </section>
 <% } %>
